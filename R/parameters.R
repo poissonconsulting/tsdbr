@@ -2,19 +2,15 @@
 #'
 #' @param parameters A data frame of parameters with columns Parameter and Units.
 #' @inheritParams hdb_create
-#' @return
+#' @return The imported parameters.
 #' @export
 hdb_add_parameters <- function(parameters, file) {
-  check_data(parameters, values = list(
-    Parameter = "",
-    Units = ""),
-    nrow = TRUE,
-    exclusive = TRUE,
-    order = TRUE,
-    key = "Parameter")
+  check_data(parameters,
+             values = list(Parameter = "",
+                           Units = ""),
+             key = "Parameter")
 
-  conn <- hdb_connect(file)
-  on.exit(DBI::dbDisconnect(conn))
+  parameters <- parameters[c("Parameter", "Units")]
 
-  invisible(parameters)
+  add(parameters, "Parameters", file)
 }

@@ -54,8 +54,8 @@ hdb_create <- function (file = "hdb.sqlite") {
       Longitude >= -180 AND Longitude <= 180 AND
       Latitude >= -90 AND Latitude <= 90
     ),
+    PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
-    PRIMARY KEY (Station)
   )")
 
   invisible(file)

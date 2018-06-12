@@ -1,4 +1,4 @@
-hdb_connect <- function(file) {
+connect <- function(file) {
   check_string(file)
 
   if(!file.exists(file))
@@ -7,4 +7,12 @@ hdb_connect <- function(file) {
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
   conn
+}
+
+add <- function(data, table, file) {
+  conn <- connect(file)
+  on.exit(DBI::dbDisconnect(conn))
+
+  DBI::dbWriteTable(conn, table, data)
+  data
 }
