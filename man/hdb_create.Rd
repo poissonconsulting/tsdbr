@@ -7,7 +7,7 @@
 hdb_create(file = "hdb.sqlite")
 }
 \arguments{
-\item{file}{A string of the name of the database file to create.}
+\item{file}{A string of the name of the database file.}
 }
 \description{
 Creates an empty SQLite database to store hourly data.
