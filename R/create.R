@@ -108,7 +108,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     FROM Data 
     GROUP BY Station")
   
-  checkperiodupload_sql <- "CREATE VIEW CheckPeriodUpload AS
+  DBI::dbGetQuery(conn, "CREATE VIEW CheckPeriodUpload AS
     SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
@@ -123,13 +123,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));"
-  
-  DBI::dbGetQuery(conn, checkperiodupload_sql)
-  
-  checkperioddata_sql <- sub("Upload", "Data", checkperiodupload_sql)
-
-  DBI::dbGetQuery(conn, checkperioddata_sql)
+      (MonthData == 1 AND Period IN ('year'));")
 
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
