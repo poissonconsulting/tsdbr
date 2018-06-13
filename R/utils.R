@@ -16,3 +16,10 @@ add <- function(data, table, file) {
   DBI::dbWriteTable(conn, table, data, append = TRUE)
   data
 }
+
+get <- function(table, file) {
+  conn <- connect(file)
+  on.exit(DBI::dbDisconnect(conn))
+
+  DBI::dbReadTable(conn, table)
+}

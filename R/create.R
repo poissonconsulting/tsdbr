@@ -53,22 +53,28 @@ hdb_create <- function (file = "hdb.sqlite") {
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
   )")
 
-  DBI::dbGetQuery(conn, "CREATE TABLE Data (
+  data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
 	  DateReading TEXT NOT NULL,
     HourReading INTEGER NOT NULL,
-    RawValue REAL NOT NULL,
-    CorrectedValue REAL NOT NULL,
+    Value REAL NOT NULL,
+    Corrected REAL NOT NULL,
     Status INTEGER NOT NULL,
     Comments TEXT
     CHECK (
-      DATETIME(DateReading) IS DateReading AND
+      DATE(DateReading) IS DateReading AND
       HourReading >= 0 AND HourReading <= 23
     ),
     PRIMARY KEY (Station, DateReading, HourReading),
     FOREIGN KEY (Station) REFERENCES Station (Station),
     FOREIGN KEY (Status) REFERENCES Status (Status)
-);")
+);"
+
+  DBI::dbGetQuery(conn, data_sql)
+
+  upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
+
+  DBI::dbGetQuery(conn, upload_sql)
 
   invisible(file)
 }
