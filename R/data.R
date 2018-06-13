@@ -38,13 +38,13 @@ if(missing_column(data, "Comments")) {
   
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  data$DateTimeReading <- as.character(data$DateTime)
+  data$DateTimeData <- as.character(data$DateTime)
   
   data$Status <- factor(data$Status,
                         levels = c("reasonable", "questionable", "erroneous"))
   data$Status <- as.integer(data$Status)
   
-  data <- data[c("Station", "DateTimeReading", "Recorded",
+  data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "Comments")]
   
   stations <- get("Station", file)

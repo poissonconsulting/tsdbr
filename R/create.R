@@ -94,21 +94,21 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
-	  DateTimeReading TEXT NOT NULL,
+	  DateTimeData TEXT NOT NULL,
     Recorded REAL NOT NULL,
     Corrected REAL NOT NULL,
     Status INTEGER NOT NULL,
     Comments TEXT
     CHECK (
-      DATETIME(DateTimeReading) IS DateTimeReading
+      DATETIME(DateTimeData) IS DateTimeData
     ),
-    PRIMARY KEY (Station, DateTimeReading),
+    PRIMARY KEY (Station, DateTimeData),
     FOREIGN KEY (Station) REFERENCES Station (Station),
     FOREIGN KEY (Status) REFERENCES Status (Status)
 );"
   
   DBI::dbGetQuery(conn, data_sql)
-  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeReading)")
+  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeData)")
   
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
   
@@ -122,7 +122,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     ));")
   
   DBI::dbGetQuery(conn, "CREATE VIEW Span AS
-    SELECT Station, MIN(DateTimeReading) AS Start, MAX(DateTimeReading) AS End
+    SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data 
     GROUP BY Station")
 
