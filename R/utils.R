@@ -23,3 +23,7 @@ get <- function(table, file) {
 
   DBI::dbReadTable(conn, table)
 }
+
+get_utc_offset <- function(file) {
+  get("Database", file)$UTC_Offset
+}

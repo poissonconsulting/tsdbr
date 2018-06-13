@@ -3,7 +3,7 @@ context("create")
 test_that("ts_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
  # file <- "ts.db"
-  setup(ts_create(file))
+  setup(ts_create(file, utc_offset = 8L))
   expect_true(file.exists(file))
 
   parameters <- data.frame(Parameter = "Temp",
@@ -29,6 +29,10 @@ test_that("ts_create", {
                      Recorded = 0:23 - 2,
                      stringsAsFactors = FALSE)
 
+  expect_error(ts_add_data(data, file), 
+               "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]")
+  data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
+  
   expect_is(ts_add_data(data, file), "data.frame")
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)

@@ -15,53 +15,62 @@ ts_add_data <- function(data, file, resolution = "abort") {
              nrow = TRUE,
              key = c("Station", "DateTime"))
   
-  if(is.null(data$Corrected)) {
-    data$Corrected <- data$Recorded
-  } else check_vector(data$Corrected, 1)
+  utc_offset <- get_utc_offset(file)
   
-  if(is.null(data$Status)) {
-    data$Status <- "Reasonable"
-  } else check_vector(data$Status, c("Reasonable", "Questionable", "Erroneous"))
-  
-  if(is.null(data$Comments)) {
-    data$Comments <- NA_character_
-  } else check_vector(data$Comments, c("", NA))
-  
-  check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
+  if(utc_offset == 0L) {
+    checkor(check_tzone(data$DateTime, "UTC"),check_tzone(data$DateTime, "GMT"))
+  } else {
+    tz <- paste0("Etc/GMT", ifelse(utc_offset > 0, "+", "-"), abs(utc_offset))
+    check_tzone(data$DateTime, tz)
+  }
 
-  data$DateTimeReading <- as.character(data$DateTime)
+if(is.null(data$Corrected)) {
+  data$Corrected <- data$Recorded
+} else check_vector(data$Corrected, 1)
 
-  data$Status <- factor(data$Status,
-                        levels = c("Reasonable", "Questionable", "Erroneous"))
-  data$Status <- as.integer(data$Status)
-  
-  print(data)
-  
-  data <- data[c("Station", "DateTimeReading", "Recorded",
-                 "Corrected", "Status", "Comments")]
+if(is.null(data$Status)) {
+  data$Status <- "Reasonable"
+} else check_vector(data$Status, c("Reasonable", "Questionable", "Erroneous"))
 
-  stations <- get("Station", file)
-  stations <- stations[c("Station", "LowerLimit", "UpperLimit")]
-  data <- merge(data, stations, by = "Station")
+if(is.null(data$Comments)) {
+  data$Comments <- NA_character_
+} else check_vector(data$Comments, c("", NA))
 
-  data$Status[!is.na(data$Corrected) &
-                !is.na(data$LowerLimit) &
-                data$Corrected < data$LowerLimit] <- 3L
+check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
 
-  data$Status[!is.na(data$Corrected) &
-                !is.na(data$UpperLimit) &
-                data$Corrected > data$UpperLimit] <- 3L
+data$DateTimeReading <- as.character(data$DateTime)
 
-  data$LowerLimit <- NULL
-  data$UpperLimit <- NULL
+data$Status <- factor(data$Status,
+                      levels = c("Reasonable", "Questionable", "Erroneous"))
+data$Status <- as.integer(data$Status)
 
-  data <- add(data, "Upload", file)
+print(data)
 
-  conn <- connect(file)
-  on.exit(DBI::dbDisconnect(conn))
+data <- data[c("Station", "DateTimeReading", "Recorded",
+               "Corrected", "Status", "Comments")]
 
-  DBI::dbGetQuery(conn, paste("INSERT OR", toupper(resolution), "INTO Data SELECT * FROM Upload;"))
-  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
-  DBI::dbGetQuery(conn, "VACUUM;")
-  data
+stations <- get("Station", file)
+stations <- stations[c("Station", "LowerLimit", "UpperLimit")]
+data <- merge(data, stations, by = "Station")
+
+data$Status[!is.na(data$Corrected) &
+              !is.na(data$LowerLimit) &
+              data$Corrected < data$LowerLimit] <- 3L
+
+data$Status[!is.na(data$Corrected) &
+              !is.na(data$UpperLimit) &
+              data$Corrected > data$UpperLimit] <- 3L
+
+data$LowerLimit <- NULL
+data$UpperLimit <- NULL
+
+data <- add(data, "Upload", file)
+
+conn <- connect(file)
+on.exit(DBI::dbDisconnect(conn))
+
+DBI::dbGetQuery(conn, paste("INSERT OR", toupper(resolution), "INTO Data SELECT * FROM Upload;"))
+DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+DBI::dbGetQuery(conn, "VACUUM;")
+data
 }

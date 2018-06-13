@@ -9,8 +9,11 @@ ts_create(file = "ts.db", utc_offset = 0L)
 \arguments{
 \item{file}{A string of the name of the database file.}
 
-\item{utc_offset}{A integer of the utc offset.}
+\item{utc_offset}{A integer of the utc offset which must lie between -12 and 14.}
 }
 \description{
 Creates an empty SQLite database to store hourly data.
+The utc_offset indicates how many hours must be added or subtracted to the 
+saved date times to convert them to UTC.
+For example 8 hours must be added to times in PST to convert them to UTC.
 }
