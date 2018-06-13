@@ -103,10 +103,15 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   DBI::dbGetQuery(conn, upload_sql)
   
-  DBI::dbGetQuery(conn, "CREATE VIEW Span AS
+  DBI::dbGetQuery(conn, "CREATE VIEW StationDataSpan AS
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data 
     GROUP BY Station")
+  
+  DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
+    SELECT s.Station As ss, s.Period AS pp, u.DateTimeData AS ee
+    FROM Station s
+    INNER JOIN Data u ON s.Station = u.Station;")
   
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
@@ -119,13 +124,13 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEFORE INSERT ON Database
     WHEN (SELECT COUNT(*) FROM Database) >= 1
     BEGIN
-      SELECT RAISE(FAIL, 'only one row permitted!');
+      SELECT RAISE(FAIL, 'only one row permitted in Database!');
     END;")
   
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
     BEFORE DELETE ON Database
     BEGIN
-      SELECT RAISE(FAIL, 'must be one row!');
+      SELECT RAISE(FAIL, 'database must be one row!');
     END;")
   
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_update_trigger
@@ -187,6 +192,12 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEGIN
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
     END;"))
+  
+  # DBI::dbGetQuery(conn, paste0("CREATE TRIGGER upload_insert_trigger
+  #   BEFORE INSERT ON Upload
+  #   BEGIN
+  #     INSERT INTO RAISE(ROLLBACK, 'invalid periods');
+  #   END;"))
   
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
