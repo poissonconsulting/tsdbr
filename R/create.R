@@ -43,13 +43,21 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   DBI::dbGetQuery(conn, "CREATE TABLE Log (
     DateTimeLog TEXT NOT NULL,
-    Change TEXT
+    OperationLog TEXT NOT NULL,
+    TableLog TEXT NOT NULL,
+    ColumnLog TEXT,
+    CommentsLog TEXT,
     CHECK (
-      DATETIME(DateTimeLog) IS DateTimeLog
+      DATETIME(DateTimeLog) IS DateTimeLog AND
+      OperationLog IN ('UPDATE', 'DELETE', 'INSERT')
   ));")
 
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", Sys.time(), "', 'inserted ", utc_offset, " into Datbase.UTC_Offset');"))
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", sys_time_utc(), "', 
+                               'INSERT',
+                               'Database',
+                               'UTC_Offset',
+                               NULL);"))
 
   DBI::dbGetQuery(conn, "CREATE TABLE Status (
     Status  INTEGER NOT NULL,
@@ -106,7 +114,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     Recorded REAL NOT NULL,
     Corrected REAL NOT NULL,
     Status INTEGER NOT NULL,
-    Comments TEXT
+    CommentsData TEXT
     CHECK (
       DATETIME(DateTimeData) IS DateTimeData
     ),

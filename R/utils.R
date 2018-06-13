@@ -36,3 +36,11 @@ has_column <- function(data, column) {
 missing_column <- function(data, column) {
   !has_column(data, column)
 }
+
+sys_time_utc <- function() {
+  time <- Sys.time()
+  attr(time, "tzone") <- "UTC"
+  time <- as.character(time)
+  time <- sub("\\sUTC$", "", time)
+  time
+}
