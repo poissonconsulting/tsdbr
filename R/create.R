@@ -62,7 +62,6 @@ ts_create <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L)
     Station TEXT NOT NULL,
     Parameter TEXT NOT NULL,
     Period TEXT NOT NULL,
-    Regular BOOLEAN NOT NULL,
     LowerLimit REAL,
     UpperLimit REAL,
     Longitude REAL,
@@ -71,7 +70,6 @@ ts_create <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L)
     StationName TEXT,
     CHECK(
       Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
-      Regular IN (0,1) AND
       LowerLimit < UpperLimit AND
       Longitude >= -180 AND Longitude <= 180 AND
       Latitude >= -90 AND Latitude <= 90 AND

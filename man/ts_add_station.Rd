@@ -4,8 +4,8 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, period, regular = TRUE,
-  file = getOption("tsdbr.file", "ts.db"))
+ts_add_station(station, parameter, period, file = getOption("tsdbr.file",
+  "ts.db"))
 }
 \arguments{
 \item{station}{A string of the station name.}
@@ -14,9 +14,6 @@ ts_add_station(station, parameter, period, regular = TRUE,
 
 \item{period}{A string of the period. The possible values are 'year', 'month',
 'day', 'hour', 'minute' and 'second'.}
-
-\item{regular}{A flag indicating whether the readings are regular.
-This affects whether missing readings are created to fill gaps when extracting data.}
 
 \item{file}{A string of the name of the database file.}
 }

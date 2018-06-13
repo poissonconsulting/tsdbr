@@ -8,7 +8,7 @@ ts_add_stations(stations, file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
-Period, Regular. The optional columns are
+Period. The optional columns are
 LowerLimit, UpperLimit, Longitude, Latitude, Organization and
 StationName.}
 
