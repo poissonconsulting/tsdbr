@@ -110,14 +110,20 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
     SELECT s.Station As Station, s.Period AS Period, 
-      MAX(STRFTIME('%m', u.DateTimeData)) != '00' AS MonthData,
-      MAX(STRFTIME('%d', u.DateTimeData)) != '00' AS DayData,
+      MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
+      MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
       MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
       MAX(STRFTIME('%M', u.DateTimeData)) != '00' AS MinuteData,
       MAX(STRFTIME('%S', u.DateTimeData)) != '00' AS SecondData
     FROM Station s
     INNER JOIN Data u ON s.Station = u.Station
-    GROUP BY s.Station, s.Period;")
+    GROUP BY s.Station, s.Period
+    HAVING 
+      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
+      (DayData == 1 AND Period IN ('year', 'month')) OR
+      (MonthData == 1 AND Period IN ('year'));")
   
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
@@ -130,13 +136,13 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEFORE INSERT ON Database
     WHEN (SELECT COUNT(*) FROM Database) >= 1
     BEGIN
-      SELECT RAISE(FAIL, 'only one row permitted in Database!');
+      SELECT RAISE(FAIL, 'only one row permitted!');
     END;")
   
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
     BEFORE DELETE ON Database
     BEGIN
-      SELECT RAISE(FAIL, 'database must be one row!');
+      SELECT RAISE(FAIL, 'must be one row!');
     END;")
   
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_update_trigger
