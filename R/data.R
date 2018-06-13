@@ -64,13 +64,13 @@ if(missing_column(data, "Comments")) {
   data$LowerLimit <- NULL
   data$UpperLimit <- NULL
   
+  conn <- connect(file)
+  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
+  on.exit(DBI::dbDisconnect(conn), add = TRUE)
+
   data <- add(data, "Upload", file)
   
-  conn <- connect(file)
-  on.exit(DBI::dbDisconnect(conn))
-  
   DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), " INTO Data SELECT * FROM Upload;"))
-  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
-  DBI::dbGetQuery(conn, "VACUUM;")
   data
 }

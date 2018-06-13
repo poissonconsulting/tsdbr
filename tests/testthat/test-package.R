@@ -19,7 +19,7 @@ test_that("ts_create", {
 
   expect_identical(parameters, ts_add_parameter("Temp", "degC", file))
 
-  expect_is(ts_add_station("S1", "Temp", "hour", file = file), "data.frame")
+  expect_is(ts_add_station("S1", "Temp", "day", file = file), "data.frame")
 
   stations <- data.frame(Station = "S2",
                          Parameter = "Temp",
@@ -39,4 +39,9 @@ test_that("ts_create", {
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
   
   expect_is(ts_add_data(data, file), "data.frame")
+
+  expect_error(ts_add_data(data, file), "UNIQUE constraint failed: Data.Station, Data.DateTimeData")
+  
+  data$Station <- "S1"
+  expect_error(ts_add_data(data, file), "invalid uploaded periods")
 })

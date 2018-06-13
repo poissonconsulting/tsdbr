@@ -205,11 +205,14 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
     END;"))
   
-  # DBI::dbGetQuery(conn, paste0("CREATE TRIGGER upload_insert_trigger
-  #   BEFORE INSERT ON Upload
-  #   BEGIN
-  #     INSERT INTO RAISE(ROLLBACK, 'invalid periods');
-  #   END;"))
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER data_insert_trigger
+    BEFORE INSERT ON Data
+    BEGIN
+      SELECT CASE
+        WHEN (SELECT COUNT(*) FROM PeriodUpload) >= 1
+        THEN RAISE(ROLLBACK, 'invalid uploaded periods')
+      END;
+    END;"))
   
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
