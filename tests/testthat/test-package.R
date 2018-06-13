@@ -4,7 +4,7 @@ test_that("ts_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
   file <- "ts.db"
   if(file.exists(file)) unlink(file)
-  setup(ts_create(file, utc_offset = 8L))
+  setup(ts_create(file = file, utc_offset = 8L))
   expect_true(file.exists(file))
   teardown(unlink(file))
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
@@ -17,7 +17,7 @@ test_that("ts_create", {
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
 
-  expect_identical(parameters, ts_add_parameter("Temp", "degC", file))
+  expect_identical(parameters, ts_add_parameter("Temp", "degC", file = file))
 
   expect_is(ts_add_station("S1", "Temp", "day", file = file), "data.frame")
 
@@ -28,26 +28,26 @@ test_that("ts_create", {
                          UpperLimit = 100,
                          stringsAsFactors = FALSE)
 
-  expect_is(ts_add_stations(stations, file), "data.frame")
+  expect_is(ts_add_stations(stations, file = file), "data.frame")
 
   data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
                      Recorded = 0:23 - 2,
                      stringsAsFactors = FALSE)
 
-  expect_error(ts_add_data(data, file), 
+  expect_error(ts_add_data(data, file = file), 
                "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]")
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
   
-  expect_is(ts_add_data(data, file), "data.frame")
+  expect_is(ts_add_data(data, file = file), "data.frame")
 
-  expect_error(ts_add_data(data, file), "UNIQUE constraint failed: Data.Station, Data.DateTimeData")
+  expect_error(ts_add_data(data, file = file), "UNIQUE constraint failed: Data.Station, Data.DateTimeData")
   
   data$Recorded <- data$Recorded - 1
 
-  expect_is(ts_add_data(data, file, resolution = "replace"), "data.frame")
+  expect_is(ts_add_data(data, file = file, resolution = "replace"), "data.frame")
   
   data$Station <- "S1"
-  expect_error(ts_add_data(data, file), "invalid uploaded periods")
+  expect_error(ts_add_data(data, file = file), "invalid uploaded periods")
   
-  expect_is(ts_add_data(data, file, aggregate = TRUE), "data.frame")
+  expect_is(ts_add_data(data, file = file, aggregate = TRUE), "data.frame")
 })

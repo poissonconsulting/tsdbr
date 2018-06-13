@@ -4,7 +4,7 @@
 \alias{ts_create}
 \title{Create Time-Series Database}
 \usage{
-ts_create(file = "ts.db", utc_offset = 0L)
+ts_create(file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L)
 }
 \arguments{
 \item{file}{A string of the name of the database file.}

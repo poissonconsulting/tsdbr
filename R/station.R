@@ -9,7 +9,7 @@
 #' @inheritParams ts_create
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, period, file, regular = TRUE) {
+ts_add_station <- function(station, parameter, period, regular = TRUE, file = getOption("tsdbr.file", "ts.db")) {
   check_string(station)
   check_string(parameter)
   check_string(period)
@@ -32,7 +32,7 @@ ts_add_station <- function(station, parameter, period, file, regular = TRUE) {
 #' @inheritParams ts_create
 #' @return The imported station data.
 #' @export
-ts_add_stations <- function(stations, file) {
+ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   check_data(stations,
              values = list(Station  = "",
                            Parameter = "",

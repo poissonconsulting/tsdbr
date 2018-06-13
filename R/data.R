@@ -9,7 +9,8 @@
 #' Options are 'abort', 'ignore' or 'replace'.
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_data <- function(data, file, aggregate = FALSE, resolution = "abort") {
+ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
+                        file = getOption("tsdbr.file", "ts.db")) {
   check_data(data,
              values = list(Station = "",
                            DateTime = Sys.time(),

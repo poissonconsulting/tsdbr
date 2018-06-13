@@ -5,7 +5,7 @@
 #' @inheritParams ts_create
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameter <- function(parameter, units, file) {
+ts_add_parameter <- function(parameter, units, file = getOption("tsdbr.file", "ts.db")) {
   check_string(parameter)
   check_string(units)
   
@@ -22,7 +22,7 @@ ts_add_parameter <- function(parameter, units, file) {
 #' @inheritParams ts_create
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameters <- function(parameters, file) {
+ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db")) {
   check_data(parameters,
              values = list(Parameter = "",
                            Units = ""),

@@ -4,7 +4,7 @@
 \alias{ts_add_parameter}
 \title{Add Parameter}
 \usage{
-ts_add_parameter(parameter, units, file)
+ts_add_parameter(parameter, units, file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
 \item{parameter}{A string of the parameter name.}
