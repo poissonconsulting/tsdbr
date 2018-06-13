@@ -108,7 +108,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     FROM Data 
     GROUP BY Station")
   
-  DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
+  checkperiodupload_sql <- "CREATE VIEW CheckPeriodUpload AS
     SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
@@ -116,15 +116,21 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       MAX(STRFTIME('%M', u.DateTimeData)) != '00' AS MinuteData,
       MAX(STRFTIME('%S', u.DateTimeData)) != '00' AS SecondData
     FROM Station s
-    INNER JOIN Data u ON s.Station = u.Station
+    INNER JOIN Upload u ON s.Station = u.Station
     GROUP BY s.Station, s.Period
     HAVING 
       (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
+      (MonthData == 1 AND Period IN ('year'));"
   
+  DBI::dbGetQuery(conn, checkperiodupload_sql)
+  
+  checkperioddata_sql <- sub("Upload", "Data", checkperiodupload_sql)
+
+  DBI::dbGetQuery(conn, checkperioddata_sql)
+
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
   
@@ -209,7 +215,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEFORE INSERT ON Data
     BEGIN
       SELECT CASE
-        WHEN (SELECT COUNT(*) FROM PeriodUpload) >= 1
+        WHEN (SELECT COUNT(*) FROM CheckPeriodUpload) >= 1
         THEN RAISE(ROLLBACK, 'invalid uploaded periods')
       END;
     END;"))
