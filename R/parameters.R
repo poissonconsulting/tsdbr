@@ -8,11 +8,11 @@
 ts_add_parameter <- function(parameter, units, file) {
   check_string(parameter)
   check_string(units)
-
+  
   parameters <- data.frame(Parameter = parameter,
                            Units = units,
                            stringsAsFactors = FALSE)
-
+  
   ts_add_parameters(parameters, file)
 }
 
@@ -26,9 +26,10 @@ ts_add_parameters <- function(parameters, file) {
   check_data(parameters,
              values = list(Parameter = "",
                            Units = ""),
-             key = "Parameter")
-
+             key = "Parameter",
+             nrow = TRUE)
+  
   parameters <- parameters[c("Parameter", "Units")]
-
+  
   add(parameters, "Parameter", file)
 }

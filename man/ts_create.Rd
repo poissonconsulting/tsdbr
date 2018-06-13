@@ -2,9 +2,9 @@
 % Please edit documentation in R/create.R
 \name{ts_create}
 \alias{ts_create}
-\title{Create Hourly Database}
+\title{Create Time-Series Database}
 \usage{
-ts_create(file = "ts.sqlite")
+ts_create(file = "ts.db")
 }
 \arguments{
 \item{file}{A string of the name of the database file.}

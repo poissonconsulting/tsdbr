@@ -25,9 +25,8 @@ test_that("ts_create", {
 
   expect_identical(ts_add_stations(stations, file), stations)
 
-  data <- data.frame(Station = "S2", DateReading = as.Date("2001-01-01"),
-                     HourReading = 0:23, Value = 0:23 - 2, Corrected = 0:23 - 2,
-                     Status = "Reasonable", Comments = NA_character_,
+  data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
+                     Recorded = 0:23 - 2,
                      stringsAsFactors = FALSE)
 
   expect_is(ts_add_data(data, file), "data.frame")

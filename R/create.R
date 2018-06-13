@@ -1,10 +1,10 @@
-#' Create Hourly Database
+#' Create Time-Series Database
 #'
 #' Creates an empty SQLite database to store hourly data.
 #'
 #' @param file A string of the name of the database file.
 #' @export
-ts_create <- function (file = "ts.sqlite") {
+ts_create <- function (file = "ts.db") {
   check_string(file)
 
   if(file.exists(file))
@@ -33,6 +33,9 @@ ts_create <- function (file = "ts.sqlite") {
   DBI::dbGetQuery(conn, "CREATE TABLE Parameter (
     Parameter  TEXT NOT NULL,
     Units TEXT NOT NULL,
+    CHECK(
+      Length(Parameter) >= 1 AND
+      Length(Units) >= 1),
     PRIMARY KEY (Parameter)
   );")
 
@@ -46,8 +49,11 @@ ts_create <- function (file = "ts.sqlite") {
     Organization TEXT,
     StationName TEXT,
     CHECK(
+      LowerLimit < UpperLimit AND
       Longitude >= -180 AND Longitude <= 180 AND
-      Latitude >= -90 AND Latitude <= 90
+      Latitude >= -90 AND Latitude <= 90 AND
+      Length(Organization) >= 1 AND
+      Length(StationName) >= 1
     ),
     PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
@@ -55,17 +61,15 @@ ts_create <- function (file = "ts.sqlite") {
 
   data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
-	  DateReading TEXT NOT NULL,
-    HourReading INTEGER NOT NULL,
-    Value REAL NOT NULL,
+	  DateTimeReading TEXT NOT NULL,
+    Recorded REAL NOT NULL,
     Corrected REAL NOT NULL,
     Status INTEGER NOT NULL,
     Comments TEXT
     CHECK (
-      DATE(DateReading) IS DateReading AND
-      HourReading >= 0 AND HourReading <= 23
+      DATETIME(DateTimeReading) IS DateTimeReading
     ),
-    PRIMARY KEY (Station, DateReading, HourReading),
+    PRIMARY KEY (Station, DateTimeReading),
     FOREIGN KEY (Station) REFERENCES Station (Station),
     FOREIGN KEY (Status) REFERENCES Status (Status)
 );"
@@ -75,6 +79,7 @@ ts_create <- function (file = "ts.sqlite") {
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
 
   DBI::dbGetQuery(conn, upload_sql)
+  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeReading)")
 
   invisible(file)
 }

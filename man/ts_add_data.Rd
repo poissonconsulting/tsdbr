@@ -7,13 +7,13 @@
 ts_add_data(data, file, resolution = "abort")
 }
 \arguments{
-\item{data}{A data frame of data with columns Station, Date, Hour, Time, Value.
-Additional optional columns include Corrected, Status,}
+\item{data}{A data frame of data with columns Station, DateTime, Recorded.
+Additional optional columns include Corrected, Status, Comments.}
 
 \item{file}{A string of the name of the database file.}
 
 \item{resolution}{A string of the action to take with regard to existing values.
-Options are abort, ignore or replace.}
+Options are 'abort', 'ignore' or 'replace'.}
 }
 \value{
 A data frame of the imported parameters.

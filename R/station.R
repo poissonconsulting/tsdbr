@@ -39,6 +39,7 @@ ts_add_stations <- function(stations, file) {
                            Latitude = c(-90, 90, NA),
                            Organization = c("", NA),
                            StationName = c("", NA)),
+             nrow = TRUE,
              key = "Station")
 
 
