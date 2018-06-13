@@ -32,13 +32,12 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     DateTimeLog TEXT NOT NULL,
     OperationLog TEXT NOT NULL,
     TableLog TEXT NOT NULL,
-    ColumnLog TEXT,
     CommentsLog TEXT,
     CHECK (
       DATETIME(DateTimeLog) IS DateTimeLog AND
       OperationLog IN ('UPDATE', 'DELETE', 'INSERT')
   ));")
-
+  
   DBI::dbGetQuery(conn, "CREATE TABLE Status (
     Status  INTEGER NOT NULL,
     Description TEXT NOT NULL,
@@ -109,6 +108,11 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     FROM Data 
     GROUP BY Station")
   
+  status <- data.frame(Status = 1:3,
+                       Description = c("reasonable", "questionable", "erroneous"))
+  
+  DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
+  
   DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeData)")
   
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_insert_trigger
@@ -123,24 +127,72 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEGIN
       SELECT RAISE(FAIL, 'must be one row!');
     END;")
-
-  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER database_insert_parameter
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER database_update_trigger
+    BEFORE UPDATE ON Database
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Database', NULL);
+    END;")
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER status_insert_trigger
+    BEFORE INSERT ON Status
+    BEGIN
+      SELECT RAISE(FAIL, 'Status table is unalterable');
+    END;")
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER status_delete_trigger
+    BEFORE DELETE ON Status
+    BEGIN
+      SELECT RAISE(FAIL, 'Status table is unalterable');
+    END;")
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER status_update_trigger
+    BEFORE UPDATE ON Status
+    BEGIN
+      SELECT RAISE(FAIL, 'Status table is unalterable');
+    END;")
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER parameter_insert_trigger
     BEFORE INSERT ON Parameter
     BEGIN
-      INSERT INTO Log VALUES('", sys_time_utc(),"', 'INSERT', 'Parameter', NULL, NULL);
+      INSERT INTO Log VALUES(DATETIME('now'), 'INSERT', 'Parameter', NULL);
     END;"))
-
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER parameter_delete_trigger
+    BEFORE DELETE ON Parameter
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'DELETE', 'Parameter', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER parameter_update_trigger
+    BEFORE UPDATE ON Parameter
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Parameter', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER station_insert_trigger
+    BEFORE INSERT ON Station
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'INSERT', 'Station', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER station_delete_trigger
+    BEFORE DELETE ON Station
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'DELETE', 'Station', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER station_update_trigger
+    BEFORE UPDATE ON Station
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
+    END;"))
+  
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", sys_time_utc(), "', 
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
                                'INSERT',
                                'Database',
-                               'UTC_Offset',
                                NULL);"))
   
-  status <- data.frame(Status = 1:3,
-                       Description = c("reasonable", "questionable", "erroneous"))
-  
-  DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
-
   invisible(file)
 }
