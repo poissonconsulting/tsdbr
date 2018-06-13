@@ -109,7 +109,12 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     GROUP BY Station")
   
   DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
-    SELECT s.Station As ss, s.Period AS pp, u.DateTimeData AS ee
+    SELECT s.Station As ss, s.Period AS pp, 
+      strftime('%m', u.DateTimeData) AS MonthData,
+      strftime('%d', u.DateTimeData) AS DayData,
+      strftime('%H', u.DateTimeData) AS HourData,
+      strftime('%M', u.DateTimeData) AS MinuteData,
+      strftime('%S', u.DateTimeData) AS SecondData
     FROM Station s
     INNER JOIN Data u ON s.Station = u.Station;")
   
