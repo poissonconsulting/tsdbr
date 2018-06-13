@@ -42,6 +42,10 @@ test_that("ts_create", {
 
   expect_error(ts_add_data(data, file), "UNIQUE constraint failed: Data.Station, Data.DateTimeData")
   
+  data$Recorded <- data$Recorded - 1
+
+  expect_is(ts_add_data(data, file, resolution = "replace"), "data.frame")
+  
   data$Station <- "S1"
   expect_error(ts_add_data(data, file), "invalid uploaded periods")
 })

@@ -72,5 +72,5 @@ if(missing_column(data, "Comments")) {
   data <- add(data, "Upload", file)
   
   DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), " INTO Data SELECT * FROM Upload;"))
-  data
+  invisible(data)
 }
