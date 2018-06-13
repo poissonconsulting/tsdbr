@@ -20,7 +20,10 @@ ts_create <- function (file = "ts.db") {
   DBI::dbGetQuery(conn, "CREATE TABLE Status (
     Status  INTEGER NOT NULL,
     Description TEXT NOT NULL,
-    CHECK (Status >= 1 AND Status <= 3)
+    CHECK (
+      Status >= 1 AND Status <= 3 AND
+      Description IN ('Reasonable', 'Questionable', 'Erroneous')
+    ),
     PRIMARY KEY (Status),
     UNIQUE (Description)
   );")
@@ -75,11 +78,11 @@ ts_create <- function (file = "ts.db") {
 );"
 
   DBI::dbGetQuery(conn, data_sql)
+  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeReading)")
 
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
 
   DBI::dbGetQuery(conn, upload_sql)
-  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeReading)")
 
   invisible(file)
 }
