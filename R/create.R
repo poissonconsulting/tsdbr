@@ -110,13 +110,14 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
     SELECT s.Station As ss, s.Period AS pp, 
-      strftime('%m', u.DateTimeData) AS MonthData,
-      strftime('%d', u.DateTimeData) AS DayData,
-      strftime('%H', u.DateTimeData) AS HourData,
-      strftime('%M', u.DateTimeData) AS MinuteData,
-      strftime('%S', u.DateTimeData) AS SecondData
+      MAX(STRFTIME('%m', u.DateTimeData)) AS MonthData,
+      MAX(STRFTIME('%d', u.DateTimeData)) AS DayData,
+      MAX(STRFTIME('%H', u.DateTimeData)) AS HourData,
+      MAX(STRFTIME('%M', u.DateTimeData)) AS MinuteData,
+      MAX(STRFTIME('%S', u.DateTimeData)) AS SecondData
     FROM Station s
-    INNER JOIN Data u ON s.Station = u.Station;")
+    INNER JOIN Data u ON s.Station = u.Station
+    GROUP BY s.Station, s.Period;")
   
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
