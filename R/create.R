@@ -28,19 +28,6 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       UTC_Offset >= -12 AND UTC_Offset <= 14
     ));")
   
-  DBI::dbGetQuery(conn, "CREATE TRIGGER database_insert_trigger
-    BEFORE INSERT ON Database
-    WHEN (SELECT COUNT(*) FROM Database) >= 1
-    BEGIN
-      SELECT RAISE(FAIL, 'only one row permitted!');
-    END;")
-  
-  DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
-    BEFORE DELETE ON Database
-    BEGIN
-      SELECT RAISE(FAIL, 'must be one row!');
-    END;")
-  
   DBI::dbGetQuery(conn, "CREATE TABLE Log (
     DateTimeLog TEXT NOT NULL,
     OperationLog TEXT NOT NULL,
@@ -52,13 +39,6 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       OperationLog IN ('UPDATE', 'DELETE', 'INSERT')
   ));")
 
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", sys_time_utc(), "', 
-                               'INSERT',
-                               'Database',
-                               'UTC_Offset',
-                               NULL);"))
-
   DBI::dbGetQuery(conn, "CREATE TABLE Status (
     Status  INTEGER NOT NULL,
     Description TEXT NOT NULL,
@@ -69,11 +49,6 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     PRIMARY KEY (Status),
     UNIQUE (Description)
   );")
-  
-  status <- data.frame(Status = 1:3,
-                       Description = c("reasonable", "questionable", "erroneous"))
-  
-  DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
   
   DBI::dbGetQuery(conn, "CREATE TABLE Parameter (
     Parameter  TEXT NOT NULL,
@@ -124,7 +99,6 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
 );"
   
   DBI::dbGetQuery(conn, data_sql)
-  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeData)")
   
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
   
@@ -134,6 +108,39 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data 
     GROUP BY Station")
+  
+  DBI::dbGetQuery(conn, "CREATE UNIQUE INDEX data_idx ON Data(Station, DateTimeData)")
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER database_insert_trigger
+    BEFORE INSERT ON Database
+    WHEN (SELECT COUNT(*) FROM Database) >= 1
+    BEGIN
+      SELECT RAISE(FAIL, 'only one row permitted!');
+    END;")
+  
+  DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
+    BEFORE DELETE ON Database
+    BEGIN
+      SELECT RAISE(FAIL, 'must be one row!');
+    END;")
+
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER database_insert_parameter
+    BEFORE INSERT ON Parameter
+    BEGIN
+      INSERT INTO Log VALUES('", sys_time_utc(),"', 'INSERT', 'Parameter', NULL, NULL);
+    END;"))
+
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", sys_time_utc(), "', 
+                               'INSERT',
+                               'Database',
+                               'UTC_Offset',
+                               NULL);"))
+  
+  status <- data.frame(Status = 1:3,
+                       Description = c("reasonable", "questionable", "erroneous"))
+  
+  DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
 
   invisible(file)
 }

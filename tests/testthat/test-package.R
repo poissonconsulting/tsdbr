@@ -3,6 +3,7 @@ context("create")
 test_that("ts_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
   file <- "ts.db"
+  if(file.exists(file)) unlink(file)
   setup(ts_create(file, utc_offset = 8L))
   expect_true(file.exists(file))
   teardown(unlink(file))
