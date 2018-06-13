@@ -50,4 +50,7 @@ test_that("ts_create", {
   expect_error(ts_add_data(data, file = file), "invalid uploaded periods")
   
   expect_is(ts_add_data(data, file = file, aggregate = TRUE), "data.frame")
+  
+  data <- ts_get_data("S1", file = file)
+  expect_is(data, "data.frame")
 })

@@ -117,3 +117,41 @@ ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
   DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), " INTO Data SELECT * FROM Upload;"))
   invisible(data)
 }
+
+#' Get Data
+#'
+#' @param stations A character vector of the stations.
+#' @param start_date The start date.
+#' @param end_date The start date.
+#' @param period A string of the period to aggregate and average by.
+#' The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.
+#' @param status A string of the worse type of data to get.
+#' The possible values are 'reasonable', 'questionable' or 'erroneous'.
+#' @param fill A flag indicating whether to fill in missing values with NAs.
+#' @inheritParams ts_create
+#' @return A data frame of the requested data.
+#' @export
+ts_get_data <- function(stations,
+                        start_date = as.Date("2017-01-01"), 
+                        end_date = as.Date("2017-12-31"),
+                        period = "hour",
+                        status = "questionable",
+                        fill = FALSE,
+                        file = getOption("tsdbr.file", "ts.db")) {
+  check_vector(stations, "", length = TRUE)
+  check_date(start_date)
+  check_date(end_date)
+  check_vector(period, c("year", "month", "day", "hour", "minute", "second"), length = 1)
+  check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
+  check_flag(fill)
+  
+  if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
+
+  conn <- connect(file)
+  on.exit(DBI::dbDisconnect(conn))
+  
+  data <- DBI::dbGetQuery(conn, "SELECT Station, DateTimeData, Corrected, Status
+    FROM Data")
+  
+  data
+}
