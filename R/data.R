@@ -44,8 +44,6 @@ if(missing_column(data, "Comments")) {
                         levels = c("reasonable", "questionable", "erroneous"))
   data$Status <- as.integer(data$Status)
   
-  print(data)
-  
   data <- data[c("Station", "DateTimeReading", "Recorded",
                  "Corrected", "Status", "Comments")]
   
@@ -69,7 +67,7 @@ if(missing_column(data, "Comments")) {
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
-  DBI::dbGetQuery(conn, paste("INSERT OR", toupper(resolution), "INTO Data SELECT * FROM Upload;"))
+  DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), " INTO Data SELECT * FROM Upload;"))
   DBI::dbGetQuery(conn, "DELETE FROM Upload;")
   DBI::dbGetQuery(conn, "VACUUM;")
   data

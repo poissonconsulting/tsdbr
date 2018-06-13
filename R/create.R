@@ -1,6 +1,6 @@
 #' Create Time-Series Database
 #'
-#' Creates an empty SQLite database to store hourly data.
+#' Creates an empty SQLite database to store time series data.
 #' The utc_offset indicates how many hours must be added or subtracted to the 
 #' saved date times to convert them to UTC.
 #' For example 8 hours must be added to times in PST to convert them to UTC.
@@ -28,11 +28,17 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       UTC_Offset >= -12 AND UTC_Offset <= 14
     ));")
   
-  DBI::dbGetQuery(conn, "CREATE TRIGGER database_trg
+  DBI::dbGetQuery(conn, "CREATE TRIGGER database_insert_trigger
     BEFORE INSERT ON Database
     WHEN (SELECT COUNT(*) FROM Database) >= 1
     BEGIN
-      SELECT RAISE(FAIL, 'only one row!');
+      SELECT RAISE(FAIL, 'only one row permitted!');
+    END;")
+
+  DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
+    BEFORE DELETE ON Database
+    BEGIN
+      SELECT RAISE(FAIL, 'must be one row!');
     END;")
   
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
@@ -107,6 +113,8 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
   
   DBI::dbGetQuery(conn, upload_sql)
+  
+  
   
   invisible(file)
 }

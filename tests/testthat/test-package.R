@@ -2,9 +2,16 @@ context("create")
 
 test_that("ts_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
- # file <- "ts.db"
+  file <- "ts.db"
   setup(ts_create(file, utc_offset = 8L))
   expect_true(file.exists(file))
+  teardown(unlink(file))
+  conn <- DBI::dbConnect(RSQLite::SQLite(), file)
+  teardown(DBI::dbDisconnect(conn))
+  
+  expect_is(conn, "SQLiteConnection")
+  
+  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0);")), "only one row permitted!")
 
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
@@ -32,9 +39,4 @@ test_that("ts_create", {
   
   expect_is(ts_add_data(data, file), "data.frame")
 
-  conn <- DBI::dbConnect(RSQLite::SQLite(), file)
-  expect_is(conn, "SQLiteConnection")
-
-  teardown(DBI::dbDisconnect(conn))
-  teardown(unlink(file))
 })
