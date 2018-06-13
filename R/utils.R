@@ -13,6 +13,6 @@ add <- function(data, table, file) {
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
 
-  DBI::dbWriteTable(conn, table, data)
+  DBI::dbWriteTable(conn, table, data, append = TRUE)
   data
 }

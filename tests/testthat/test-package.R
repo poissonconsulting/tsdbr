@@ -5,10 +5,13 @@ test_that("hdb_create", {
   setup(hdb_create(file))
   expect_true(file.exists(file))
 
-  parameters <- data.frame(Parameter = "Temperature",
+  parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
 
-  expect_identical(parameters, hdb_add_parameters(parameters, file))
+  expect_identical(parameters, hdb_add_parameter("Temp", "degC", file))
+
+    parameters <- data.frame(Parameter = "Temperature",
+                           Units = "degC", stringsAsFactors = FALSE)
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
   expect_is(conn, "SQLiteConnection")

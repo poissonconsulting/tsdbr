@@ -38,9 +38,9 @@ hdb_create <- function (file = "hdb.sqlite") {
 
   DBI::dbGetQuery(conn, "CREATE TABLE Station (
     Station TEXT NOT NULL,
+    Parameter TEXT NOT NULL,
     StartDate TEXT NOT NULL,
     EndDate TEXT,
-    Parameter TEXT NOT NULL,
     LowerLimit REAL,
     UpperLimit REAL,
     Longitude REAL,
