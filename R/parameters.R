@@ -2,10 +2,10 @@
 #'
 #' @param parameter A string of the parameter name.
 #' @param units A string of the units
-#' @inheritParams hdb_create
+#' @inheritParams ts_create
 #' @return A data frame of the imported parameters.
 #' @export
-hdb_add_parameter <- function(parameter, units, file) {
+ts_add_parameter <- function(parameter, units, file) {
   check_string(parameter)
   check_string(units)
 
@@ -13,16 +13,16 @@ hdb_add_parameter <- function(parameter, units, file) {
                            Units = units,
                            stringsAsFactors = FALSE)
 
-  hdb_add_parameters(parameters, file)
+  ts_add_parameters(parameters, file)
 }
 
 #' Add Parameters
 #'
 #' @param parameters A data frame of parameters with columns Parameter and Units.
-#' @inheritParams hdb_create
+#' @inheritParams ts_create
 #' @return A data frame of the imported parameters.
 #' @export
-hdb_add_parameters <- function(parameters, file) {
+ts_add_parameters <- function(parameters, file) {
   check_data(parameters,
              values = list(Parameter = "",
                            Units = ""),

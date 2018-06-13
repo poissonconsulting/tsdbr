@@ -2,12 +2,12 @@
 #'
 #' @param data A data frame of data with columns Station, Date, Hour, Time, Value.
 #' Additional optional columns include Corrected, Status,
-#' @inheritParams hdb_create
+#' @inheritParams ts_create
 #' @param resolution A string of the action to take with regard to existing values.
 #' Options are abort, ignore or replace.
 #' @return A data frame of the imported parameters.
 #' @export
-hdb_add_data <- function(data, file, resolution = "abort") {
+ts_add_data <- function(data, file, resolution = "abort") {
   check_data(data,
              values = list(Station = "",
                            DateReading = Sys.Date(),

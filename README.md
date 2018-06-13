@@ -1,10 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# hourlydbr
+# tsdbr
 
-The goal of hourlydbr is to provide tools to create, populate, maintain
-and query a database of hourly data.
+The goal of tsdbr is to provide tools to create, populate, maintain
+and query a database of time series data.
 
 It is built to be simple with as few dependencies as possible. And also
 something to which additional functionality can be added without
@@ -17,5 +17,5 @@ You can install the development version from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("poissonconsulting/hourlydbr")
+devtools::install_github("poissonconsulting/tsdbr")
 ```

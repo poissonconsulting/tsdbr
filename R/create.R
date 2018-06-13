@@ -4,7 +4,7 @@
 #'
 #' @param file A string of the name of the database file.
 #' @export
-hdb_create <- function (file = "hdb.sqlite") {
+ts_create <- function (file = "ts.sqlite") {
   check_string(file)
 
   if(file.exists(file))

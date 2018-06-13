@@ -2,10 +2,10 @@
 #'
 #' @param station A string of the station name.
 #' @param parameter A string of the parameter.
-#' @inheritParams hdb_create
+#' @inheritParams ts_create
 #' @return A data frame of the imported station.
 #' @export
-hdb_add_station <- function(station, parameter, file) {
+ts_add_station <- function(station, parameter, file) {
   check_string(station)
   check_string(parameter)
 
@@ -18,7 +18,7 @@ hdb_add_station <- function(station, parameter, file) {
                          Organization = NA_character_,
                          StationName = NA_character_,
                          stringsAsFactors = FALSE)
-  hdb_add_stations(stations, file)
+  ts_add_stations(stations, file)
 }
 
 #' Add Stations
@@ -26,10 +26,10 @@ hdb_add_station <- function(station, parameter, file) {
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' LowerLimit, UpperLimit, Longitude, Latitude, Organization,
 #' StationName.
-#' @inheritParams hdb_create
+#' @inheritParams ts_create
 #' @return The imported stations.
 #' @export
-hdb_add_stations <- function(stations, file) {
+ts_add_stations <- function(stations, file) {
   check_data(stations,
              values = list(Station  = "",
                            Parameter = "",

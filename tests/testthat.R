@@ -1,4 +1,4 @@
 library(testthat)
-library(hourlydbr)
+library(tsdbr)
 
-test_check("hourlydbr")
+test_check("tsdbr")
