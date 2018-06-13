@@ -4,14 +4,12 @@
 \alias{hdb_add_station}
 \title{Add Station}
 \usage{
-hdb_add_station(station, parameter, start_date, file)
+hdb_add_station(station, parameter, file)
 }
 \arguments{
 \item{station}{A string of the station name.}
 
 \item{parameter}{A string of the parameter.}
-
-\item{start_date}{A string of the start date.}
 
 \item{file}{A string of the name of the database file.}
 }

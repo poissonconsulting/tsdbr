@@ -2,7 +2,7 @@ context("create")
 
 test_that("hdb_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
-  file <- "db.sqlite"
+#  file <- "db.sqlite"
   setup(hdb_create(file))
   expect_true(file.exists(file))
 
@@ -11,7 +11,7 @@ test_that("hdb_create", {
 
   expect_identical(parameters, hdb_add_parameter("Temp", "degC", file))
 
-  expect_is(hdb_add_station("S1", "Temp", Sys.Date(), file), "data.frame")
+  expect_is(hdb_add_station("S1", "Temp", file), "data.frame")
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
   expect_is(conn, "SQLiteConnection")

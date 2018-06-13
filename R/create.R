@@ -39,8 +39,6 @@ hdb_create <- function (file = "hdb.sqlite") {
   DBI::dbGetQuery(conn, "CREATE TABLE Station (
     Station TEXT NOT NULL,
     Parameter TEXT NOT NULL,
-    StartDate TEXT NOT NULL,
-    EndDate TEXT,
     LowerLimit REAL,
     UpperLimit REAL,
     Longitude REAL,
@@ -48,15 +46,29 @@ hdb_create <- function (file = "hdb.sqlite") {
     Organization TEXT,
     StationName TEXT,
     CHECK(
-      DATE(StartDate) IS StartDate AND
-      DATE(EndDate) IS EndDate AND
-      EndDate > StartDate AND
       Longitude >= -180 AND Longitude <= 180 AND
       Latitude >= -90 AND Latitude <= 90
     ),
     PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
   )")
+
+  DBI::dbGetQuery(conn, "CREATE TABLE Data (
+    Station TEXT NOT NULL,
+	  DateReading TEXT NOT NULL,
+    HourReading INTEGER NOT NULL,
+    RawValue REAL NOT NULL,
+    CorrectedValue REAL NOT NULL,
+    Status INTEGER NOT NULL,
+    Comments TEXT
+    CHECK (
+      DATETIME(DateReading) IS DateReading AND
+      HourReading >= 0 AND HourReading <= 23
+    ),
+    PRIMARY KEY (Station, DateReading, HourReading),
+    FOREIGN KEY (Station) REFERENCES Station (Station),
+    FOREIGN KEY (Status) REFERENCES Status (Status)
+);")
 
   invisible(file)
 }

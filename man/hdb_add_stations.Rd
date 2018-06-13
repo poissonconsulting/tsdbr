@@ -8,7 +8,7 @@ hdb_add_stations(stations, file)
 }
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
-StartDate, EndDate, LowerLimit, UpperLimit, Longitude, Latitude, Organization,
+LowerLimit, UpperLimit, Longitude, Latitude, Organization,
 StationName.}
 
 \item{file}{A string of the name of the database file.}
