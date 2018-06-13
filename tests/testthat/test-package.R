@@ -48,4 +48,6 @@ test_that("ts_create", {
   
   data$Station <- "S1"
   expect_error(ts_add_data(data, file), "invalid uploaded periods")
+  
+  expect_is(ts_add_data(data, file, aggregate = TRUE), "data.frame")
 })

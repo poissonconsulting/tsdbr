@@ -4,13 +4,16 @@
 \alias{ts_add_data}
 \title{Add Data}
 \usage{
-ts_add_data(data, file, resolution = "abort")
+ts_add_data(data, file, aggregate = FALSE, resolution = "abort")
 }
 \arguments{
 \item{data}{A data frame of data with columns Station, DateTime, Recorded.
 Additional optional columns include Corrected, Status, Comments.}
 
 \item{file}{A string of the name of the database file.}
+
+\item{aggregate}{A flag indicating whether to aggregate and average multiple values within the same station period.
+This also has the effect of rounding down single values.}
 
 \item{resolution}{A string of the action to take with regard to existing values.
 Options are 'abort', 'ignore' or 'replace'.}
