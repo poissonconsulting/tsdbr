@@ -2,6 +2,7 @@
 
 export(hdb_add_parameter)
 export(hdb_add_parameters)
+export(hdb_add_station)
 export(hdb_add_stations)
 export(hdb_create)
 import(checkr)

@@ -9,7 +9,8 @@ hdb_add_parameter <- function(parameter, units, file) {
   check_string(parameter)
   check_string(units)
 
-  parameters <- data.frame(Parameter = parameter, Units = units,
+  parameters <- data.frame(Parameter = parameter,
+                           Units = units,
                            stringsAsFactors = FALSE)
 
   hdb_add_parameters(parameters, file)
