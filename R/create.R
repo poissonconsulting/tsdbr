@@ -41,8 +41,16 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
       SELECT RAISE(FAIL, 'must be one row!');
     END;")
   
+  DBI::dbGetQuery(conn, "CREATE TABLE Log (
+    DateTimeLog TEXT NOT NULL,
+    Change TEXT
+    CHECK (
+      DATETIME(DateTimeLog) IS DateTimeLog
+  ));")
+
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
-  
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", Sys.time(), "', 'inserted ", utc_offset, " into Datbase.UTC_Offset');"))
+
   DBI::dbGetQuery(conn, "CREATE TABLE Status (
     Status  INTEGER NOT NULL,
     Description TEXT NOT NULL,
@@ -113,13 +121,6 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   upload_sql <- sub("CREATE TABLE Data [(]", "CREATE TABLE Upload (", data_sql)
   
   DBI::dbGetQuery(conn, upload_sql)
-  
-  DBI::dbGetQuery(conn, "CREATE TABLE Log (
-    DateTimeLog TEXT NOT NULL,
-    Change TEXT
-    CHECK (
-      DATETIME(DateTimeLog) IS DateTimeLog
-    ));")
   
   DBI::dbGetQuery(conn, "CREATE VIEW Span AS
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
