@@ -2,7 +2,7 @@ context("create")
 
 test_that("ts_create", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
-#  file <- "db.sqlite"
+ # file <- "ts.db"
   setup(ts_create(file))
   expect_true(file.exists(file))
 

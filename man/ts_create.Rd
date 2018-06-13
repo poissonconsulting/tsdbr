@@ -4,10 +4,12 @@
 \alias{ts_create}
 \title{Create Time-Series Database}
 \usage{
-ts_create(file = "ts.db")
+ts_create(file = "ts.db", utc_offset = 0L)
 }
 \arguments{
 \item{file}{A string of the name of the database file.}
+
+\item{utc_offset}{A integer of the utc offset.}
 }
 \description{
 Creates an empty SQLite database to store hourly data.
