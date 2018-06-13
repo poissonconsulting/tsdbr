@@ -42,14 +42,14 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     Description TEXT NOT NULL,
     CHECK (
       Status >= 1 AND Status <= 3 AND
-      Description IN ('Reasonable', 'Questionable', 'Erroneous')
+      Description IN ('reasonable', 'questionable', 'erroneous')
     ),
     PRIMARY KEY (Status),
     UNIQUE (Description)
   );")
   
   status <- data.frame(Status = 1:3,
-                       Description = c("Reasonable", "Questionable", "Erroneous"))
+                       Description = c("reasonable", "questionable", "erroneous"))
   
   DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
   
@@ -65,6 +65,8 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   DBI::dbGetQuery(conn, "CREATE TABLE Station (
     Station TEXT NOT NULL,
     Parameter TEXT NOT NULL,
+    Period TEXT NOT NULL,
+    Regular BOOLEAN NOT NULL,
     LowerLimit REAL,
     UpperLimit REAL,
     Longitude REAL,
@@ -72,6 +74,8 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     Organization TEXT,
     StationName TEXT,
     CHECK(
+      Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
+      Regular IN (0,1) AND
       LowerLimit < UpperLimit AND
       Longitude >= -180 AND Longitude <= 180 AND
       Latitude >= -90 AND Latitude <= 90 AND

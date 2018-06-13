@@ -11,19 +11,16 @@ test_that("ts_create", {
 
   expect_identical(parameters, ts_add_parameter("Temp", "degC", file))
 
-  expect_is(ts_add_station("S1", "Temp", file), "data.frame")
+  expect_is(ts_add_station("S1", "Temp", "hour", file = file), "data.frame")
 
   stations <- data.frame(Station = "S2",
                          Parameter = "Temp",
+                         Period = "hour",
                          LowerLimit = 0,
                          UpperLimit = 100,
-                         Longitude = NA_real_,
-                         Latitude = NA_real_,
-                         Organization = NA_character_,
-                         StationName = NA_character_,
                          stringsAsFactors = FALSE)
 
-  expect_identical(ts_add_stations(stations, file), stations)
+  expect_is(ts_add_stations(stations, file), "data.frame")
 
   data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
                      Recorded = 0:23 - 2,

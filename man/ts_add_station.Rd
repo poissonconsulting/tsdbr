@@ -4,14 +4,20 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, file)
+ts_add_station(station, parameter, period, file, regular = TRUE)
 }
 \arguments{
 \item{station}{A string of the station name.}
 
 \item{parameter}{A string of the parameter.}
 
+\item{period}{A string of the period. The possible values are 'year', 'month',
+'day', 'hour', 'minute' and 'second'.}
+
 \item{file}{A string of the name of the database file.}
+
+\item{regular}{A flag indicating whether the readings are regular.
+This affects whether missing readings are created to fill gaps when extracting data.}
 }
 \value{
 A data frame of the imported station.

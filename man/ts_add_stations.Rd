@@ -8,13 +8,14 @@ ts_add_stations(stations, file)
 }
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
-LowerLimit, UpperLimit, Longitude, Latitude, Organization,
+Period, Regular. The optional columns are
+LowerLimit, UpperLimit, Longitude, Latitude, Organization and
 StationName.}
 
 \item{file}{A string of the name of the database file.}
 }
 \value{
-The imported stations.
+The imported station data.
 }
 \description{
 Add Stations

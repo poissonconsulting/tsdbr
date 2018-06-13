@@ -27,3 +27,12 @@ get <- function(table, file) {
 get_utc_offset <- function(file) {
   get("Database", file)$UTC_Offset
 }
+
+has_column <- function(data, column) {
+  check_string(column)
+  column %in% colnames(data)
+}
+
+missing_column <- function(data, column) {
+  !has_column(data, column)
+}
