@@ -109,7 +109,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     GROUP BY Station")
   
   DBI::dbGetQuery(conn, "CREATE VIEW PeriodUpload AS
-    SELECT s.Station As ss, s.Period AS pp, 
+    SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '00' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '00' AS DayData,
       MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
