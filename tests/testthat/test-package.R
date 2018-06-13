@@ -38,5 +38,4 @@ test_that("ts_create", {
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
   
   expect_is(ts_add_data(data, file), "data.frame")
-
 })

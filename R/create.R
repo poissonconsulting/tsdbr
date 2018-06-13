@@ -34,7 +34,7 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
     BEGIN
       SELECT RAISE(FAIL, 'only one row permitted!');
     END;")
-
+  
   DBI::dbGetQuery(conn, "CREATE TRIGGER database_delete_trigger
     BEFORE DELETE ON Database
     BEGIN
@@ -114,7 +114,10 @@ ts_create <- function (file = "ts.db", utc_offset = 0L) {
   
   DBI::dbGetQuery(conn, upload_sql)
   
-  
+  DBI::dbGetQuery(conn, "CREATE VIEW Span AS
+    SELECT Station, MIN(DateTimeReading) AS Start, MAX(DateTimeReading) AS End
+    FROM Data 
+    GROUP BY Station")
   
   invisible(file)
 }
