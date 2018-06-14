@@ -5,9 +5,9 @@
 \title{Get Data}
 \usage{
 ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
-  366L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
-  status = "questionable", fill = FALSE, file = getOption("tsdbr.file",
-  "ts.db"))
+  365L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
+  status = "questionable", fill = FALSE, na_replace = NA,
+  file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
 \item{stations}{A character vector of the stations.}
@@ -24,7 +24,9 @@ The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.}
 \item{status}{A string of the worse type of data to get.
 The possible values are 'reasonable', 'questionable' or 'erroneous'.}
 
-\item{fill}{A flag indicating whether to fill in missing values with NAs.}
+\item{fill}{A flag indicating whether to fill in missing values.}
+
+\item{na_replace}{A scalar indicating what to use to fill in missing values.}
 
 \item{file}{A string of the name of the database file.}
 }

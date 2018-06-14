@@ -35,11 +35,13 @@ test_that("package", {
                      stringsAsFactors = FALSE)
   
   data$Recorded[4] <- NA
-
+  
   expect_error(ts_add_data(data, file = file), 
                "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]")
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
   
+  data <- data[-5,]
+
   expect_is(ts_add_data(data, file = file), "data.frame")
 
   expect_error(ts_add_data(data, file = file), "UNIQUE constraint failed: Data.Station, Data.DateTimeData")
@@ -62,8 +64,10 @@ test_that("package", {
   
   expect_identical(ts_get_stations(file = file, periods = c("hour"))$Station, "S2")
  
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", file = file)), 25L)
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), file = file)), 22L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", file = file)), 24L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), file = file)), 21L)
   expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"), file = file)), 1L)
   expect_identical(nrow(ts_get_data(file = file)), 0L)
+  expect_identical(nrow(ts_get_data(stations = "S1", file = file, end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 366L)
+    expect_equal(ts_get_data(stations = "S1", file = file, end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, na_replace = -10)$Corrected, rep(-10, 12))
 })

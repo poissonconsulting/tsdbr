@@ -94,25 +94,28 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.
 #' @param status A string of the worse type of data to get.
 #' The possible values are 'reasonable', 'questionable' or 'erroneous'.
-#' @param fill A flag indicating whether to fill in missing values with NAs.
+#' @param fill A flag indicating whether to fill in missing values.
+#' @param na_replace A scalar indicating what to use to fill in missing values.
 #' @inheritParams ts_create_db
 #' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations = ts_get_stations()$Station,
-                        start_date = end_date - 366L, 
+                        start_date = end_date - 365L, 
                         end_date = Sys.Date(),
                         period = "hour",
                         na_rm = FALSE,
                         status = "questionable",
                         fill = FALSE,
+                        na_replace = NA,
                         file = getOption("tsdbr.file", "ts.db")) {
-  check_vector(stations, "", length = TRUE)
+  check_vector(stations, "", length = TRUE, unique = TRUE)
   check_date(start_date)
   check_date(end_date)
   check_vector(period, c("year", "month", "day", "hour", "minute", "second"), length = 1)
   check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
   check_flag(fill)
+  check_length1(na_replace)
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
@@ -130,22 +133,39 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
     "))
   
   if(nrow(data)) {  
-    data$Period <- period
-    data <- round_down_time(data)
-    data$Period <- NULL
-    
-    data <- aggregate_time_get(data, na_rm = na_rm)
+    if(period != "second") {
+      data$Period <- period
+      data <- round_down_time(data)
+      data$Period <- NULL
+      
+      data <- aggregate_time_get(data, na_rm = na_rm)
+    }
     
     status <- status_to_integer(status)
     data <- data[data$Status <= status,]
     
-    data$Status <- sub("1", "reasonable", data$Status)
-    data$Status <- sub("2", "questionable", data$Status)
-    data$Status <- sub("3", "erroneous", data$Status)
   }
-  data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = get_tz(file))
-  
+  data$Status <- sub("1", "reasonable", data$Status)
+  data$Status <- sub("2", "questionable", data$Status)
+  data$Status <- sub("3", "erroneous", data$Status)
   data$Status <- ordered(data$Status, levels = c("reasonable", "questionable", "erroneous"))
+
+  tz <- get_tz(file)
+  data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
+  
+  if(fill) {
+    datetimes <- seq(as.POSIXct(as.character(start_date), tz = tz), 
+                     as.POSIXct(as.character(end_date), tz = tz),
+                     by = period)
+    
+    all <- expand.grid(Station = stations, DateTimeData = datetimes,
+                       stringsAsFactors = FALSE)
+    data <- merge(data, all, by = c("Station", "DateTimeData"), all.y = TRUE)
+    data$Corrected[is.na(data$Corrected)] <- as.numeric(na_replace)
+    data$Status[is.na(data$Status)] <- "reasonable"
+  }
+
+  data <- data[order(data$Station, data$DateTimeData),]
   
   rownames(data) <- NULL
   colnames(data) <- c("Station", "DateTime", "Corrected", "Status")
