@@ -11,7 +11,7 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
   check_string(station)
   check_string(parameter)
   check_string(period)
-
+  
   stations <- data.frame(Station = station,
                          Parameter = parameter,
                          Period = period,
@@ -23,7 +23,7 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
 #'
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period. The optional columns are
-#' LowerLimit, UpperLimit, Longitude, Latitude, Organization and
+#' LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization and
 #' StationName.
 #' @inheritParams ts_create
 #' @return The imported station data.
@@ -52,6 +52,10 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
     stations$Latitude <- NA_real_
   } else check_vector(stations$Latitude, c(-90, 90, NA))
   
+  if(missing_column(stations, "Elevation")) {
+    stations$Elevation <- NA_real_
+  } else check_vector(stations$Elevation, c(1, NA))
+  
   if(missing_column(stations, "Organization")) {
     stations$Organization <- NA_character_
   } else check_vector(stations$Organization, c("", NA))
@@ -62,7 +66,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   
   stations <- stations[c("Station", "Parameter", "Period",
                          "LowerLimit", "UpperLimit", "Longitude", "Latitude",
-                         "Organization", "StationName")]
+                         "Elevation", "Organization", "StationName")]
   
   add(stations, "Station", file)
 }

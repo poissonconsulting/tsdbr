@@ -66,6 +66,7 @@ ts_create <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L)
     UpperLimit REAL,
     Longitude REAL,
     Latitude REAL,
+    Elevation REAL,
     Organization TEXT,
     StationName TEXT,
     CHECK(
