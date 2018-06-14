@@ -70,3 +70,31 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   
   add(stations, "Station", file)
 }
+
+#' Get Stations Table
+#' 
+#' Gets stations table as a data frame.
+#' @param parameters A character of the parameters to filter by.
+#' @param periods A character vector of the periods to filter by.
+#' @inheritParams ts_create
+#' @return A data frame of the requested data.
+#' @export
+ts_get_stations <- function(
+  parameters = ts_get_parameters()$Parameter,
+  periods = c("year", "month", "day", "hour", "minute", "second"),
+  file = getOption("tsdbr.file", "ts.db")) {
+  check_vector(parameters, ts_get_parameters()$Parameter, length = TRUE,
+               unique = TRUE)
+  check_vector(periods, c("year", "month", "day", "hour", "minute", "second"), 
+               length = TRUE, unique = TRUE)
+  
+  conn <- connect(file)
+  on.exit(DBI::dbDisconnect(conn))
+  
+  data <- DBI::dbGetQuery(conn, paste0("SELECT *
+    FROM Station
+    WHERE Parameter ", in_commas(parameters),
+    "AND Period ", in_commas(periods)))
+  
+  data
+}

@@ -36,3 +36,7 @@ has_column <- function(data, column) {
 missing_column <- function(data, column) {
   !has_column(data, column)
 }
+
+in_commas <- function(x) {
+  paste0("IN ('", paste0(x, collapse = "','"), "')")
+}

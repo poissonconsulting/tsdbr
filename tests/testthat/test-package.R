@@ -55,4 +55,9 @@ test_that("ts_create", {
   expect_is(data, "data.frame")
   expect_identical(ts_get_parameters(file = file), 
                    data.frame(Parameter = "Temp", Units = "degC", stringsAsFactors = FALSE))
+  
+  expect_identical(nrow(ts_get_stations(file = file)), 2L)
+  
+  expect_identical(ts_get_stations(file = file, periods = c("hour"))$Station, "S2")
+  
 })

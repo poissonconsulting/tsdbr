@@ -44,7 +44,7 @@ ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
-  data <- DBI::dbGetQuery(conn, "SELECT Parameter, Units
+  data <- DBI::dbGetQuery(conn, "SELECT *
     FROM Parameter")
   
   data
