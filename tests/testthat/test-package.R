@@ -33,6 +33,8 @@ test_that("ts_create", {
   data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
                      Recorded = 0:23 - 2,
                      stringsAsFactors = FALSE)
+  
+  data$Recorded[4] <- NA
 
   expect_error(ts_add_data(data, file = file), 
                "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]")

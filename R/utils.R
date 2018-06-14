@@ -40,3 +40,9 @@ missing_column <- function(data, column) {
 in_commas <- function(x) {
   paste0("IN ('", paste0(x, collapse = "','"), "')")
 }
+
+average <- function(x, na_rm) {
+  if(!na_rm) return(mean(x))
+  if(all(is.na(x))) return(x[1])
+  mean(x, na.rm = TRUE)
+}

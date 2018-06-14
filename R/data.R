@@ -5,16 +5,18 @@
 #' @inheritParams ts_create
 #' @param aggregate A flag indicating whether to aggregate and average multiple values within the same station period.
 #' This also has the effect of rounding down single values.
+#' @param na_rm A flag indicating whether to remove missing values (if possible) when aggregating.
 #' @param resolution A string of the action to take with regard to existing values.
 #' Options are 'abort', 'ignore' or 'replace'.
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
+ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
+                        resolution = "abort",
                         file = getOption("tsdbr.file", "ts.db")) {
   check_data(data,
              values = list(Station = "",
                            DateTime = Sys.time(),
-                           Recorded = 1),
+                           Recorded = c(1, NA)),
              nrow = TRUE,
              key = c("Station", "DateTime"))
   
@@ -31,7 +33,7 @@ ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
   
   if(missing_column(data, "Corrected")) {
     data$Corrected <- data$Recorded
-  } else check_vector(data$Corrected, 1)
+  } else check_vector(data$Corrected, c(1, NA))
   
   if(missing_column(data, "Status")) {
     data$Status <- "reasonable"
@@ -44,6 +46,7 @@ ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
   data$CommentsData <- data$Comments
   
   check_flag(aggregate)
+  check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
   data$Status <- factor(data$Status,
@@ -60,8 +63,9 @@ ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
   
   data <- merge(data, stations[c("Station", "LowerLimit", "UpperLimit")], by = "Station")
   
-  data$Status[!is.na(data$LowerLimit) & data$Corrected < data$LowerLimit] <- 3L
-  data$Status[!is.na(data$UpperLimit) & data$Corrected > data$UpperLimit] <- 3L
+  data$Status[is.na(data$Corrected)] <- 1L
+  data$Status[!is.na(data$Corrected) & !is.na(data$LowerLimit) & data$Corrected < data$LowerLimit] <- 3L
+  data$Status[!is.na(data$Corrected) & !is.na(data$UpperLimit) & data$Corrected > data$UpperLimit] <- 3L
   
   data$LowerLimit <- NULL
   data$UpperLimit <- NULL
@@ -100,8 +104,8 @@ ts_add_data <- function(data, aggregate = FALSE, resolution = "abort",
     data <- lapply(data, FUN = function(x) {
       data.frame(Station = x$Station[1],
                  DateTimeData = x$DateTimeData[1],
-                 Recorded = mean(x$Recorded), 
-                 Corrected = mean(x$Corrected),
+                 Recorded = average(x$Recorded, na_rm = na_rm), 
+                 Corrected = average(x$Corrected, na_rm = na_rm),
                  Status = max(x$Status),
                  CommentsData = paste(unique(x$CommentsData), collapse = " ")) })
     data <- do.call("rbind", data)

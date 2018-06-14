@@ -4,7 +4,7 @@
 \alias{ts_add_data}
 \title{Add Data}
 \usage{
-ts_add_data(data, aggregate = FALSE, resolution = "abort",
+ts_add_data(data, aggregate = FALSE, na_rm = FALSE, resolution = "abort",
   file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
@@ -13,6 +13,8 @@ Additional optional columns include Corrected, Status, Comments.}
 
 \item{aggregate}{A flag indicating whether to aggregate and average multiple values within the same station period.
 This also has the effect of rounding down single values.}
+
+\item{na_rm}{A flag indicating whether to remove missing values (if possible) when aggregating.}
 
 \item{resolution}{A string of the action to take with regard to existing values.
 Options are 'abort', 'ignore' or 'replace'.}

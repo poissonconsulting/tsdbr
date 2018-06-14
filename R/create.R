@@ -84,8 +84,8 @@ ts_create <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L)
   data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
 	  DateTimeData TEXT NOT NULL,
-    Recorded REAL NOT NULL,
-    Corrected REAL NOT NULL,
+    Recorded REAL,
+    Corrected REAL,
     Status INTEGER NOT NULL,
     CommentsData TEXT
     CHECK (
