@@ -8,7 +8,7 @@
 #' @param file A string of the name of the database file.
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.
 #' @export
-ts_create <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L) {
+ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L) {
   check_string(file)
   check_scalar(utc_offset, c(-12L, 14L))
   

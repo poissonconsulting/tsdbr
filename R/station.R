@@ -4,7 +4,7 @@
 #' @param parameter A string of the parameter.
 #' @param period A string of the period. The possible values are 'year', 'month',
 #' 'day', 'hour', 'minute' and 'second'. 
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the imported station.
 #' @export
 ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.file", "ts.db")) {
@@ -25,7 +25,7 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
 #' Period. The optional columns are
 #' LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization and
 #' StationName.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return The imported station data.
 #' @export
 ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
@@ -76,7 +76,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
 #' Gets stations table as a data frame.
 #' @param parameters A character of the parameters to filter by.
 #' @param periods A character vector of the periods to filter by.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the requested data.
 #' @export
 ts_get_stations <- function(

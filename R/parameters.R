@@ -2,7 +2,7 @@
 #'
 #' @param parameter A string of the parameter name.
 #' @param units A string of the units
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the imported parameters.
 #' @export
 ts_add_parameter <- function(parameter, units, file = getOption("tsdbr.file", "ts.db")) {
@@ -19,7 +19,7 @@ ts_add_parameter <- function(parameter, units, file = getOption("tsdbr.file", "t
 #' Add Parameters
 #'
 #' @param parameters A data frame of parameters with columns Parameter and Units.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the imported parameters.
 #' @export
 ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db")) {
@@ -37,7 +37,7 @@ ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db"
 #' Get Parameter Table
 #' 
 #' Gets parameter table as a data frame.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the requested data.
 #' @export
 ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {

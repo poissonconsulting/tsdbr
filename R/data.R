@@ -2,7 +2,7 @@
 #'
 #' @param data A data frame of data with columns Station, DateTime, Recorded.
 #' Additional optional columns include Corrected, Status, Comments.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @param aggregate A flag indicating whether to aggregate and average multiple values within the same station period.
 #' This also has the effect of rounding down single values.
 #' @param na_rm A flag indicating whether to remove missing values (if possible) when aggregating.
@@ -132,7 +132,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' @param status A string of the worse type of data to get.
 #' The possible values are 'reasonable', 'questionable' or 'erroneous'.
 #' @param fill A flag indicating whether to fill in missing values with NAs.
-#' @inheritParams ts_create
+#' @inheritParams ts_create_db
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations,
