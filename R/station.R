@@ -95,6 +95,6 @@ ts_get_stations <- function(
     FROM Station
     WHERE Parameter ", in_commas(parameters),
     "AND Period ", in_commas(periods)))
-  
+  rownames(data) <- NULL
   data
 }

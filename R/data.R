@@ -20,12 +20,11 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
              nrow = TRUE,
              key = c("Station", "DateTime"))
   
-  utc_offset <- get_utc_offset(file)
+  tz <- get_tz(file)
   
-  if(utc_offset == 0L) {
+  if(tz == "GMT") {
     checkor(check_tzone(data$DateTime, "UTC"),check_tzone(data$DateTime, "GMT"))
   } else {
-    tz <- paste0("Etc/GMT", ifelse(utc_offset > 0, "+", "-"), abs(utc_offset))
     check_tzone(data$DateTime, tz)
   }
   
@@ -49,9 +48,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  data$Status <- factor(data$Status,
-                        levels = c("reasonable", "questionable", "erroneous"))
-  data$Status <- as.integer(data$Status)
+  data$Status <- status_to_integer(data$Status)
   
   data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "CommentsData")]
@@ -72,44 +69,10 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   if(aggregate) {
     data <- merge(data, stations[c("Station", "Period")], by = "Station")
-    
-    data$DateTimeData[data$Period == "minute"] <- 
-      sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-          "\\1-\\2-\\3 \\4:\\5:00", 
-          data$DateTimeData[data$Period == "minute"])
-    
-    data$DateTimeData[data$Period == "hour"] <- 
-      sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-          "\\1-\\2-\\3 \\4:00:00", 
-          data$DateTimeData[data$Period == "hour"])
-    
-    data$DateTimeData[data$Period == "day"] <- 
-      sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-          "\\1-\\2-\\3 00:00:00", 
-          data$DateTimeData[data$Period == "day"])
-    
-    data$DateTimeData[data$Period == "month"] <- 
-      sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-          "\\1-\\2-01 00:00:00", 
-          data$DateTimeData[data$Period == "month"])
-    
-    data$DateTimeData[data$Period == "year"] <- 
-      sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-          "\\1-01-01 00:00:00", 
-          data$DateTimeData[data$Period == "year"])
-    
+    data <- round_down_time(data)
     data$Period <- NULL
     
-    data <- split(data, data[c("Station", "DateTimeData")], drop = TRUE)
-    data <- lapply(data, FUN = function(x) {
-      data.frame(Station = x$Station[1],
-                 DateTimeData = x$DateTimeData[1],
-                 Recorded = average(x$Recorded, na_rm = na_rm), 
-                 Corrected = average(x$Corrected, na_rm = na_rm),
-                 Status = max(x$Status),
-                 CommentsData = paste(unique(x$CommentsData), collapse = " ")) })
-    data <- do.call("rbind", data)
-    row.names(data) <- NULL
+    data <- aggregate_time_add(data, na_rm = na_rm) 
   }  
   conn <- connect(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
@@ -133,16 +96,18 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' The possible values are 'reasonable', 'questionable' or 'erroneous'.
 #' @param fill A flag indicating whether to fill in missing values with NAs.
 #' @inheritParams ts_create_db
+#' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations = ts_get_stations()$Station,
                         start_date = end_date - 366L, 
                         end_date = Sys.Date(),
                         period = "hour",
+                        na_rm = FALSE,
                         status = "questionable",
                         fill = FALSE,
                         file = getOption("tsdbr.file", "ts.db")) {
-  check_vector(stations, ts_get_stations()$Station, length = TRUE)
+  check_vector(stations, "", length = TRUE)
   check_date(start_date)
   check_date(end_date)
   check_vector(period, c("year", "month", "day", "hour", "minute", "second"), length = 1)
@@ -150,7 +115,10 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
   check_flag(fill)
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
-
+  
+  if(any(!unique(stations) %in% ts_get_stations()$Station))
+    stop("unknown stations", call. = FALSE)
+  
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
@@ -161,5 +129,25 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
     DATE(DateTimeData) <= '", end_date, "'
     "))
   
+  if(nrow(data)) {  
+    data$Period <- period
+    data <- round_down_time(data)
+    data$Period <- NULL
+    
+    data <- aggregate_time_get(data, na_rm = na_rm)
+    
+    status <- status_to_integer(status)
+    data <- data[data$Status <= status,]
+    
+    data$Status <- sub("1", "reasonable", data$Status)
+    data$Status <- sub("2", "questionable", data$Status)
+    data$Status <- sub("3", "erroneous", data$Status)
+  }
+  data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = get_tz(file))
+  
+  data$Status <- ordered(data$Status, levels = c("reasonable", "questionable", "erroneous"))
+  
+  rownames(data) <- NULL
+  colnames(data) <- c("Station", "DateTime", "Corrected", "Status")
   data
 }

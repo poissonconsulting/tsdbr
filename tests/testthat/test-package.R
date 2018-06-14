@@ -53,7 +53,7 @@ test_that("package", {
   
   expect_is(ts_add_data(data, file = file, aggregate = TRUE), "data.frame")
   
-  data <- ts_get_data("S1", file = file)
+  data <- ts_get_data(stations = "S1", file = file)
   expect_is(data, "data.frame")
   expect_identical(ts_get_parameters(file = file), 
                    data.frame(Parameter = "Temp", Units = "degC", stringsAsFactors = FALSE))
@@ -62,8 +62,8 @@ test_that("package", {
   
   expect_identical(ts_get_stations(file = file, periods = c("hour"))$Station, "S2")
  
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"))), 25L)
-  expect_identical(nrow(ts_get_data("S1", end_date = as.Date("2000-09-01"))), 1L)
-  expect_identical(nrow(ts_get_data()), 0L)
-  
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", file = file)), 25L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), file = file)), 22L)
+  expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"), file = file)), 1L)
+  expect_identical(nrow(ts_get_data(file = file)), 0L)
 })

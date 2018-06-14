@@ -5,8 +5,9 @@
 \title{Get Data}
 \usage{
 ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
-  366L, end_date = Sys.Date(), period = "hour", status = "questionable",
-  fill = FALSE, file = getOption("tsdbr.file", "ts.db"))
+  366L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
+  status = "questionable", fill = FALSE, file = getOption("tsdbr.file",
+  "ts.db"))
 }
 \arguments{
 \item{stations}{A character vector of the stations.}
@@ -17,6 +18,8 @@ ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
 
 \item{period}{A string of the period to aggregate and average by.
 The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.}
+
+\item{na_rm}{A flag indicating whether to remove missing values (if possible) when aggregating.}
 
 \item{status}{A string of the worse type of data to get.
 The possible values are 'reasonable', 'questionable' or 'erroneous'.}

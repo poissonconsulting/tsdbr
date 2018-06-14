@@ -46,7 +46,7 @@ ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
   
   data <- DBI::dbGetQuery(conn, "SELECT *
     FROM Parameter")
-  
+  rownames(data) <- NULL
   data
 }
 
