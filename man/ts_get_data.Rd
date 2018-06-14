@@ -4,17 +4,16 @@
 \alias{ts_get_data}
 \title{Get Data}
 \usage{
-ts_get_data(stations, start_date = as.Date("2017-01-01"),
-  end_date = as.Date("2017-12-31"), period = "hour",
-  status = "questionable", fill = FALSE, file = getOption("tsdbr.file",
-  "ts.db"))
+ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
+  366L, end_date = Sys.Date(), period = "hour", status = "questionable",
+  fill = FALSE, file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
 \item{stations}{A character vector of the stations.}
 
 \item{start_date}{The start date.}
 
-\item{end_date}{The start date.}
+\item{end_date}{The end date.}
 
 \item{period}{A string of the period to aggregate and average by.
 The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.}

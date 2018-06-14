@@ -61,5 +61,7 @@ test_that("package", {
   expect_identical(nrow(ts_get_stations(file = file)), 2L)
   
   expect_identical(ts_get_stations(file = file, periods = c("hour"))$Station, "S2")
+ 
+  expect_identical(nrow(ts_get_data()), 25L)
   
 })
