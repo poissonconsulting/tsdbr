@@ -53,4 +53,6 @@ test_that("ts_create", {
   
   data <- ts_get_data("S1", file = file)
   expect_is(data, "data.frame")
+  expect_identical(ts_get_parameters(file = file), 
+                   data.frame(Parameter = "Temp", Units = "degC", stringsAsFactors = FALSE))
 })

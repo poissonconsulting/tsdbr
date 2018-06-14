@@ -33,3 +33,20 @@ ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db"
   
   add(parameters, "Parameter", file)
 }
+
+#' Get Parameter Table
+#' 
+#' Gets parameter table as a data frame.
+#' @inheritParams ts_create
+#' @return A data frame of the requested data.
+#' @export
+ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
+  conn <- connect(file)
+  on.exit(DBI::dbDisconnect(conn))
+  
+  data <- DBI::dbGetQuery(conn, "SELECT Parameter, Units
+    FROM Parameter")
+  
+  data
+}
+
