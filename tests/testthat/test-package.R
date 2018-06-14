@@ -68,6 +68,8 @@ test_that("package", {
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), file = file)), 21L)
   expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"), file = file)), 1L)
   expect_identical(nrow(ts_get_data(file = file)), 0L)
-  expect_identical(nrow(ts_get_data(stations = "S1", file = file, end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 366L)
-    expect_equal(ts_get_data(stations = "S1", file = file, end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, na_replace = -10)$Corrected, rep(-10, 12))
+  expect_identical(nrow(ts_get_data(stations = "S1", file = file, end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 367L)
+    expect_equal(ts_get_data(stations = "S2", file = file, end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, na_replace = -10, status = "erroneous")$Corrected, c(rep(-10, 12), 9.227273),
+                 tolerance = 0.0000001)
+    expect_identical(ts_get_data(file = file, start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour", fill = TRUE, na_replace = Inf)$Corrected, rep(Inf, 50))
 })

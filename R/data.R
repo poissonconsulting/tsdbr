@@ -101,7 +101,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations = ts_get_stations()$Station,
-                        start_date = end_date - 365L, 
+                        start_date = end_date - 366L, 
                         end_date = Sys.Date(),
                         period = "hour",
                         na_rm = FALSE,

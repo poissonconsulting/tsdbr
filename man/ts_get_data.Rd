@@ -5,7 +5,7 @@
 \title{Get Data}
 \usage{
 ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
-  365L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
+  366L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
   status = "questionable", fill = FALSE, na_replace = NA,
   file = getOption("tsdbr.file", "ts.db"))
 }
