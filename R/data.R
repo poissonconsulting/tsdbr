@@ -156,7 +156,9 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
   
   data <- DBI::dbGetQuery(conn, paste0("SELECT Station, DateTimeData, Corrected, Status
     FROM Data
-    WHERE Station ", in_commas(stations), "
+    WHERE Station ", in_commas(stations), " AND
+    DATE(DateTimeData) >= '", start_date, "' AND
+    DATE(DateTimeData) <= '", end_date, "'
     "))
   
   data

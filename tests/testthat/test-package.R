@@ -62,6 +62,8 @@ test_that("package", {
   
   expect_identical(ts_get_stations(file = file, periods = c("hour"))$Station, "S2")
  
-  expect_identical(nrow(ts_get_data()), 25L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"))), 25L)
+  expect_identical(nrow(ts_get_data("S1", end_date = as.Date("2000-09-01"))), 1L)
+  expect_identical(nrow(ts_get_data()), 0L)
   
 })
