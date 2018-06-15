@@ -10,7 +10,8 @@ Imports:
   DBI,
   RSQLite
 Suggests: 
-    testthat
+    testthat,
+    covr
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
