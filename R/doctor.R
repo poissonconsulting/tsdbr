@@ -5,6 +5,7 @@
 #' @param check_gaps A flag indicating whether to check if there are any gaps in the data given the period.
 #' @param fix A flag indicating whether to fix any problems
 #' @inheritParams ts_create_db
+#' @return A flag indicating whether or not the database passed the checks (or was fixed)
 #' @export
 ts_doctor_db <- function(check_limits = TRUE,
                          check_period = TRUE,
@@ -17,56 +18,114 @@ ts_doctor_db <- function(check_limits = TRUE,
   check_flag(fix)
   
   conn <- connect(file)
-  on.exit(DBI::dbDisconnect(conn))
+  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
+  on.exit(DBI::dbDisconnect(conn), add = TRUE)
   
-  DBI::dbGetQuery(conn, "CREATE TEMPORARY VIEW CheckLimitsData AS
-      SELECT s.Station AS Station, COUNT(*) AS Outside
+  if(check_limits) {
+    
+    limits <- DBI::dbGetQuery(
+      conn, "SELECT d.Station, d.DateTimeData,
+        d.Recorded, d.Corrected, 
+        d.CommentsData
       FROM Station s
       INNER JOIN Data d ON s.Station = d.Station
       WHERE (d.Corrected > s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
-        d.Status != 3
-      GROUP BY s.Station;") # change lowerlimit <
-  
-  limits <- DBI::dbGetQuery(conn, "SELECT * FROM CheckLimitsData")
-  
-  if(nrow(limits)) {
-    message(sum(limits$Outside), " non-erroneous corrected values at ", 
-     nrow(limits), " stations",
-     " are outside the lower and upper limits")
+        d.Status != 3;") # change lowerlimit <
+    
+    if(nrow(limits)) {
+      message("there are ", nrow(limits), " non-erroneous (corrected) values at ", 
+              length(unique(limits$Station)), " stations",
+              " that are outside the lower and upper limits")
+      if(fix) {
+        limits$Status <- 3L
+        limits <- limits[c("Station", "DateTimeData", "Recorded",
+                           "Corrected", "Status", "CommentsData")]      
+        limits$UploadedUTC <- sys_time_utc()
+        
+        limits <- add(limits, "Upload", file)
+
+        DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
+ 
+        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
+                               'INSERT', 'Data', 'REPLACE fix limits');"))
+      }
+    }
+    limits <- nrow(limits) > 0
   }
   
-  DBI::dbGetQuery(conn, "CREATE TEMPORARY VIEW CheckPeriodData AS
-    SELECT s.Station As Station, s.Period AS Period, 
-      MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
-      MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
-      MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
-      MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
-      MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
-    FROM Station s
-    INNER JOIN Data d ON s.Station = d.Station
-    GROUP BY s.Station, s.Period
-    HAVING 
-      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
-      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (HourData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (DayData == 1 AND Period IN ('year', 'month')) OR 
-      (MonthData == 1 AND Period IN ('year'));") 
-  
-  # remove hour on hour
-  
-  period <- DBI::dbGetQuery(conn, "SELECT * FROM CheckPeriodData")
-  
-  if(nrow(period)) {
-    message("the following stations have invalid periods: ", punctuate(period$Station, "and"))
-  }
-  
-  # DBI::dbGetQuery(conn, "CREATE TEMPORARY VIEW CheckPeriodData AS
-  #     SELECT s.Station AS Station, s.Period AS Period,
-  #     
-  #     FROM Station s
-  #     INNER JOIN Data d ON s.Station = d.Station
-  #     GROUP BY s.Station, s.Period;")
+  # if(check_period) {
+  #   period <- DBI::dbGetQuery(conn, "
+  #   SELECT d.Station AS Station, s.Period, d.DateTimeData,
+  #       d.Recorded AS Recorded, d.Corrected AS Corrected, d.Status AS Status,
+  #       d.CommentsData AS CommentsData,
+  #     MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
+  #     MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
+  #     MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
+  #     MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
+  #     MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
+  #   FROM Station s
+  #   INNER JOIN Data d ON s.Station = d.Station
+  #   GROUP BY s.Station, s.Period
+  #   HAVING
+  #     (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+  #     (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+  #     (HourData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+  #     (DayData == 1 AND Period IN ('year', 'month')) OR
+  #     (MonthData == 1 AND Period IN ('year'));")
+
+#  remove hour on hour
+
+ # if(nrow(period)) {
+ #   message("there are ", the following stations have invalid periods: ", punctuate(period$Station, "and"))
+ # }
+ # }
   # 
-  # period <- DBI::dbGetQuery(conn, "SELECT * FROM CheckPeriodData")
-  # period
+  # if(check_gaps) {
+  #   span <- DBI::dbGetQuery(conn, 
+  #                           "SELECT s.Station AS Station, s.Period AS Period,
+  #             d.Start AS Start, d.End AS End
+  #             FROM Station AS s INNER JOIN 
+  #             StationDataSpan AS d ON s.Station = d.Station")
+  #   
+  #   span <- split(span, 1:nrow(span))
+  #   span <- lapply(span, FUN = function(x) {
+  #     datetimes <- seq(as.POSIXct(x$Start, tz = "UTC"), 
+  #                      as.POSIXct(x$End, tz = "UTC"),
+  #                      by = x$Period)
+  #     datetimes <- format(datetimes, format = "%Y-%m-%d %H:%M:%S")
+  #     data.frame(ID = paste(x$Station, datetimes)) })
+  #   span <- do.call("rbind", span)
+  #   
+  #   data <- DBI::dbGetQuery(
+  #     conn, "SELECT Station || ' ' ||DateTimeData AS ID
+  #             FROM Data")
+  #   
+  #   span <- data.frame(ID = setdiff(span$ID, data$ID))
+  #   
+  #   span$Station <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\1", span$ID)
+  #   span$DateTimeData <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\3", span$ID)
+  #   span$ID <- NULL
+  #   
+  #   if(nrow(span)) {
+  #     message("there are ", nrow(span), " gaps in ", 
+  #             nrow(limits), " stations")
+  #   }
+  #   return(span)
+  # }
+  # 
+  # if(fix) {
+  #   if(nrow(limits)) {
+  #     warning("not yet implemented fix limits")
+  #   }
+  #   if(nrow(period)) {
+  #     warning("not yet implemented fix period")
+  #   }
+  #   if(nrow(gaps)) {
+  #     warning("not yet implemented fix gaps")
+  #   }
+  # }
+  if(!fix) return(!limits)
+  TRUE
 }

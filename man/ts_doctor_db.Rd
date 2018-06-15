@@ -18,6 +18,9 @@ ts_doctor_db(check_limits = TRUE, check_period = TRUE, check_gaps = FALSE,
 
 \item{file}{A string of the name of the database file.}
 }
+\value{
+A flag indicating whether or not the database passed the checks (or was fixed)
+}
 \description{
 Doctor Database
 }
