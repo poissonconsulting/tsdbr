@@ -73,4 +73,6 @@ test_that("package", {
                  tolerance = 0.0000001)
     expect_identical(ts_get_data(file = file, start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour", fill = TRUE, na_replace = Inf)$Corrected, rep(Inf, 50))
     expect_identical(ts_get_log(file)$TableLog, c("Database", "Parameter", "Station", "Station", "Data", "Data", "Data"))
+    
+    ts_doctor_db()
 })
