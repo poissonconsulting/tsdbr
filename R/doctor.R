@@ -20,7 +20,7 @@ ts_doctor_db <- function(check_limits = TRUE,
   on.exit(DBI::dbDisconnect(conn))
   
   DBI::dbGetQuery(conn, "CREATE TEMPORARY VIEW CheckLimitsData AS
-      SELECT s.Station AS Station
+      SELECT s.Station AS Station, COUNT(*) AS Outside
       FROM Station s
       INNER JOIN Data d ON s.Station = d.Station
       WHERE (d.Corrected < s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
@@ -28,12 +28,21 @@ ts_doctor_db <- function(check_limits = TRUE,
       GROUP BY s.Station;")
   
   limits <- DBI::dbGetQuery(conn, "SELECT * FROM CheckLimitsData")
-
-  if(nrow(limits))
+  
+  if(nrow(limits)) {
     message("the following stations",
             " have corrected values outside the lower and upper limits",
             " that are not coded as erroneous:", 
             punctuate(limits$Station, "and"))
+  }
   
-  NULL
+  # DBI::dbGetQuery(conn, "CREATE TEMPORARY VIEW CheckPeriodData AS
+  #     SELECT s.Station AS Station, s.Period AS Period,
+  #     
+  #     FROM Station s
+  #     INNER JOIN Data d ON s.Station = d.Station
+  #     GROUP BY s.Station, s.Period;")
+  # 
+  # period <- DBI::dbGetQuery(conn, "SELECT * FROM CheckPeriodData")
+  # period
 }
