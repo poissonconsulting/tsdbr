@@ -19,13 +19,9 @@ knitr::opts_chunk$set(
 
 # tsdbr
 
-The goal of tsdbr is to provide tools to create, populate, maintain and query an SQLite database of hourly data.
+tsdbr provide functions to create, populate, maintain and query an SQLite database of environmental time series data.
 
-The design of tsdbr adopts the following princinciples
-- simplicity
-- minimal dependencies
-- maximal integrity independence 
-- extensiblility
+tsdbr is designed to be simple to use with minimal dependencies and maximal database integrity independence.
 
 ## Installation
 
@@ -39,5 +35,5 @@ devtools::install_github("poissonconsulting/tsdbr")
 ## Conduct
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
-  By participating in this project you agree to abide by its terms.
+By participating in this project you agree to abide by its terms.
   

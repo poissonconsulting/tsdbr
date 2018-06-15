@@ -9,11 +9,11 @@ status](https://codecov.io/gh/poissonconsulting/tsdbr/branch/master/graph/badge.
 
 # tsdbr
 
-The goal of tsdbr is to provide tools to create, populate, maintain and
-query an SQLite database of hourly data.
+tsdbr provide functions to create, populate, maintain and query an
+SQLite database of environmental time series data.
 
-The design of tsdbr adopts the following princinciples - simplicity -
-minimal dependencies - maximal integrity independence - extensiblility
+tsdbr is designed to be simple to use with minimal dependencies and
+maximal database integrity independence.
 
 ## Installation
 
