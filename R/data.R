@@ -82,8 +82,12 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   data <- add(data, "Upload", file)
   
-  DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
+  x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
                                " INTO Data SELECT * FROM Upload;"))
+  
+  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
+                               'INSERT', 'Data', '", toupper(resolution), "');"))
+
   invisible(data)
 }
 
