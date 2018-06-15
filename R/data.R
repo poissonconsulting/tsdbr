@@ -81,7 +81,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   on.exit(DBI::dbDisconnect(conn), add = TRUE)
   DBI::dbGetQuery(conn, "DELETE FROM Upload;")
   
-  data <- add(data, "Upload", file)
+  add(data, "Upload", file)
   
   x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
                                " INTO Data SELECT * FROM Upload;"))

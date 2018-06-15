@@ -18,7 +18,6 @@ ts_doctor_db <- function(check_limits = TRUE,
   check_flag(fix)
   
   conn <- connect(file)
-  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
   on.exit(DBI::dbDisconnect(conn), add = TRUE)
@@ -30,8 +29,8 @@ ts_doctor_db <- function(check_limits = TRUE,
         d.CommentsData
       FROM Station s
       INNER JOIN Data d ON s.Station = d.Station
-      WHERE (d.Corrected > s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
-        d.Status != 3;") # change lowerlimit <
+      WHERE (d.Corrected < s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
+        d.Status != 3;")
     
     if(nrow(limits)) {
       message("there are ", nrow(limits), " non-erroneous (corrected) values at ", 
@@ -43,12 +42,13 @@ ts_doctor_db <- function(check_limits = TRUE,
                            "Corrected", "Status", "CommentsData")]      
         limits$UploadedUTC <- sys_time_utc()
         
-        limits <- add(limits, "Upload", file)
+        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        add(limits, "Upload", file)
         
         DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
         
         DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
-                               'INSERT', 'Data', 'REPLACE fix limits');"))
+                               'UPDATE', 'Data', 'REPLACE fix limits');"))
         limits <- limits[integer(0),]
       }
     } 
@@ -56,7 +56,7 @@ ts_doctor_db <- function(check_limits = TRUE,
   }
   
   if(check_period) {
-
+    
     period <- DBI::dbGetQuery(conn, "
     SELECT d.Station AS Station, s.Period AS Period,
       MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
@@ -70,11 +70,10 @@ ts_doctor_db <- function(check_limits = TRUE,
     HAVING
       (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (HourData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
       (MonthData == 1 AND Period IN ('year'));")
-    #  remove hour on hour
-    
+
     if(nrow(period)) {
       message("there are ", 
               length(unique(period$Station)), " stations",
@@ -86,50 +85,57 @@ ts_doctor_db <- function(check_limits = TRUE,
     }
     period <- nrow(period) > 0
   }
-  # 
-  # if(check_gaps) {
-  #   span <- DBI::dbGetQuery(conn, 
-  #                           "SELECT s.Station AS Station, s.Period AS Period,
-  #             d.Start AS Start, d.End AS End
-  #             FROM Station AS s INNER JOIN 
-  #             StationDataSpan AS d ON s.Station = d.Station")
-  #   
-  #   span <- split(span, 1:nrow(span))
-  #   span <- lapply(span, FUN = function(x) {
-  #     datetimes <- seq(as.POSIXct(x$Start, tz = "UTC"), 
-  #                      as.POSIXct(x$End, tz = "UTC"),
-  #                      by = x$Period)
-  #     datetimes <- format(datetimes, format = "%Y-%m-%d %H:%M:%S")
-  #     data.frame(ID = paste(x$Station, datetimes)) })
-  #   span <- do.call("rbind", span)
-  #   
-  #   data <- DBI::dbGetQuery(
-  #     conn, "SELECT Station || ' ' ||DateTimeData AS ID
-  #             FROM Data")
-  #   
-  #   span <- data.frame(ID = setdiff(span$ID, data$ID))
-  #   
-  #   span$Station <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\1", span$ID)
-  #   span$DateTimeData <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\3", span$ID)
-  #   span$ID <- NULL
-  #   
-  #   if(nrow(span)) {
-  #     message("there are ", nrow(span), " gaps in ", 
-  #             nrow(limits), " stations")
-  #   }
-  #   return(span)
-  # }
-  # 
-  # if(fix) {
-  #   if(nrow(limits)) {
-  #     warning("not yet implemented fix limits")
-  #   }
-  #   if(nrow(period)) {
-  #     warning("not yet implemented fix period")
-  #   }
-  #   if(nrow(gaps)) {
-  #     warning("not yet implemented fix gaps")
-  #   }
-  # }
-  !limits & !period # & !span
+  
+  if(check_gaps) {
+    span <- DBI::dbGetQuery(conn,
+                            "SELECT s.Station AS Station, s.Period AS Period,
+              d.Start AS Start, d.End AS End
+              FROM Station AS s INNER JOIN
+              StationDataSpan AS d ON s.Station = d.Station")
+    
+    span <- split(span, 1:nrow(span))
+    span <- lapply(span, FUN = function(x) {
+      datetimes <- seq(as.POSIXct(x$Start, tz = "UTC"),
+                       as.POSIXct(x$End, tz = "UTC"),
+                       by = x$Period)
+      datetimes <- format(datetimes, format = "%Y-%m-%d %H:%M:%S")
+      data.frame(ID = paste(x$Station, datetimes)) })
+    span <- do.call("rbind", span)
+    
+    data <- DBI::dbGetQuery(
+      conn, "SELECT Station || ' ' ||DateTimeData AS ID
+              FROM Data")
+    
+    span <- data.frame(ID = setdiff(span$ID, data$ID))
+    rm(data)
+    
+    span$Station <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\1", span$ID)
+    span$DateTimeData <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\3", span$ID)
+    span$ID <- NULL
+    
+    if(nrow(span)) {
+      message("there are ", nrow(span), " gaps in ",
+              nrow(limits), " stations")
+      
+      if(fix) {
+        span$Recorded <- NA_real_
+        span$Corrected <- NA_real_
+        span$Status <- 1L
+        span$CommentsData <- NA_character_
+        
+        span$UploadedUTC <- sys_time_utc()
+        
+        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        add(span, "Upload", file)
+        
+        DBI::dbGetQuery(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
+        
+        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
+                               'INSERT', 'Data', 'ABORT - fix gaps');"))
+        span <- span[integer(0),]
+      }
+    }
+    span <- nrow(span) > 0
+  }
+  !limits & !period & !span
 }
