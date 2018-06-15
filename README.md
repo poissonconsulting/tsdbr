@@ -6,6 +6,8 @@
 status](https://travis-ci.org/poissonconsulting/tsdbr.svg?branch=master)](https://travis-ci.org/poissonconsulting/tsdbr)
 [![Coverage
 status](https://codecov.io/gh/poissonconsulting/tsdbr/branch/master/graph/badge.svg)](https://codecov.io/github/poissonconsulting/tsdbr?branch=master)
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 # tsdbr
 
