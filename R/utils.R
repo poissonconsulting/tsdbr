@@ -14,7 +14,7 @@ add <- function(data, table, file) {
   on.exit(DBI::dbDisconnect(conn))
   
   DBI::dbWriteTable(conn, table, data, append = TRUE)
-  data
+  invisible(data)
 }
 
 get <- function(table, file) {

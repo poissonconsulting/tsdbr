@@ -69,6 +69,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
     Elevation REAL,
     Organization TEXT,
     StationName TEXT,
+    CommentsStation TEXT
     CHECK(
       Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
       LowerLimit < UpperLimit AND
