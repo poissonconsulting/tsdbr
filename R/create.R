@@ -29,12 +29,12 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
     ));")
   
   DBI::dbGetQuery(conn, "CREATE TABLE Log (
-    DateTimeLog TEXT NOT NULL,
+    LoggedUTC TEXT NOT NULL,
     OperationLog TEXT NOT NULL,
     TableLog TEXT NOT NULL,
     CommentsLog TEXT,
     CHECK (
-      DATETIME(DateTimeLog) IS DateTimeLog AND
+      DATETIME(LoggedUTC) IS LoggedUTC AND
       OperationLog IN ('UPDATE', 'DELETE', 'INSERT')
   ));")
   
