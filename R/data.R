@@ -73,7 +73,8 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data$Period <- NULL
     
     data <- aggregate_time_add(data, na_rm = na_rm) 
-  }  
+  }
+  data$UploadedUTC <- sys_time_utc()
   conn <- connect(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
@@ -81,7 +82,8 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   data <- add(data, "Upload", file)
   
-  DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), " INTO Data SELECT * FROM Upload;"))
+  DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
+                               " INTO Data SELECT * FROM Upload;"))
   invisible(data)
 }
 

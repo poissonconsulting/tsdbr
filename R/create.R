@@ -87,9 +87,11 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
     Recorded REAL,
     Corrected REAL,
     Status INTEGER NOT NULL,
+    UploadedUTC TEXT NOT NULL,
     CommentsData TEXT
     CHECK (
-      DATETIME(DateTimeData) IS DateTimeData
+      DATETIME(DateTimeData) IS DateTimeData AND
+      DATETIME(UploadedUTC) IS UploadedUTC
     ),
     PRIMARY KEY (Station, DateTimeData),
     FOREIGN KEY (Station) REFERENCES Station (Station),

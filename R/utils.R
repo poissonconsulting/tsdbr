@@ -106,3 +106,9 @@ status_to_integer <- function(x) {
   x <- factor(x, levels = c("reasonable", "questionable", "erroneous"))
   as.integer(x)
 }
+
+sys_time_utc <- function() {
+  x <- Sys.time()
+  attr(x, "tzone") <- "UTC"
+  as.character(x)
+}
