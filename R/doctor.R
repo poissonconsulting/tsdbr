@@ -24,7 +24,6 @@ ts_doctor_db <- function(check_limits = TRUE,
   on.exit(DBI::dbDisconnect(conn), add = TRUE)
   
   if(check_limits) {
-    
     limits <- DBI::dbGetQuery(
       conn, "SELECT d.Station, d.DateTimeData,
         d.Recorded, d.Corrected, 
@@ -45,42 +44,48 @@ ts_doctor_db <- function(check_limits = TRUE,
         limits$UploadedUTC <- sys_time_utc()
         
         limits <- add(limits, "Upload", file)
-
+        
         DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
- 
+        
         DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
                                'INSERT', 'Data', 'REPLACE fix limits');"))
+        limits <- limits[integer(0),]
       }
-    }
+    } 
     limits <- nrow(limits) > 0
   }
   
-  # if(check_period) {
-  #   period <- DBI::dbGetQuery(conn, "
-  #   SELECT d.Station AS Station, s.Period, d.DateTimeData,
-  #       d.Recorded AS Recorded, d.Corrected AS Corrected, d.Status AS Status,
-  #       d.CommentsData AS CommentsData,
-  #     MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
-  #     MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
-  #     MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
-  #     MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
-  #     MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
-  #   FROM Station s
-  #   INNER JOIN Data d ON s.Station = d.Station
-  #   GROUP BY s.Station, s.Period
-  #   HAVING
-  #     (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
-  #     (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-  #     (HourData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-  #     (DayData == 1 AND Period IN ('year', 'month')) OR
-  #     (MonthData == 1 AND Period IN ('year'));")
+  if(check_period) {
 
-#  remove hour on hour
-
- # if(nrow(period)) {
- #   message("there are ", the following stations have invalid periods: ", punctuate(period$Station, "and"))
- # }
- # }
+    period <- DBI::dbGetQuery(conn, "
+    SELECT d.Station AS Station, s.Period AS Period,
+      MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
+      MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
+      MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
+      MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
+      MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
+    FROM Station s
+    INNER JOIN Data d ON s.Station = d.Station
+    GROUP BY s.Station, s.Period
+    HAVING
+      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (HourData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (DayData == 1 AND Period IN ('year', 'month')) OR
+      (MonthData == 1 AND Period IN ('year'));")
+    #  remove hour on hour
+    
+    if(nrow(period)) {
+      message("there are ", 
+              length(unique(period$Station)), " stations",
+              " with date times that are inconsistent with the period")
+      
+      if(fix) {
+        warning("fix period not yet implemented")
+      }
+    }
+    period <- nrow(period) > 0
+  }
   # 
   # if(check_gaps) {
   #   span <- DBI::dbGetQuery(conn, 
@@ -126,6 +131,5 @@ ts_doctor_db <- function(check_limits = TRUE,
   #     warning("not yet implemented fix gaps")
   #   }
   # }
-  if(!fix) return(!limits)
-  TRUE
+  !limits & !period # & !span
 }
