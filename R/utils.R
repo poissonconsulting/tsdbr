@@ -104,11 +104,6 @@ aggregate_time_get <- function(data, na_rm) {
   data
 }
 
-status_to_integer <- function(x) {
-  x <- factor(x, levels = c("reasonable", "questionable", "erroneous"))
-  as.integer(x)
-}
-
 sys_time_utc <- function() {
   x <- Sys.time()
   attr(x, "tzone") <- "UTC"
@@ -133,3 +128,5 @@ plural <- function(x, n = 1L, end = "") {
   check_string(end)
   paste0(x, ifelse(n != 1L, "s", ""), end)
 }
+
+status_values <- function() c("reasonable", "questionable", "erroneous")

@@ -35,8 +35,8 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   } else check_vector(data$Corrected, c(1, NA))
   
   if(missing_column(data, "Status")) {
-    data$Status <- "reasonable"
-  } else check_vector(data$Status, c("reasonable", "questionable", "erroneous"))
+    data$Status <- ordered("reasonable", status_values())
+  } else check_vector(data$Status, ordered(status_values(), status_values()))
   
   if(missing_column(data, "Comments")) {
     data$Comments <- NA_character_
@@ -48,7 +48,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  data$Status <- status_to_integer(data$Status)
+  data$Status <- as.integer(data$Status)
   
   data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "CommentsData")]
@@ -169,14 +169,14 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
       data <- aggregate_time_get(data, na_rm = na_rm)
     }
     
-    status <- status_to_integer(status)
+    status <- as.integer(ordered(status, status_values()))
     data <- data[data$Status <= status,]
     
   }
   data$Status <- sub("1", "reasonable", data$Status)
   data$Status <- sub("2", "questionable", data$Status)
   data$Status <- sub("3", "erroneous", data$Status)
-  data$Status <- ordered(data$Status, levels = c("reasonable", "questionable", "erroneous"))
+  data$Status <- ordered(data$Status, levels = status_values())
 
   tz <- get_tz(file)
   data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
