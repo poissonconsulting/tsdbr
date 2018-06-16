@@ -8,7 +8,8 @@
 #' @param file A string of the name of the database file.
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.
 #' @export
-ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L) {
+ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), 
+                          utc_offset = 0L) {
   check_string(file)
   check_scalar(utc_offset, c(-12L, 14L))
   
@@ -25,6 +26,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
   DBI::dbGetQuery(conn, "CREATE TABLE Database (
     UTC_Offset  INTEGER NOT NULL,
     VersionTSDBR TEXT NOT NULL,
+    Disclaimer TEXT NOT NULL,
     CHECK (
       UTC_Offset >= -12 AND UTC_Offset <= 14
     ));")
@@ -193,7 +195,8 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
   
   DBI::dbGetQuery(conn, 
                   paste0("INSERT INTO Database VALUES(", utc_offset,
-                         ",'", utils::packageVersion('tsdbr'), "');"))
+                         ",'", utils::packageVersion('tsdbr'), "'",
+                         ", 'THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND');"))
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
                                'INSERT',
                                'Database',

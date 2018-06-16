@@ -21,7 +21,9 @@ get <- function(table, file) {
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
-  DBI::dbReadTable(conn, table)
+  table <- DBI::dbReadTable(conn, table)
+  rownames(table) <- NULL
+  table
 }
 
 get_utc_offset <- function(file) {

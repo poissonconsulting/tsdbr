@@ -41,12 +41,6 @@ ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db"
 #' @return A data frame of the requested data.
 #' @export
 ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
-  conn <- connect(file)
-  on.exit(DBI::dbDisconnect(conn))
-  
-  data <- DBI::dbGetQuery(conn, "SELECT *
-    FROM Parameter")
-  rownames(data) <- NULL
-  data
+  get("Parameter", file = file)
 }
 

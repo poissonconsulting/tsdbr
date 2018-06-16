@@ -12,7 +12,7 @@ test_that("package", {
   
   expect_is(conn, "SQLiteConnection")
   
-  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0, '0');")), "only one row permitted!")
+  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0, '0', 'Disclaimer');")), "only one row permitted!")
 
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
@@ -76,4 +76,7 @@ test_that("package", {
     
   expect_true(ts_doctor_db(check_gaps = TRUE, fix = TRUE))
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", file = file)), 25L)
+  expect_identical(ts_set_disclaimer(file = file), 
+                   "THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND")
+  expect_identical(ts_get_disclaimer(file = file), "THE DATA ARE COPYRIGHTED")
 })
