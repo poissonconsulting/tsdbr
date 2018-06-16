@@ -72,7 +72,8 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     Latitude REAL,
     Elevation REAL,
     Organization TEXT,
-    StationName TEXT,
+    StationName TEXT UNIQUE,
+    StationID TEXT UNIQUE,
     CommentsStation TEXT
     CHECK(
       Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
@@ -80,7 +81,8 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
       Longitude >= -180 AND Longitude <= 180 AND
       Latitude >= -90 AND Latitude <= 90 AND
       Length(Organization) >= 1 AND
-      Length(StationName) >= 1
+      Length(StationName) >= 1 AND
+      Length(StationID) >= 1
     ),
     PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
