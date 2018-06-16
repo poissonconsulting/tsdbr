@@ -112,23 +112,17 @@ sys_time_utc <- function() {
   as.character(x)
 }
 
-punctuate <- function(x, qualifier = "or") {
-  check_string(qualifier)
-  if (is.logical(x) || is.integer(x) || is.numeric(x)) {
-    x <- as.character(x)
-  } else
-    x <- paste0("'", as.character(x), "'")
-  if (length(x) == 1)
-    return(x)
-  n <- length(x)
-  paste(paste(x[-n], collapse = ", "), qualifier, x[n])
-}
-
-plural <- function(x, n = 1L, end = "") {
-  check_string(x)
-  n <- check_count(n, coerce = TRUE)
-  check_string(end)
-  paste0(x, ifelse(n != 1L, "s", ""), end)
-}
-
 status_values <- function() c("reasonable", "questionable", "erroneous")
+
+#' System User
+#'
+#' Gets a string of the system user.
+#' 
+#' @return A string of the system user.
+#' @export
+#'
+#' @examples
+#' ts_sys_user()
+ts_sys_user <- function() {
+  unname(Sys.info()["user"])
+}

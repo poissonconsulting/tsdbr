@@ -12,7 +12,9 @@ test_that("package", {
   
   expect_is(conn, "SQLiteConnection")
   
-  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0, '0', 'Disclaimer');")), "only one row permitted!")
+  expect_error(DBI::dbGetQuery(conn, paste0(
+    "INSERT INTO Database VALUES(0, '0', 'user', 'Disclaimer');")), 
+    "only one row permitted!")
   
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
@@ -79,11 +81,16 @@ test_that("package", {
   expect_identical(ts_set_disclaimer(file = file), 
                    "THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND")
   expect_identical(ts_get_disclaimer(file = file), "THE DATA ARE COPYRIGHTED")
+  expect_identical(ts_set_maintainer(file = file, "me"), ts_sys_user())
+  expect_identical(ts_get_maintainer(file = file), "me")
+  
   data <- ts_get_data(end_date = as.Date("2000-09-01"), file = file)
-  expect_equal(colnames(ts_write_csv(data, file = sub("[.]db$", ".csv", file))), 
+  csv <- sub("[.]db$", ".csv", file)
+  expect_equal(colnames(ts_write_csv(data, file = csv)), 
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
                  "Corrected", "Status"))
-  
+  teardown(unlink(csv))
+
   expect_null(ts_plot_data(data))
 })
   
