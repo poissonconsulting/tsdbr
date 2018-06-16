@@ -51,7 +51,7 @@ test_that("package", {
   expect_is(ts_add_data(data, file = file, resolution = "replace"), "data.frame")
   
   data$Station <- "S1"
-  expect_error(ts_add_data(data, file = file), "invalid uploaded periods")
+  expect_error(ts_add_data(data, file = file), "there are 1 stations with date times that are inconsistent with the period")
   
   expect_is(ts_add_data(data, file = file, aggregate = TRUE), "data.frame")
   

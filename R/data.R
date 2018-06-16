@@ -83,6 +83,27 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   add(data, "Upload", file)
   
+  period <- DBI::dbGetQuery(conn, "SELECT s.Station As Station, s.Period AS Period, 
+      MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
+      MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
+      MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
+      MAX(STRFTIME('%M', u.DateTimeData)) != '00' AS MinuteData,
+      MAX(STRFTIME('%S', u.DateTimeData)) != '00' AS SecondData
+    FROM Station s
+    INNER JOIN Upload u ON s.Station = u.Station
+    GROUP BY s.Station, s.Period
+    HAVING 
+      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
+      (DayData == 1 AND Period IN ('year', 'month')) OR
+      (MonthData == 1 AND Period IN ('year'));")
+  
+  if(nrow(period)) {
+      stop("there are ", 
+              length(unique(period$Station)), " stations",
+              " with date times that are inconsistent with the period", call. = FALSE)
+  }
   x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
                                " INTO Data SELECT * FROM Upload;"))
   

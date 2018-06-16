@@ -109,23 +109,6 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data 
     GROUP BY Station")
-  
-  DBI::dbGetQuery(conn, "CREATE VIEW CheckPeriodUpload AS
-    SELECT s.Station As Station, s.Period AS Period, 
-      MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
-      MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
-      MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
-      MAX(STRFTIME('%M', u.DateTimeData)) != '00' AS MinuteData,
-      MAX(STRFTIME('%S', u.DateTimeData)) != '00' AS SecondData
-    FROM Station s
-    INNER JOIN Upload u ON s.Station = u.Station
-    GROUP BY s.Station, s.Period
-    HAVING 
-      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
-      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
-      (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
 
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
@@ -205,15 +188,6 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
     BEFORE UPDATE ON Station
     BEGIN
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
-    END;"))
-  
-  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER data_insert_trigger
-    BEFORE INSERT ON Data
-    BEGIN
-      SELECT CASE
-        WHEN (SELECT COUNT(*) FROM CheckPeriodUpload) >= 1
-        THEN RAISE(ROLLBACK, 'invalid uploaded periods')
-      END;
     END;"))
   
   DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
