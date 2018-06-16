@@ -19,16 +19,50 @@ maximal database integrity independence.
 
 ## Installation
 
-You can install the development version from
-[GitHub](https://github.com/) with:
+To install the latest version from the Poisson drat
+[repository](https://github.com/poissonconsulting/drat)
+
+``` r
+# install.packages("drat")
+drat::addRepo("poissonconsulting")
+install.packages("tsdbr")
+```
+
+To install the latest development version from
+[GitHub](https://github.com/poissonconsulting/tsdbr)
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("poissonconsulting/tsdbr")
 ```
 
-## Conduct
+## Citation
+
+``` 
+
+To cite package 'tsdbr' in publications use:
+
+  Joe Thorley (2018). tsdbr: Time Series Database. R package
+  version 0.0.0.9001.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {tsdbr: Time Series Database},
+    author = {Joe Thorley},
+    year = {2018},
+    note = {R package version 0.0.0.9001},
+  }
+```
+
+## Contribution
+
+Please report any
+[issues](https://github.com/poissonconsulting/tsdbr/issues).
+
+[Pull requests](https://github.com/poissonconsulting/tsdbr/pulls) are
+always welcome.
 
 Please note that this project is released with a [Contributor Code of
-Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree
-to abide by its terms.
+Conduct](CONDUCT.md). By participating in this project you agree to
+abide by its terms.

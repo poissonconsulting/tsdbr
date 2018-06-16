@@ -26,15 +26,30 @@ tsdbr is designed to be simple to use with minimal dependencies and maximal data
 
 ## Installation
 
-You can install the development version from [GitHub](https://github.com/) with:
+To install the latest version from the Poisson drat [repository](https://github.com/poissonconsulting/drat)
+``` r
+# install.packages("drat")
+drat::addRepo("poissonconsulting")
+install.packages("tsdbr")
+```
 
+To install the latest development version from [GitHub](https://github.com/poissonconsulting/tsdbr)
 ``` r
 # install.packages("devtools")
 devtools::install_github("poissonconsulting/tsdbr")
 ```
 
-## Conduct
+## Citation
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+```{r, comment="", echo=FALSE}
+citation(package = "tsdbr")
+```
+
+## Contribution
+
+Please report any [issues](https://github.com/poissonconsulting/tsdbr/issues).
+
+[Pull requests](https://github.com/poissonconsulting/tsdbr/pulls) are always welcome.
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). 
 By participating in this project you agree to abide by its terms.
-  
