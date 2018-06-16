@@ -28,12 +28,14 @@ test_that("package", {
                          Period = "hour",
                          LowerLimit = 0,
                          UpperLimit = 100,
+                         StationID = "t2",
                          stringsAsFactors = FALSE)
   
   expect_is(ts_add_stations(stations, file = file), "data.frame")
   
   data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
                      Recorded = 0:23 - 2,
+                     StationID = "t2",
                      stringsAsFactors = FALSE)
   
   data$Recorded[4] <- NA
@@ -90,6 +92,9 @@ test_that("package", {
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
                  "Corrected", "Status"))
   teardown(unlink(csv))
+  
+  expect_warning(ts_translate_stations(data, to_id = TRUE), 
+                 "the following stations are unrecognised: 'S1'")
 
   expect_null(ts_plot_data(data))
 })
