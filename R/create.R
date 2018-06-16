@@ -1,9 +1,7 @@
 #' Create Time-Series Database
 #'
 #' Creates an empty SQLite database to store time series data.
-#' The utc_offset indicates how many hours must be added or subtracted to the 
-#' saved date times to convert them to UTC.
-#' For example 8 hours must be added to times in PST to convert them to UTC.
+#' The UTC offset for Alaska is -8.
 #'
 #' @param file A string of the name of the database file.
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.

@@ -4,7 +4,7 @@ test_that("package", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
   file <- "ts.db"
   if(file.exists(file)) unlink(file)
-  setup(ts_create_db(file = file, utc_offset = 8L))
+  setup(ts_create_db(file = file, utc_offset = -8L))
   expect_true(file.exists(file))
   teardown(unlink(file))
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
