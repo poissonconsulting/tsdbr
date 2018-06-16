@@ -16,7 +16,7 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
   DBI::dbGetQuery(conn, 
                   paste0("UPDATE Database 
                          SET Maintainer = '", maintainer, "'"))
-  old
+  invisible(old)
 }
 
 #' Get Maintainer

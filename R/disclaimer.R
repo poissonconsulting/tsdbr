@@ -17,7 +17,7 @@ ts_set_disclaimer <- function(
   DBI::dbGetQuery(conn, 
                   paste0("UPDATE Database 
                          SET Disclaimer = '", disclaimer, "'"))
-  old
+  invisible(old)
 }
 
 #' Get Disclaimer
