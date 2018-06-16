@@ -83,5 +83,7 @@ test_that("package", {
   expect_equal(colnames(ts_write_csv(data, file = sub("[.]db$", ".csv", file))), 
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
                  "Corrected", "Status"))
+  
+  expect_null(ts_plot_data(data))
 })
   

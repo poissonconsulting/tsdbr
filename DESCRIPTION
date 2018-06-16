@@ -7,11 +7,12 @@ Description: Creates, populates, maintains and queries an
 Authors@R: person("Joe", "Thorley", email = "joe@poissonconsulting.ca", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Imports: 
-  checkr,
-  DBI,
-  RSQLite,
-  utils
+    checkr,
+    DBI,
+    RSQLite,
+    utils
 Suggests: 
+    ggplot2,
     testthat,
     covr
 Encoding: UTF-8
