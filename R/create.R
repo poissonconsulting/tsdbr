@@ -24,6 +24,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
   
   DBI::dbGetQuery(conn, "CREATE TABLE Database (
     UTC_Offset  INTEGER NOT NULL,
+    VersionTSDBR TEXT NOT NULL,
     CHECK (
       UTC_Offset >= -12 AND UTC_Offset <= 14
     ));")
@@ -190,7 +191,9 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), utc_offset = 
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
     END;"))
   
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(",utc_offset,");"))
+  DBI::dbGetQuery(conn, 
+                  paste0("INSERT INTO Database VALUES(", utc_offset,
+                         ",'", utils::packageVersion('tsdbr'), "');"))
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
                                'INSERT',
                                'Database',

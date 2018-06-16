@@ -12,7 +12,7 @@ test_that("package", {
   
   expect_is(conn, "SQLiteConnection")
   
-  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0);")), "only one row permitted!")
+  expect_error(DBI::dbGetQuery(conn, paste0("INSERT INTO Database VALUES(0, '0');")), "only one row permitted!")
 
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
