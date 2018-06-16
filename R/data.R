@@ -28,8 +28,6 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     check_tzone(data$DateTime, tz)
   }
   
-  data$DateTimeData <- as.character(data$DateTime)
-  
   if(missing_column(data, "Corrected")) {
     data$Corrected <- data$Recorded
   } else check_vector(data$Corrected, c(1, NA))
@@ -42,12 +40,12 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data$Comments <- NA_character_
   } else check_vector(data$Comments, c("", NA))
   
-  data$CommentsData <- data$Comments
-  
   check_flag(aggregate)
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
+  data$DateTimeData <- as.character(data$DateTime)
+  data$CommentsData <- data$Comments
   data$Status <- as.integer(data$Status)
   
   data <- data[c("Station", "DateTimeData", "Recorded",

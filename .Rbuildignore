@@ -4,5 +4,6 @@
 ^README\.Rmd$
 ^\.travis\.yml$
 ^ts\.db$
+^ts\.csv$
 ^codecov\.yml$
 ^CODE_OF_CONDUCT\.md$
