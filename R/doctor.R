@@ -91,7 +91,7 @@ ts_doctor_db <- function(check_limits = TRUE,
                             "SELECT s.Station AS Station, s.Period AS Period,
               d.Start AS Start, d.End AS End
               FROM Station AS s INNER JOIN
-              StationDataSpan AS d ON s.Station = d.Station")
+              DataSpan AS d ON s.Station = d.Station")
     
     span <- split(span, 1:nrow(span))
     span <- lapply(span, FUN = function(x) {

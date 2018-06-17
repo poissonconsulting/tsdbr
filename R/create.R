@@ -109,8 +109,13 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
   
   DBI::dbGetQuery(conn, upload_sql)
   
-  DBI::dbGetQuery(conn, "CREATE VIEW StationDataSpan AS
+  DBI::dbGetQuery(conn, "CREATE VIEW DataSpan AS
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
+    FROM Data 
+    GROUP BY Station")
+  
+  DBI::dbGetQuery(conn, "CREATE VIEW DataCount AS
+    SELECT Station, COUNT(*) AS DataCount
     FROM Data 
     GROUP BY Station")
 
