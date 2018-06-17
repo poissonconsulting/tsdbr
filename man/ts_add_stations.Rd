@@ -9,7 +9,7 @@ ts_add_stations(stations, file = getOption("tsdbr.file", "ts.db"))
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
 Period. The optional columns are
-LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , StationName, StationID and Comments.}
+LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , SiteName, StationID and Comments.}
 
 \item{file}{A string of the name of the database file.}
 }
@@ -17,5 +17,5 @@ LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , StationNa
 The imported station data.
 }
 \description{
-Add Stations
+There can be more than one station with the same SiteName.
 }

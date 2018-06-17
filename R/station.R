@@ -21,9 +21,11 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
 
 #' Add Stations
 #'
+#' There can be more than one station with the same SiteName.
+#' 
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period. The optional columns are
-#' LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , StationName, StationID and Comments.
+#' LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , SiteName, StationID and Comments.
 #' @inheritParams ts_create_db
 #' @return The imported station data.
 #' @export
@@ -59,9 +61,9 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
     stations$Organization <- NA_character_
   } else check_vector(stations$Organization, c("", NA))
   
-  if(missing_column(stations, "StationName")) {
-    stations$StationName <- NA_character_
-  } else check_vector(stations$StationName, c("", NA))
+  if(missing_column(stations, "SiteName")) {
+    stations$SiteName <- NA_character_
+  } else check_vector(stations$SiteName, c("", NA))
   
   if(missing_column(stations, "StationID")) {
     stations$StationID <- NA_character_
@@ -75,7 +77,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   
   stations <- stations[c("Station", "Parameter", "Period",
                          "LowerLimit", "UpperLimit", "Longitude", "Latitude",
-                         "Elevation", "Organization", "StationName", "StationID",
+                         "Elevation", "Organization", "SiteName", "StationID",
                          "CommentsStation")]
   
   add(stations, "Station", file)
