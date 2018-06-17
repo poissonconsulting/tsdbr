@@ -18,7 +18,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
   
   DBI::dbGetQuery(conn, "CREATE TABLE Database (

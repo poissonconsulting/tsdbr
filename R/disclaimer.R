@@ -12,7 +12,7 @@ ts_set_disclaimer <- function(
   old <- ts_get_disclaimer(file = file)
   
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   DBI::dbGetQuery(conn, 
                   paste0("UPDATE Database 

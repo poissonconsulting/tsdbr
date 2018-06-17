@@ -76,7 +76,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  on.exit(DBI::dbDisconnect(conn), add = TRUE)
+  on.exit(ts_disconnect_db(conn), add = TRUE)
   DBI::dbGetQuery(conn, "DELETE FROM Upload;")
   
   add(data, "Upload", file)
@@ -145,7 +145,7 @@ ts_get_data <- function(stations = NULL,
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   checkor(check_null(stations), 
           check_vector(stations, ts_get_stations(file = file)$Station, 

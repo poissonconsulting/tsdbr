@@ -11,7 +11,7 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
   old <- ts_get_maintainer(file = file)
   
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   DBI::dbGetQuery(conn, 
                   paste0("UPDATE Database 

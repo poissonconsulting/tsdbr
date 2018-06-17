@@ -20,7 +20,7 @@ ts_doctor_db <- function(check_limits = TRUE,
   conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  on.exit(DBI::dbDisconnect(conn), add = TRUE)
+  on.exit(ts_disconnect_db(conn), add = TRUE)
   
   if(check_limits) {
     limits <- DBI::dbGetQuery(

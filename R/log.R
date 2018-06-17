@@ -6,7 +6,7 @@
 #' @export
 ts_get_log <- function(file = getOption("tsdbr.file", "ts.db")) {
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   data <- DBI::dbGetQuery(conn, "SELECT *
     FROM Log")

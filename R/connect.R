@@ -14,6 +14,16 @@ ts_connect_db <- function(file = getOption("tsdbr.file", "ts.db")) {
   conn
 }
 
+#' Disconnect from Database
+#'
+#' @param conn An object of class SQLiteConnection.
+#' @export
+ts_disconnect_db <- function(conn) {
+  if(!inherits(conn, "SQLiteConnection"))
+    stop("conn must be an SQLiteConnection", call. = FALSE)
+  DBI::dbDisconnect(conn)
+}
+
 #' Get Table
 #'
 #' @param table A string of the table to get.
@@ -23,7 +33,7 @@ ts_connect_db <- function(file = getOption("tsdbr.file", "ts.db")) {
 ts_get_table <- function(table, file = getOption("tsdbr.file", "ts.db")) {
   check_string(table)
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   if(!DBI::dbExistsTable(conn, table))
     stop("table '", table, "' does not exist", call. = FALSE)

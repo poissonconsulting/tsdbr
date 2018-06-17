@@ -1,6 +1,6 @@
 add <- function(data, table, file) {
   conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
+  on.exit(ts_disconnect_db(conn))
   
   DBI::dbWriteTable(conn, table, data, append = TRUE)
   invisible(data)
