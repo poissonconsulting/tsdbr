@@ -17,5 +17,5 @@ LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , SiteName,
 The imported station data.
 }
 \description{
-There can be more than one station with the same SiteName.
+Add Stations
 }

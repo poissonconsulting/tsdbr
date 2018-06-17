@@ -20,8 +20,6 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
 }
 
 #' Add Stations
-#'
-#' There can be more than one station with the same SiteName.
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period. The optional columns are

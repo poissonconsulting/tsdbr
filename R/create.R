@@ -83,6 +83,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
       Length(StationID) >= 1
     ),
     PRIMARY KEY (Station),
+    UNIQUE (Parameter, SiteName),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
   )")
   
