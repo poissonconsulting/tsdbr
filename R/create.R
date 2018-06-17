@@ -119,6 +119,17 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     FROM Data 
     GROUP BY Station, Year")
 
+  DBI::dbGetQuery(conn, "CREATE VIEW DataNULL AS
+    SELECT Station, STRFTIME('%Y', DateTimeData) AS Year, COUNT(*) AS DataNULL
+    FROM Data
+    WHERE Corrected IS NULL 
+    GROUP BY Station, Year")
+  
+    DBI::dbGetQuery(conn, "CREATE VIEW ProportionNULL AS
+    SELECT Station, Year, DataNULL / DataCount AS ProportionNULL
+    FROM DataCount
+    NATURAL JOIN DataNULL")
+  
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))
   
