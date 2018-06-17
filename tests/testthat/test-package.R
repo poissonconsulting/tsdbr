@@ -96,7 +96,10 @@ test_that("package", {
                  "Corrected", "Status"))
   teardown(unlink(csv))
   
-  expect_warning(ts_translate_stations(data, to_name = TRUE), 
+  expect_warning(ts_translate_stations(data), 
+                 "the following stations are unrecognised: 'S1' and 'S2'")
+  
+  expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
                  "the following stations are unrecognised: 'S1'")
 
   expect_null(ts_plot_data(data))

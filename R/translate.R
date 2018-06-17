@@ -1,32 +1,38 @@
 #' Translate Stations
 #' 
-#' Translate stations from the codings in StationName to those in Station (or vice versa).
+#' Translate stations from or to the codings in Station, StationName and StationID.
 #' Its useful if the data are provided with different station codings to the main ones used in the database.
 #'
-#' @param data A data frame with the column Station of the station to translate.
-#' @param to_name A flag indicating whether to translate to or from StationName
+#' @param data A data frame with the column Station of the station coding.
+#' @param from A string indicating the coding to translate from. 
+#' Possible values are 'Station', 'StationName' and 'StationID'.
+#' @param to A string indicating the coding to translate to. 
+#' Possible values are 'Station', 'StationName' and 'StationID'.
 #' @inheritParams ts_create_db
 #'
 #' @return The translated data
 #' @export
-ts_translate_stations <- function(data, to_name = FALSE, file = getOption("tsdbr.file", "ts.db")) {
+ts_translate_stations <- function(data, from = "StationID", to = "Station",
+                                  file = getOption("tsdbr.file", "ts.db")) {
   check_data(data, values = list(Station = ""))
-  check_flag(to_name)
+  check_vector(from, c("Station", "StationName", "StationID"), length = 1)
+  check_vector(to, c("Station", "StationName", "StationID"), length = 1)
+  
+  if(from == to) return(data)
+  
   stations <- ts_get_stations(file = file)
-  if(!nrow(data)) return(data)
   
   stations_from <- data["Station"]
-  stations <- stations[c("Station", "StationName")]
-  
-  if(!to_name) colnames(stations) <- rev(colnames(stations))
-  
-  stations <- merge(stations, stations_from, all.y = TRUE, by = "Station")
+  colnames(stations_from) <- from
+  stations <- stations[c(from, to)]
+
+  stations <- merge(stations, stations_from, all.y = TRUE, by = from)
   rm(stations_from)
-  data$Station <- stations$StationName
+  data$Station <- stations[[to]]
   
-  missing <- unique(stations$Station[is.na(stations$StationName)])
+  missing <- unique(stations[[from]][is.na(stations[[to]])])
   if(length(missing)) {
-    warning("the following stations are unrecognised: ", punctuate(missing), 
+    warning("the following stations are unrecognised: ", punctuate(missing, "and"), 
             call. = FALSE)
   }
   data

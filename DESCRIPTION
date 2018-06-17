@@ -1,9 +1,9 @@
 Package: tsdbr
-Version: 0.0.0.9006
+Version: 0.0.0.9007
 Date: 2018-06-17
-Title: Time Series Database
-Description: Creates, populates, maintains and queries an 
-  SQLite database of time series data.
+Title: Environmental Time Series Databasing
+Description: Creates, populates, maintains and queries 
+  SQLite databases of environmental time series data.
 Authors@R: person("Joe", "Thorley", email = "joe@poissonconsulting.ca", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Imports: 

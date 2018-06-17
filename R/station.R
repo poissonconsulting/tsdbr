@@ -26,7 +26,7 @@ ts_add_station <- function(station, parameter, period, site, file = getOption("t
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period and Site. The optional columns are
-#' Depth, LowerLimit, UpperLimit, StationName and Comments.
+#' Depth, LowerLimit, UpperLimit, StationName, StationID and Comments.
 #' @inheritParams ts_create_db
 #' @return The imported station data.
 #' @export
@@ -55,6 +55,10 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
     stations$StationName <- NA_character_
   } else check_vector(stations$StationName, c("", NA))
   
+  if(missing_column(stations, "StationID")) {
+    stations$StationID <- NA_character_
+  } else check_vector(stations$StationID, c("", NA))
+  
   if(missing_column(stations, "Comments")) {
     stations$Comments <- NA_character_
   } else check_vector(stations$Comments, c("", NA))
@@ -63,7 +67,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   
   stations <- stations[c("Station", "Parameter", "Period", "Site",
                          "Depth", "LowerLimit", "UpperLimit",
-                         "StationName", 
+                         "StationName", "StationID",
                          "CommentsStation")]
   
   add(stations, "Station", file)
@@ -104,8 +108,8 @@ ts_get_stations <- function(
   data <- DBI::dbGetQuery(conn, paste0("SELECT *
     FROM Station
     WHERE Parameter ", in_commas(parameters),
-    "AND Period ", in_commas(periods),
-    "AND Site ", in_commas(sites)))
+                                       "AND Period ", in_commas(periods),
+                                       "AND Site ", in_commas(sites)))
   rownames(data) <- NULL
   data
 }

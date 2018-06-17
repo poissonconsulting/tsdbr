@@ -4,13 +4,17 @@
 \alias{ts_translate_stations}
 \title{Translate Stations}
 \usage{
-ts_translate_stations(data, to_name = FALSE, file = getOption("tsdbr.file",
-  "ts.db"))
+ts_translate_stations(data, from = "StationID", to = "Station",
+  file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
-\item{data}{A data frame with the column Station of the station to translate.}
+\item{data}{A data frame with the column Station of the station coding.}
 
-\item{to_name}{A flag indicating whether to translate to or from StationName}
+\item{from}{A string indicating the coding to translate from. 
+Possible values are 'Station', 'StationName' and 'StationID'.}
+
+\item{to}{A string indicating the coding to translate to. 
+Possible values are 'Station', 'StationName' and 'StationID'.}
 
 \item{file}{A string of the name of the database file.}
 }
@@ -18,6 +22,6 @@ ts_translate_stations(data, to_name = FALSE, file = getOption("tsdbr.file",
 The translated data
 }
 \description{
-Translate stations from the codings in StationName to those in Station (or vice versa).
+Translate stations from or to the codings in Station, StationName and StationID.
 Its useful if the data are provided with different station codings to the main ones used in the database.
 }

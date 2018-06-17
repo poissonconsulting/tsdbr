@@ -85,11 +85,13 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     LowerLimit REAL,
     UpperLimit REAL,
     StationName TEXT UNIQUE,
+    StationID TEXT UNIQUE,
     CommentsStation TEXT
     CHECK(
       Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
       LowerLimit < UpperLimit AND
-      Length(StationName) >= 1
+      Length(StationName) >= 1 AND
+      Length(StationID) >= 1
     ),
     PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
