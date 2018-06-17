@@ -1,6 +1,6 @@
 Package: tsdbr
-Version: 0.0.0.9004
-Date: 2018-06-16
+Version: 0.0.0.9005
+Date: 2018-06-17
 Title: Time Series Database
 Description: Creates, populates, maintains and queries an 
   SQLite database of time series data.
