@@ -7,11 +7,9 @@ test_that("package", {
   setup(ts_create_db(file = file, utc_offset = -8L))
   expect_true(file.exists(file))
   teardown(unlink(file))
-  conn <- DBI::dbConnect(RSQLite::SQLite(), file)
-  teardown(DBI::dbDisconnect(conn))
-  
-  expect_is(conn, "SQLiteConnection")
-  
+  conn <- ts_connect_db(file)
+  teardown(ts_disconnect(conn))
+
   expect_error(DBI::dbGetQuery(conn, paste0(
     "INSERT INTO Database VALUES(0, '0', 'user', 'Disclaimer');")), 
     "only one row permitted!")
