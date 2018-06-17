@@ -4,7 +4,7 @@ test_that("package", {
   file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
   file <- "ts.db"
   if(file.exists(file)) unlink(file)
-  setup(ts_create_db(file = file, utc_offset = -8L))
+  setup(ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour")))
   expect_true(file.exists(file))
   teardown(unlink(file))
   conn <- ts_connect_db(file)
@@ -21,6 +21,7 @@ test_that("package", {
   
   expect_is(ts_add_site("Mount Doom", file = file), "data.frame")
   
+  expect_error(ts_add_station("S1", "Temp", "minute", "Mount Doom", file = file))  
   expect_is(ts_add_station("S1", "Temp", "day", "Mount Doom", file = file), "data.frame")
   
   stations <- data.frame(Station = "S2",

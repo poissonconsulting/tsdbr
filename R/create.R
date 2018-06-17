@@ -5,11 +5,16 @@
 #'
 #' @param file A string of the name of the database file.
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.
+#' @param periods A character vector of the permitted periods. 
+#' Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'
 #' @export
 ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), 
-                          utc_offset = 0L) {
+                          utc_offset = 0L,
+                          periods = c("year", "month", "day", "hour", "minute", "second")) {
   check_string(file)
   check_scalar(utc_offset, c(-12L, 14L))
+  check_vector(periods, c("year", "month", "day", "hour", "minute", "second"),
+               length = TRUE, unique = TRUE, named = FALSE)
   
   if(file.exists(file))
     stop("file '", file, "' already exists", call. = FALSE)
@@ -76,7 +81,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     PRIMARY KEY (Site)
   )")
   
-  DBI::dbGetQuery(conn, "CREATE TABLE Station (
+  DBI::dbGetQuery(conn, paste0("CREATE TABLE Station (
     Station TEXT NOT NULL,
     Parameter TEXT NOT NULL,
     Period TEXT NOT NULL,
@@ -88,7 +93,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     StationID TEXT UNIQUE,
     CommentsStation TEXT
     CHECK(
-      Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
+      Period ", in_commas(periods)," AND
       LowerLimit < UpperLimit AND
       Length(StationName) >= 1 AND
       Length(StationID) >= 1
@@ -96,7 +101,7 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     PRIMARY KEY (Station),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
     FOREIGN KEY (Site) REFERENCES Site (Site)
-  )")
+  )"))
   
   data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
