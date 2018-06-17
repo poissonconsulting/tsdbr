@@ -60,31 +60,40 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     PRIMARY KEY (Parameter)
   );")
   
+  DBI::dbGetQuery(conn, "CREATE TABLE Site (
+    Site TEXT NOT NULL,
+    Longitude REAL,
+    Latitude REAL,
+    Organization TEXT,
+    SiteName TEXT UNIQUE,
+    CommentsSite TEXT
+    CHECK(
+      Longitude >= -180 AND Longitude <= 180 AND
+      Latitude >= -90 AND Latitude <= 90 AND
+      Length(Organization) >= 1 AND
+      Length(SiteName) >= 1
+    ),
+    PRIMARY KEY (Site)
+  )")
+  
   DBI::dbGetQuery(conn, "CREATE TABLE Station (
     Station TEXT NOT NULL,
     Parameter TEXT NOT NULL,
     Period TEXT NOT NULL,
+    Site TEXT NOT NULL,
+    Elevation REAL,
     LowerLimit REAL,
     UpperLimit REAL,
-    Longitude REAL,
-    Latitude REAL,
-    Elevation REAL,
-    Organization TEXT,
-    SiteName TEXT,
-    StationID TEXT UNIQUE,
+    StationName TEXT UNIQUE,
     CommentsStation TEXT
     CHECK(
       Period IN ('year', 'month', 'day', 'hour', 'minute', 'second') AND
       LowerLimit < UpperLimit AND
-      Longitude >= -180 AND Longitude <= 180 AND
-      Latitude >= -90 AND Latitude <= 90 AND
-      Length(Organization) >= 1 AND
-      Length(SiteName) >= 1 AND
-      Length(StationID) >= 1
+      Length(StationName) >= 1
     ),
     PRIMARY KEY (Station),
-    UNIQUE (Parameter, SiteName),
     FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
+    FOREIGN KEY (Site) REFERENCES Site (Site)
   )")
   
   data_sql <- "CREATE TABLE Data (
@@ -191,6 +200,24 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     BEFORE UPDATE ON Parameter
     BEGIN
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Parameter', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER site_insert_trigger
+    BEFORE INSERT ON Site
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'INSERT', 'Site', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER site_delete_trigger
+    BEFORE DELETE ON Parameter
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'DELETE', 'Site', NULL);
+    END;"))
+  
+  DBI::dbGetQuery(conn, paste0("CREATE TRIGGER site_update_trigger
+    BEFORE UPDATE ON Parameter
+    BEGIN
+      INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Site', NULL);
     END;"))
   
   DBI::dbGetQuery(conn, paste0("CREATE TRIGGER station_insert_trigger

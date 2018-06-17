@@ -21,16 +21,21 @@ test_that("package", {
   
   expect_identical(parameters, ts_add_parameter("Temp", "degC", file = file))
   
-  expect_is(ts_add_station("S1", "Temp", "day", file = file), "data.frame")
+  expect_is(ts_add_site("Mount Doom", file = file), "data.frame")
+  
+  expect_is(ts_add_station("S1", "Temp", "day", "Mount Doom", file = file), "data.frame")
   
   stations <- data.frame(Station = "S2",
                          Parameter = "Temp",
                          Period = "hour",
+                         Site = "Lothlorien",
                          LowerLimit = 0,
                          UpperLimit = 100,
                          StationID = "t2",
                          stringsAsFactors = FALSE)
   
+  expect_error(ts_add_stations(stations, file = file))
+  stations$Site <- "Mount Doom"
   expect_is(ts_add_stations(stations, file = file), "data.frame")
   
   data <- data.frame(Station = "S2", DateTime = ISOdate(2000, 9, 1, 0:23),
@@ -76,7 +81,7 @@ test_that("package", {
   expect_equal(ts_get_data(stations = "S2", file = file, end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, na_replace = -10, status = "erroneous")$Corrected, c(rep(-10, 12), 9.227273),
                tolerance = 0.0000001)
   expect_identical(ts_get_data(file = file, start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour", fill = TRUE, na_replace = Inf)$Corrected, rep(Inf, 50))
-  expect_identical(ts_get_log(file)$TableLog, c("Database", "Parameter", "Station", "Station", "Data", "Data", "Data"))
+  expect_identical(ts_get_log(file)$TableLog, c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data"))
   
   expect_true(ts_doctor_db(check_gaps = TRUE, fix = TRUE))
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", file = file)), 25L)
@@ -93,7 +98,7 @@ test_that("package", {
                  "Corrected", "Status"))
   teardown(unlink(csv))
   
-  expect_warning(ts_translate_stations(data, to_id = TRUE), 
+  expect_warning(ts_translate_stations(data, to_name = TRUE), 
                  "the following stations are unrecognised: 'S1'")
 
   expect_null(ts_plot_data(data))

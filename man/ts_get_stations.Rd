@@ -5,12 +5,15 @@
 \title{Get Stations Table}
 \usage{
 ts_get_stations(parameters = NULL, periods = c("year", "month", "day",
-  "hour", "minute", "second"), file = getOption("tsdbr.file", "ts.db"))
+  "hour", "minute", "second"), sites = NULL, file = getOption("tsdbr.file",
+  "ts.db"))
 }
 \arguments{
 \item{parameters}{A character of the parameters to filter by.}
 
 \item{periods}{A character vector of the periods to filter by.}
+
+\item{sites}{A character of the sites to filter by.}
 
 \item{file}{A string of the name of the database file.}
 }

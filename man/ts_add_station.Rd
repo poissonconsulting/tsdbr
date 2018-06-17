@@ -4,16 +4,18 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, period, file = getOption("tsdbr.file",
-  "ts.db"))
+ts_add_station(station, parameter, period, site,
+  file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
-\item{station}{A string of the station name.}
+\item{station}{A string of the station}
 
 \item{parameter}{A string of the parameter.}
 
 \item{period}{A string of the period. The possible values are 'year', 'month',
 'day', 'hour', 'minute' and 'second'.}
+
+\item{site}{A string of the site.}
 
 \item{file}{A string of the name of the database file.}
 }

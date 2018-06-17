@@ -1,20 +1,23 @@
 #' Add Station
 #'
-#' @param station A string of the station name.
+#' @param station A string of the station
 #' @param parameter A string of the parameter.
 #' @param period A string of the period. The possible values are 'year', 'month',
-#' 'day', 'hour', 'minute' and 'second'. 
+#' 'day', 'hour', 'minute' and 'second'.
+#' @param site A string of the site.
 #' @inheritParams ts_create_db
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_station <- function(station, parameter, period, site, file = getOption("tsdbr.file", "ts.db")) {
   check_string(station)
   check_string(parameter)
   check_string(period)
+  check_string(site)
   
   stations <- data.frame(Station = station,
                          Parameter = parameter,
                          Period = period,
+                         Site = site,
                          stringsAsFactors = FALSE)
   ts_add_stations(stations, file)
 }
@@ -22,8 +25,8 @@ ts_add_station <- function(station, parameter, period, file = getOption("tsdbr.f
 #' Add Stations
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
-#' Period. The optional columns are
-#' LowerLimit, UpperLimit, Longitude, Latitude, Elevation, Organization , SiteName, StationID and Comments.
+#' Period and Site. The optional columns are
+#' LowerLimit, UpperLimit, Elevation, StationName and Comments.
 #' @inheritParams ts_create_db
 #' @return The imported station data.
 #' @export
@@ -31,7 +34,8 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   check_data(stations,
              values = list(Station  = "",
                            Parameter = "",
-                           Period = c("year", "month", "day", "hour", "minute", "second")),
+                           Period = c("year", "month", "day", "hour", "minute", "second"),
+                           Site = ""),
              nrow = TRUE,
              key = "Station")
   
@@ -43,29 +47,13 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
     stations$UpperLimit <- NA_real_
   } else check_vector(stations$UpperLimit, c(1, NA))
   
-  if(missing_column(stations, "Longitude")) {
-    stations$Longitude <- NA_real_
-  } else check_vector(stations$Longitude, c(-180, 180, NA))
-  
-  if(missing_column(stations, "Latitude")) {
-    stations$Latitude <- NA_real_
-  } else check_vector(stations$Latitude, c(-90, 90, NA))
-  
   if(missing_column(stations, "Elevation")) {
     stations$Elevation <- NA_real_
   } else check_vector(stations$Elevation, c(1, NA))
   
-  if(missing_column(stations, "Organization")) {
-    stations$Organization <- NA_character_
-  } else check_vector(stations$Organization, c("", NA))
-  
-  if(missing_column(stations, "SiteName")) {
-    stations$SiteName <- NA_character_
-  } else check_vector(stations$SiteName, c("", NA))
-  
-  if(missing_column(stations, "StationID")) {
-    stations$StationID <- NA_character_
-  } else check_vector(stations$StationID, c("", NA))
+  if(missing_column(stations, "StationName")) {
+    stations$StationName <- NA_character_
+  } else check_vector(stations$StationName, c("", NA))
   
   if(missing_column(stations, "Comments")) {
     stations$Comments <- NA_character_
@@ -73,9 +61,9 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   
   stations$CommentsStation <- stations$Comments
   
-  stations <- stations[c("Station", "Parameter", "Period",
-                         "LowerLimit", "UpperLimit", "Longitude", "Latitude",
-                         "Elevation", "Organization", "SiteName", "StationID",
+  stations <- stations[c("Station", "Parameter", "Period", "Site",
+                         "Elevation", "LowerLimit", "UpperLimit",
+                         "StationName", 
                          "CommentsStation")]
   
   add(stations, "Station", file)
@@ -85,6 +73,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
 #' 
 #' Gets stations table as a data frame.
 #' @param parameters A character of the parameters to filter by.
+#' @param sites A character of the sites to filter by.
 #' @param periods A character vector of the periods to filter by.
 #' @inheritParams ts_create_db
 #' @return A data frame of the requested data.
@@ -92,24 +81,31 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
 ts_get_stations <- function(
   parameters = NULL,
   periods = c("year", "month", "day", "hour", "minute", "second"),
+  sites = NULL,
   file = getOption("tsdbr.file", "ts.db")) {
-
+  
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
   checkor(check_null(parameters), 
           check_vector(parameters, ts_get_parameters(file = file)$Parameter, 
                        length = TRUE, unique = TRUE))
+  
   check_vector(periods, c("year", "month", "day", "hour", "minute", "second"), 
                length = TRUE, unique = TRUE)
   
-  if(is.null(parameters)) parameters <- ts_get_parameters(file = file)$Parameter
+  checkor(check_null(sites), 
+          check_vector(sites, ts_get_sites(file = file)$Site, 
+                       length = TRUE, unique = TRUE))
   
+  if(is.null(parameters)) parameters <- ts_get_parameters(file = file)$Parameter
+  if(is.null(sites)) sites <- ts_get_sites(file = file)$Site
   
   data <- DBI::dbGetQuery(conn, paste0("SELECT *
     FROM Station
     WHERE Parameter ", in_commas(parameters),
-                                       "AND Period ", in_commas(periods)))
+    "AND Period ", in_commas(periods),
+    "AND Site ", in_commas(sites)))
   rownames(data) <- NULL
   data
 }
