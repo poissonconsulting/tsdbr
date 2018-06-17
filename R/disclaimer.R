@@ -27,5 +27,5 @@ ts_set_disclaimer <- function(
 #' @return A string of the disclaimer.
 #' @export
 ts_get_disclaimer <- function(file = getOption("tsdbr.file", "ts.db")) {
-  get("Database", file = file)$Disclaimer
+  ts_get_table("Database", file = file)$Disclaimer
 }

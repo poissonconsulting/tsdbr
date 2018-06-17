@@ -7,7 +7,7 @@
 ts_connect_db(file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
-\item{file}{A string of the database to connect with.}
+\item{file}{A string of the name of the database file.}
 }
 \value{
 A connection.

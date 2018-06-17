@@ -6,17 +6,8 @@ add <- function(data, table, file) {
   invisible(data)
 }
 
-get <- function(table, file) {
-  conn <- ts_connect_db(file)
-  on.exit(DBI::dbDisconnect(conn))
-  
-  table <- DBI::dbReadTable(conn, table)
-  rownames(table) <- NULL
-  table
-}
-
 get_utc_offset <- function(file) {
-  get("Database", file)$UTC_Offset
+  ts_get_table("Database", file)$UTC_Offset
 }
 
 get_tz <- function(file) {

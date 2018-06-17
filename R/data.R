@@ -51,7 +51,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "CommentsData")]
   
-  stations <- get("Station", file)
+  stations <- ts_get_table("Station", file)
   
   if(any(!unique(data$Station) %in% stations$Station))
     stop("unknown stations", call. = FALSE)

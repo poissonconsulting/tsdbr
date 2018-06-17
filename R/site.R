@@ -63,5 +63,5 @@ ts_add_sites <- function(sites, file = getOption("tsdbr.file", "ts.db")) {
 #' @return A data frame of the requested data.
 #' @export
 ts_get_sites <- function(file = getOption("tsdbr.file", "ts.db")) {
-  get("Site", file = file)
+  ts_get_table("Site", file = file)
 }

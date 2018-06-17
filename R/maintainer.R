@@ -26,5 +26,5 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
 #' @return A string of the maintainer.
 #' @export
 ts_get_maintainer <- function(file = getOption("tsdbr.file", "ts.db")) {
-  get("Database", file = file)$Maintainer
+  ts_get_table("Database", file = file)$Maintainer
 }

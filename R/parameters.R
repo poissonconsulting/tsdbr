@@ -41,6 +41,6 @@ ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db"
 #' @return A data frame of the requested data.
 #' @export
 ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
-  get("Parameter", file = file)
+  ts_get_table("Parameter", file = file)
 }
 
