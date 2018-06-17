@@ -115,9 +115,9 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     GROUP BY Station")
   
   DBI::dbGetQuery(conn, "CREATE VIEW DataCount AS
-    SELECT Station, COUNT(*) AS DataCount
+    SELECT Station, STRFTIME('%Y', DateTimeData) AS Year, COUNT(*) AS DataCount
     FROM Data 
-    GROUP BY Station")
+    GROUP BY Station, Year")
 
   status <- data.frame(Status = 1:3,
                        Description = c("reasonable", "questionable", "erroneous"))

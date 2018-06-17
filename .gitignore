@@ -6,3 +6,4 @@
 *.sqlite
 *.db
 ts.csv
+*.pdf
