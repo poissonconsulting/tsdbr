@@ -26,7 +26,7 @@ ts_add_station <- function(station, parameter, period, site, file = getOption("t
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period and Site. The optional columns are
-#' LowerLimit, UpperLimit, Elevation, StationName and Comments.
+#' Depth, LowerLimit, UpperLimit, StationName and Comments.
 #' @inheritParams ts_create_db
 #' @return The imported station data.
 #' @export
@@ -47,9 +47,9 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
     stations$UpperLimit <- NA_real_
   } else check_vector(stations$UpperLimit, c(1, NA))
   
-  if(missing_column(stations, "Elevation")) {
-    stations$Elevation <- NA_real_
-  } else check_vector(stations$Elevation, c(1, NA))
+  if(missing_column(stations, "Depth")) {
+    stations$Depth <- NA_real_
+  } else check_vector(stations$Depth, c(1, NA))
   
   if(missing_column(stations, "StationName")) {
     stations$StationName <- NA_character_
@@ -62,7 +62,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
   stations$CommentsStation <- stations$Comments
   
   stations <- stations[c("Station", "Parameter", "Period", "Site",
-                         "Elevation", "LowerLimit", "UpperLimit",
+                         "Depth", "LowerLimit", "UpperLimit",
                          "StationName", 
                          "CommentsStation")]
   
