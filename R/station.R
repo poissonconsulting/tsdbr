@@ -84,7 +84,7 @@ ts_get_stations <- function(
   sites = NULL,
   file = getOption("tsdbr.file", "ts.db")) {
   
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbDisconnect(conn))
   
   checkor(check_null(parameters), 

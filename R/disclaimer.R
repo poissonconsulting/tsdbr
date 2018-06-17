@@ -11,7 +11,7 @@ ts_set_disclaimer <- function(
   check_string(disclaimer)
   old <- ts_get_disclaimer(file = file)
   
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbDisconnect(conn))
   
   DBI::dbGetQuery(conn, 

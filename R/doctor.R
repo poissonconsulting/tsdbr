@@ -17,7 +17,7 @@ ts_doctor_db <- function(check_limits = TRUE,
   check_flag(check_gaps)
   check_flag(fix)
   
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
   on.exit(DBI::dbDisconnect(conn), add = TRUE)

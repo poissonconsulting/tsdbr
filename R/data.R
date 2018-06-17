@@ -73,7 +73,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data <- aggregate_time_add(data, na_rm = na_rm) 
   }
   data$UploadedUTC <- sys_time_utc()
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
   on.exit(DBI::dbDisconnect(conn), add = TRUE)
@@ -144,7 +144,7 @@ ts_get_data <- function(stations = NULL,
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbDisconnect(conn))
   
   checkor(check_null(stations), 

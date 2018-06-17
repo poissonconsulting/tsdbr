@@ -10,7 +10,7 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
   check_string(maintainer)
   old <- ts_get_maintainer(file = file)
   
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbDisconnect(conn))
   
   DBI::dbGetQuery(conn, 

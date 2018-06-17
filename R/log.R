@@ -5,7 +5,7 @@
 #' @return A data frame of the requested data.
 #' @export
 ts_get_log <- function(file = getOption("tsdbr.file", "ts.db")) {
-  conn <- connect(file)
+  conn <- ts_connect_db(file)
   on.exit(DBI::dbDisconnect(conn))
   
   data <- DBI::dbGetQuery(conn, "SELECT *
