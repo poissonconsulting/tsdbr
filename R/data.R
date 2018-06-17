@@ -98,16 +98,16 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
       (MonthData == 1 AND Period IN ('year'));")
   
   if(nrow(period)) {
-      stop("there are ", 
-              length(unique(period$Station)), " stations",
-              " with date times that are inconsistent with the period", call. = FALSE)
+    stop("there are ", 
+         length(unique(period$Station)), " stations",
+         " with date times that are inconsistent with the period", call. = FALSE)
   }
   x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
-                               " INTO Data SELECT * FROM Upload;"))
+                                    " INTO Data SELECT * FROM Upload;"))
   
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
-
+  
   invisible(data)
 }
 
@@ -126,7 +126,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
 #' @export
-ts_get_data <- function(stations = ts_get_stations()$Station,
+ts_get_data <- function(stations = NULL,
                         start_date = end_date - 366L, 
                         end_date = Sys.Date(),
                         period = "hour",
@@ -135,7 +135,6 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
                         fill = FALSE,
                         na_replace = NA,
                         file = getOption("tsdbr.file", "ts.db")) {
-  check_vector(stations, "", length = TRUE, unique = TRUE)
   check_date(start_date)
   check_date(end_date)
   check_vector(period, c("year", "month", "day", "hour", "minute", "second"), length = 1)
@@ -145,12 +144,15 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
-  if(any(!unique(stations) %in% ts_get_stations()$Station))
-    stop("unknown stations", call. = FALSE)
-  
   conn <- connect(file)
   on.exit(DBI::dbDisconnect(conn))
   
+  checkor(check_null(stations), 
+          check_vector(stations, ts_get_stations(file = file)$Station, 
+                       length = TRUE, unique = TRUE))
+
+  if(is.null(stations)) stations <- ts_get_stations(file = file)$Station
+
   data <- DBI::dbGetQuery(conn, paste0("SELECT Station, DateTimeData, Corrected, Status
     FROM Data
     WHERE Station ", in_commas(stations), " AND
@@ -175,7 +177,7 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
   data$Status <- sub("2", "questionable", data$Status)
   data$Status <- sub("3", "erroneous", data$Status)
   data$Status <- ordered(data$Status, levels = status_values())
-
+  
   tz <- get_tz(file)
   data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
   
@@ -190,7 +192,7 @@ ts_get_data <- function(stations = ts_get_stations()$Station,
     data$Corrected[is.na(data$Corrected)] <- as.numeric(na_replace)
     data$Status[is.na(data$Status)] <- "reasonable"
   }
-
+  
   data <- data[order(data$Station, data$DateTimeData),]
   
   rownames(data) <- NULL

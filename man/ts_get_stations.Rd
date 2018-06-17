@@ -4,9 +4,8 @@
 \alias{ts_get_stations}
 \title{Get Stations Table}
 \usage{
-ts_get_stations(parameters = ts_get_parameters()$Parameter,
-  periods = c("year", "month", "day", "hour", "minute", "second"),
-  file = getOption("tsdbr.file", "ts.db"))
+ts_get_stations(parameters = NULL, periods = c("year", "month", "day",
+  "hour", "minute", "second"), file = getOption("tsdbr.file", "ts.db"))
 }
 \arguments{
 \item{parameters}{A character of the parameters to filter by.}

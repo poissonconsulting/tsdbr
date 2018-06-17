@@ -4,8 +4,8 @@
 \alias{ts_get_data}
 \title{Get Data}
 \usage{
-ts_get_data(stations = ts_get_stations()$Station, start_date = end_date -
-  366L, end_date = Sys.Date(), period = "hour", na_rm = FALSE,
+ts_get_data(stations = NULL, start_date = end_date - 366L,
+  end_date = Sys.Date(), period = "hour", na_rm = FALSE,
   status = "questionable", fill = FALSE, na_replace = NA,
   file = getOption("tsdbr.file", "ts.db"))
 }
