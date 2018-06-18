@@ -8,7 +8,7 @@ test_that("package", {
   expect_true(file.exists(file))
   teardown(unlink(file))
   conn <- ts_connect_db(file)
-  teardown(ts_disconnect(conn))
+  teardown(ts_disconnect_db(conn))
 
   expect_error(DBI::dbGetQuery(conn, paste0(
     "INSERT INTO Database VALUES(0, '0', 'user', 'Disclaimer');")), 
@@ -91,10 +91,13 @@ test_that("package", {
   expect_identical(ts_get_maintainer(file = file), "me")
   
   data <- ts_get_data(end_date = as.Date("2000-09-01"), file = file)
+  expect_identical(colnames(data), c("Station", "DateTime", "Recorded", "Corrected",
+                                 "Status", "Comments"))
+  expect_identical(nrow(data), 22L)
   csv <- sub("[.]db$", ".csv", file)
   expect_equal(colnames(ts_write_csv(data, file = csv)), 
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
-                 "Corrected", "Status"))
+                 "Recorded", "Corrected", "Status", "Comments"))
   teardown(unlink(csv))
   
   expect_warning(ts_translate_stations(data), 

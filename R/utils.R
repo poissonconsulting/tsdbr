@@ -56,7 +56,7 @@ round_down_time <- function(data) {
   data
 }
 
-aggregate_time_add <- function(data, na_rm) {
+aggregate_time <- function(data, na_rm) {
   data <- split(data, data[c("Station", "DateTimeData")], drop = TRUE)
   data <- lapply(data, FUN = function(x) {
     data.frame(Station = x$Station[1],
@@ -64,20 +64,7 @@ aggregate_time_add <- function(data, na_rm) {
                Recorded = average(x$Recorded, na_rm = na_rm), 
                Corrected = average(x$Corrected, na_rm = na_rm),
                Status = max(x$Status),
-               CommentsData = paste(unique(x$CommentsData), collapse = " "),
-               stringsAsFactors = FALSE) })
-  data <- do.call("rbind", data)
-  row.names(data) <- NULL
-  data
-}
-
-aggregate_time_get <- function(data, na_rm) {
-  data <- split(data, data[c("Station", "DateTimeData")], drop = TRUE)
-  data <- lapply(data, FUN = function(x) {
-    data.frame(Station = x$Station[1],
-               DateTimeData = x$DateTimeData[1],
-               Corrected = average(x$Corrected, na_rm = na_rm),
-               Status = max(x$Status),
+               CommentsData = NA_character_,
                stringsAsFactors = FALSE) })
   data <- do.call("rbind", data)
   row.names(data) <- NULL

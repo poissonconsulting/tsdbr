@@ -70,7 +70,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data <- round_down_time(data)
     data$Period <- NULL
     
-    data <- aggregate_time_add(data, na_rm = na_rm) 
+    data <- aggregate_time(data, na_rm = na_rm) 
   }
   data$UploadedUTC <- sys_time_utc()
   conn <- ts_connect_db(file)
@@ -153,7 +153,8 @@ ts_get_data <- function(stations = NULL,
 
   if(is.null(stations)) stations <- ts_get_stations(file = file)$Station
 
-  data <- DBI::dbGetQuery(conn, paste0("SELECT Station, DateTimeData, Corrected, Status
+  data <- DBI::dbGetQuery(conn, paste0(
+    "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
     WHERE Station ", in_commas(stations), " AND
     DATE(DateTimeData) >= '", start_date, "' AND
@@ -166,7 +167,7 @@ ts_get_data <- function(stations = NULL,
       data <- round_down_time(data)
       data$Period <- NULL
       
-      data <- aggregate_time_get(data, na_rm = na_rm)
+      data <- aggregate_time(data, na_rm = na_rm)
     }
     
     status <- as.integer(ordered(status, status_values()))
@@ -196,6 +197,7 @@ ts_get_data <- function(stations = NULL,
   data <- data[order(data$Station, data$DateTimeData),]
   
   rownames(data) <- NULL
-  colnames(data) <- c("Station", "DateTime", "Corrected", "Status")
+  colnames(data) <- c("Station", "DateTime", "Recorded", "Corrected", "Status",
+                      "Comments")
   data
 }

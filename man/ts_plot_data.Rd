@@ -8,7 +8,7 @@ ts_plot_data(data)
 }
 \arguments{
 \item{data}{A data frame of the data to plot with minimum of columns Station,
-DateTime and Observed and/or Corrected.}
+DateTime and Recorded and/or Corrected.}
 }
 \description{
 Plot Data

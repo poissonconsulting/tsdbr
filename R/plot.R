@@ -13,7 +13,7 @@ plot_station <- function(data) {
 #' Plot Data
 #'
 #' @param data A data frame of the data to plot with minimum of columns Station,
-#' DateTime and Observed and/or Corrected.
+#' DateTime and Recorded and/or Corrected.
 #' @export
 ts_plot_data <- function(data) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -27,27 +27,27 @@ ts_plot_data <- function(data) {
              nrow = TRUE,
              key = c("Station", "DateTime"))
   
-  checkor(check_data(data, list(Observed = c(1, NA))),
+  checkor(check_data(data, list(Recorded = c(1, NA))),
           check_data(data, list(Corrected = c(1, NA))))
   
   if(missing_column(data, "Corrected")) {
-    data$Corrected <- data$Observed
-  } else if (missing_column(data, "Observed")) {
-    data$Observed <- data$Corrected
+    data$Corrected <- data$Recorded
+  } else if (missing_column(data, "Recorded")) {
+    data$Recorded <- data$Corrected
   }
   
   if(missing_column(data, "Status")) {
     data$Status <- ordered("reasonable", status_values())
   } else check_vector(data$Status, ordered(status_values(), status_values()))
   
-  observed <- data
+  recorded <- data
   data$Value <- data$Corrected
   data$Type <- "Corrected"
-  observed$Value <- observed$Observed
-  observed$Type <- "Observed"
-  data <- rbind(data, observed)
-  rm(observed)
-  data$Type <- factor(data$Type, levels = c("Observed", "Corrected"))
+  recorded$Value <- recorded$Recorded
+  recorded$Type <- "Recorded"
+  data <- rbind(data, recorded)
+  rm(recorded)
+  data$Type <- factor(data$Type, levels = c("Recorded", "Corrected"))
   
   data <- split(data, data["Station"], drop = TRUE)
   lapply(data, plot_station)
