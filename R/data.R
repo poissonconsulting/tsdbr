@@ -192,9 +192,20 @@ ts_get_data <- function(stations = NULL,
   }
   
   data <- data[order(data$Station, data$DateTimeData),]
-  
-  rownames(data) <- NULL
   colnames(data) <- c("Station", "DateTime", "Recorded", "Corrected", "Status",
                       "Comments")
+  
+  stations <- ts_get_stations(conn = conn)
+  parameters <- ts_get_parameters(conn = conn)
+  
+  parameters <- parameters[c("Parameter", "Units")]
+  
+  stations <- merge(stations, parameters, by = "Parameter")
+  stations <- stations[c("Station", "Site", "Depth", "Parameter", "Units", "StationName")]
+  data <- merge(data, stations, by = "Station")
+  comments <- data$Comments
+  data$Comments <- NULL
+  data$Comments <- comments
+  rownames(data) <- NULL
   data
 }

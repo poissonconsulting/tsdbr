@@ -2,12 +2,12 @@ context("package")
 
 test_that("package", {
   file <- ":memory:"
-#  file <- "tsdbr.sqlite" to see
+  #  file <- "tsdbr.sqlite" to see
   if(file.exists(file)) unlink(file)
   conn <- ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour"))
   teardown(ts_disconnect_db(conn))
   options(tsdbr.conn = conn)
-
+  
   expect_error(DBI::dbGetQuery(conn, paste0(
     "INSERT INTO Database VALUES('tsdbr', '0', 'user', 0, 'Disclaimer');")), 
     "only one row permitted!")
@@ -90,12 +90,13 @@ test_that("package", {
   
   data <- ts_get_data(end_date = as.Date("2000-09-01"))
   expect_identical(colnames(data), c("Station", "DateTime", "Recorded", "Corrected",
-                                 "Status", "Comments"))
+                                     "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
   expect_identical(nrow(data), 22L)
   expect_equal(colnames(ts_write_csv(data, file = tempfile(fileext=".csv"))),
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
-                 "Recorded", "Corrected", "Status", "Comments"))
-
+                 "Recorded", "Corrected",
+                 "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
+  
   expect_warning(ts_translate_stations(data), 
                  "the following stations are unrecognised: 'S1' and 'S2'")
   
@@ -105,4 +106,4 @@ test_that("package", {
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
   expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 13L)
 })
-  
+
