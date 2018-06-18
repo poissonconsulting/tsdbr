@@ -101,7 +101,5 @@ test_that("package", {
   
   expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
                  "the following stations are unrecognised: 'S1'")
-
-  expect_null(ts_plot_data(data))
 })
   

@@ -25,7 +25,27 @@ conn <- ts_create_db(":memory:")
 options(tsdbr.conn = conn)
 ts_add_parameter("discharge", "cms")
 ts_add_site("Niagara Falls")
-ts_add_station("S1", "discharge", "hour", "Niagara Falls")
+ts_add_station("S1", "discharge", "Niagara Falls", "hour")
+data <- data.frame(Station = "S1", DateTime = ISOdate(2000, 9, 1, 0:23),
+                   Recorded = 0:23 - 2,
+                   stringsAsFactors = FALSE)
+ts_add_data(data)
+data <- ts_get_data(start_date = as.Date("2000-09-01"),
+                    end_date = as.Date("2000-09-02"))
+print(head(data))
+#>   Station            DateTime Recorded Corrected     Status Comments
+#> 1      S1 2000-09-01 00:00:00       -2        -2 reasonable     <NA>
+#> 2      S1 2000-09-01 01:00:00       -1        -1 reasonable     <NA>
+#> 3      S1 2000-09-01 02:00:00        0         0 reasonable     <NA>
+#> 4      S1 2000-09-01 03:00:00        1         1 reasonable     <NA>
+#> 5      S1 2000-09-01 04:00:00        2         2 reasonable     <NA>
+#> 6      S1 2000-09-01 05:00:00        3         3 reasonable     <NA>
+ts_plot_data(data)
+```
+
+<img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
+
+``` r
 ts_disconnect_db()
 ```
 
@@ -55,7 +75,7 @@ devtools::install_github("poissonconsulting/tsdbr")
 To cite package 'tsdbr' in publications use:
 
   Joe Thorley (2018). tsdbr: Environmental Time Series Databasing.
-  R package version 0.0.0.9008.
+  R package version 0.0.0.9009.
 
 A BibTeX entry for LaTeX users is
 
@@ -63,7 +83,7 @@ A BibTeX entry for LaTeX users is
     title = {tsdbr: Environmental Time Series Databasing},
     author = {Joe Thorley},
     year = {2018},
-    note = {R package version 0.0.0.9008},
+    note = {R package version 0.0.0.9009},
   }
 ```
 

@@ -1,5 +1,5 @@
 Package: tsdbr
-Version: 0.0.0.9009
+Version: 0.0.0.9010
 Date: 2018-06-18
 Title: Environmental Time Series Databasing
 Description: Creates, populates, maintains and queries 
@@ -15,6 +15,7 @@ Suggests:
     ggplot2,
     testthat,
     covr
+Additional_Repositories: http://poissonconsulting.github.io/drat
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
