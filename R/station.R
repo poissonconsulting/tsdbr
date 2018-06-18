@@ -2,17 +2,17 @@
 #'
 #' @param station A string of the station
 #' @param parameter A string of the parameter.
+#' @param site A string of the site.
 #' @param period A string of the period. The possible values are 'year', 'month',
 #' 'day', 'hour', 'minute' and 'second'.
-#' @param site A string of the site.
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, period, site, conn = getOption("tsdbr.conn", NULL)) {
+ts_add_station <- function(station, parameter, site, period, conn = getOption("tsdbr.conn", NULL)) {
   check_string(station)
   check_string(parameter)
-  check_string(period)
   check_string(site)
+  check_string(period)
   
   stations <- data.frame(Station = station,
                          Parameter = parameter,
@@ -25,17 +25,19 @@ ts_add_station <- function(station, parameter, period, site, conn = getOption("t
 #' Add Stations
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
-#' Period and Site. The optional columns are
+#' Site and Period. The optional columns are
 #' Depth, LowerLimit, UpperLimit, StationName, StationID and Comments.
 #' @inheritParams ts_disconnect_db
 #' @return The imported station data.
 #' @export
 ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
+  check_conn(conn)
   check_data(stations,
              values = list(Station  = "",
                            Parameter = "",
-                           Period = c("year", "month", "day", "hour", "minute", "second"),
-                           Site = ""),
+                           Site = "",
+                           Period = c("year", "month", "day", "hour", "minute", "second")
+             ),
              nrow = TRUE,
              key = "Station")
   
@@ -65,7 +67,7 @@ ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
   
   stations$CommentsStation <- stations$Comments
   
-  stations <- stations[c("Station", "Parameter", "Period", "Site",
+  stations <- stations[c("Station", "Parameter", "Site", "Period",
                          "Depth", "LowerLimit", "UpperLimit",
                          "StationName", "StationID",
                          "CommentsStation")]
@@ -87,7 +89,7 @@ ts_get_stations <- function(
   periods = c("year", "month", "day", "hour", "minute", "second"),
   sites = NULL,
   conn = getOption("tsdbr.conn", NULL)) {
-
+  
   checkor(check_null(parameters), 
           check_vector(parameters, ts_get_parameters(conn = conn)$Parameter, 
                        length = TRUE, unique = TRUE, only = TRUE))

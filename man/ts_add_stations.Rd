@@ -8,7 +8,7 @@ ts_add_stations(stations, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
-Period and Site. The optional columns are
+Site and Period. The optional columns are
 Depth, LowerLimit, UpperLimit, StationName, StationID and Comments.}
 
 \item{conn}{An object of class SQLiteConnection.}

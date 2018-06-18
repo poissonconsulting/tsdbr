@@ -4,7 +4,7 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, period, site,
+ts_add_station(station, parameter, site, period,
   conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
@@ -12,10 +12,10 @@ ts_add_station(station, parameter, period, site,
 
 \item{parameter}{A string of the parameter.}
 
+\item{site}{A string of the site.}
+
 \item{period}{A string of the period. The possible values are 'year', 'month',
 'day', 'hour', 'minute' and 'second'.}
-
-\item{site}{A string of the site.}
 
 \item{conn}{An object of class SQLiteConnection.}
 }

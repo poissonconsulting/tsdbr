@@ -19,13 +19,13 @@ test_that("package", {
   
   expect_is(ts_add_site("Mount Doom"), "data.frame")
   
-  expect_error(ts_add_station("S1", "Temp", "minute", "Mount Doom"))  
-  expect_is(ts_add_station("S1", "Temp", "day", "Mount Doom"), "data.frame")
+  expect_error(ts_add_station("S1", "Temp", "Mount Doom", "minute"))  
+  expect_is(ts_add_station("S1", "Temp", "Mount Doom", "day"), "data.frame")
   
   stations <- data.frame(Station = "S2",
                          Parameter = "Temp",
-                         Period = "hour",
                          Site = "Lothlorien",
+                         Period = "hour",
                          LowerLimit = 0,
                          UpperLimit = 100,
                          StationID = "t2",
