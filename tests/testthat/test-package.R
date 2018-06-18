@@ -1,12 +1,11 @@
 context("package")
 
 test_that("package", {
-  file <- tempfile(tmpdir = tempdir(check = TRUE), fileext = ".sqlite")
-  file <- "ts.db"
+  file <- ":memory:"
+#  file <- "tsdbr.sqlite" to see
   if(file.exists(file)) unlink(file)
   conn <- ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour"))
   teardown(ts_disconnect_db(conn))
-  expect_true(file.exists(file))
   options(tsdbr.conn = conn)
 
   expect_error(DBI::dbGetQuery(conn, paste0(
@@ -93,12 +92,10 @@ test_that("package", {
   expect_identical(colnames(data), c("Station", "DateTime", "Recorded", "Corrected",
                                  "Status", "Comments"))
   expect_identical(nrow(data), 22L)
-  csv <- sub("[.]db$", ".csv", file)
-  expect_equal(colnames(ts_write_csv(data, file = csv)), 
+  expect_equal(colnames(ts_write_csv(data, file = tempfile(fileext=".csv"))),
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
                  "Recorded", "Corrected", "Status", "Comments"))
-  teardown(unlink(csv))
-  
+
   expect_warning(ts_translate_stations(data), 
                  "the following stations are unrecognised: 'S1' and 'S2'")
   

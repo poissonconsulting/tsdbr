@@ -5,5 +5,5 @@
 
 *.sqlite
 *.db
-ts.csv
+*.csv
 *.pdf
