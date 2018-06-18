@@ -137,7 +137,7 @@ ts_get_data <- function(stations = NULL,
                         file = getOption("tsdbr.file", "ts.db")) {
   check_date(start_date)
   check_date(end_date)
-  check_vector(period, c("year", "month", "day", "hour", "minute", "second"), length = 1)
+  check_vector(period, ts_get_periods(file = file), length = 1, only = TRUE)
   check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
   check_flag(fill)
   check_length1(na_replace)
@@ -149,7 +149,7 @@ ts_get_data <- function(stations = NULL,
   
   checkor(check_null(stations), 
           check_vector(stations, ts_get_stations(file = file)$Station, 
-                       length = TRUE, unique = TRUE))
+                       length = TRUE, unique = TRUE, only = TRUE))
 
   if(is.null(stations)) stations <- ts_get_stations(file = file)$Station
 

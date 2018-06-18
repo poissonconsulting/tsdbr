@@ -111,3 +111,10 @@ plural <- function(x, n = 1L, end = "") {
   paste0(x, ifelse(n != 1L, "s", ""), end)
 }
 
+# this function needs exporting and setting up so that looks up
+# permitted periods from Station table SQL
+ts_get_periods <- function(file = getOption("tsdbr.file", "ts.db")) {
+  c("year", "month", "day", "hour", "minute", "second")
+}
+
+

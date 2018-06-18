@@ -93,14 +93,14 @@ ts_get_stations <- function(
   
   checkor(check_null(parameters), 
           check_vector(parameters, ts_get_parameters(file = file)$Parameter, 
-                       length = TRUE, unique = TRUE))
+                       length = TRUE, unique = TRUE, only = TRUE))
   
-  check_vector(periods, c("year", "month", "day", "hour", "minute", "second"), 
-               length = TRUE, unique = TRUE)
+  check_vector(periods, ts_get_periods(file = file), 
+               length = TRUE, unique = TRUE, only = TRUE)
   
   checkor(check_null(sites), 
           check_vector(sites, ts_get_sites(file = file)$Site, 
-                       length = TRUE, unique = TRUE))
+                       length = TRUE, unique = TRUE, only = TRUE))
   
   if(is.null(parameters)) parameters <- ts_get_parameters(file = file)$Parameter
   if(is.null(sites)) sites <- ts_get_sites(file = file)$Site
