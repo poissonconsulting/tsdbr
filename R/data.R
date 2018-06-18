@@ -54,11 +54,10 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   stations <- ts_get_table("Station", conn)
   
-  if(any(!unique(data$Station) %in% stations$Station))
-    stop("unknown stations", call. = FALSE)
-  
+  check_vector(data$Station, stations$Station, only = TRUE)
+
   data <- merge(data, stations[c("Station", "LowerLimit", "UpperLimit")], by = "Station")
-  
+
   data$Status[is.na(data$Corrected)] <- 1L
   data$Status[!is.na(data$Corrected) & !is.na(data$LowerLimit) & data$Corrected < data$LowerLimit] <- 3L
   data$Status[!is.na(data$Corrected) & !is.na(data$UpperLimit) & data$Corrected > data$UpperLimit] <- 3L
