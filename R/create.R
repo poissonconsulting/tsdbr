@@ -7,8 +7,9 @@
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.
 #' @param periods A character vector of the permitted periods. 
 #' Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'
+#' @return A connection to the database.
 #' @export
-ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"), 
+ts_create_db <- function (file, 
                           utc_offset = 0L,
                           periods = c("year", "month", "day", "hour", "minute", "second")) {
   check_string(file)
@@ -23,9 +24,8 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
     stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
-  on.exit(ts_disconnect_db(conn))
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
-  
+
   DBI::dbGetQuery(conn, "CREATE TABLE Database (
     UTC_Offset  INTEGER NOT NULL,
     VersionTSDBR TEXT NOT NULL,
@@ -255,5 +255,5 @@ ts_create_db <- function (file = getOption("tsdbr.file", "ts.db"),
                                'Database',
                                NULL);"))
   
-  invisible(file)
+  conn
 }

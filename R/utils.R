@@ -1,17 +1,14 @@
-add <- function(data, table, file) {
-  conn <- ts_connect_db(file)
-  on.exit(ts_disconnect_db(conn))
-  
+add <- function(data, table, conn) {
   DBI::dbWriteTable(conn, table, data, append = TRUE)
   invisible(data)
 }
 
-get_utc_offset <- function(file) {
-  ts_get_table("Database", file)$UTC_Offset
+get_utc_offset <- function(conn) {
+  ts_get_table("Database", conn)$UTC_Offset
 }
 
-get_tz <- function(file) {
-  ts_utc_offset_to_tz(get_utc_offset(file))
+get_tz <- function(conn) {
+  ts_utc_offset_to_tz(get_utc_offset(conn))
 }
 
 has_column <- function(data, column) {
@@ -113,7 +110,7 @@ plural <- function(x, n = 1L, end = "") {
 
 # this function needs exporting and setting up so that looks up
 # permitted periods from Station table SQL
-ts_get_periods <- function(file = getOption("tsdbr.file", "ts.db")) {
+ts_get_periods <- function(conn = getOption("tsdbr.conn", NULL)) {
   c("year", "month", "day", "hour", "minute", "second")
 }
 

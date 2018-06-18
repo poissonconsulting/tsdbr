@@ -5,7 +5,7 @@
 \title{Add Station}
 \usage{
 ts_add_station(station, parameter, period, site,
-  file = getOption("tsdbr.file", "ts.db"))
+  conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{station}{A string of the station}
@@ -17,7 +17,7 @@ ts_add_station(station, parameter, period, site,
 
 \item{site}{A string of the site.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the imported station.

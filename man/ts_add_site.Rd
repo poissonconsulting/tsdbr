@@ -4,12 +4,12 @@
 \alias{ts_add_site}
 \title{Add Sites}
 \usage{
-ts_add_site(site, file = getOption("tsdbr.file", "ts.db"))
+ts_add_site(site, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{site}{A string of the site name.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the imported parameters.

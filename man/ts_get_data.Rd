@@ -7,7 +7,7 @@
 ts_get_data(stations = NULL, start_date = end_date - 366L,
   end_date = Sys.Date(), period = "hour", na_rm = FALSE,
   status = "questionable", fill = FALSE, na_replace = NA,
-  file = getOption("tsdbr.file", "ts.db"))
+  conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{stations}{A character vector of the stations.}
@@ -28,7 +28,7 @@ The possible values are 'reasonable', 'questionable' or 'erroneous'.}
 
 \item{na_replace}{A scalar indicating what to use to fill in missing values.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the requested data.

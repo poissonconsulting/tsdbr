@@ -1,16 +1,16 @@
 #' Add Sites
 #'
 #' @param site A string of the site name.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_site <- function(site, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_site <- function(site, conn = getOption("tsdbr.conn", NULL)) {
   check_string(site)
 
   sites <- data.frame(Site = site,
                            stringsAsFactors = FALSE)
   
-  ts_add_sites(sites, file)
+  ts_add_sites(sites, conn)
 }
 
 #' Add Site
@@ -18,10 +18,10 @@ ts_add_site <- function(site, file = getOption("tsdbr.file", "ts.db")) {
 #' @param sites A data frame of parameters with columns Site.
 #' The optional columns are
 #' Longitude, Latitude, Organization, SiteName and Comments.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_sites <- function(sites, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_sites <- function(sites, conn = getOption("tsdbr.conn", NULL)) {
   check_data(sites,
              values = list(Site = ""),
              key = "Site",
@@ -52,16 +52,16 @@ ts_add_sites <- function(sites, file = getOption("tsdbr.file", "ts.db")) {
   sites <- sites[c("Site", "Longitude", "Latitude",
                          "Organization", "SiteName", "CommentsSite")]
   
-  add(sites, "Site", file)
+  add(sites, "Site", conn)
 }
 
 
 #' Get Site Table
 #' 
 #' Gets site table as a data frame.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the requested data.
 #' @export
-ts_get_sites <- function(file = getOption("tsdbr.file", "ts.db")) {
-  ts_get_table("Site", file = file)
+ts_get_sites <- function(conn = getOption("tsdbr.conn", NULL)) {
+  ts_get_table("Site", conn = conn)
 }

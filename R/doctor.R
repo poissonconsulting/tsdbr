@@ -4,24 +4,22 @@
 #' @param check_period A flag indicating whether to check if the periods are valid.
 #' @param check_gaps A flag indicating whether to check if there are any gaps in the data given the period.
 #' @param fix A flag indicating whether to fix any problems
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A flag indicating whether or not the database passed the checks (or was fixed)
 #' @export
 ts_doctor_db <- function(check_limits = TRUE,
                          check_period = TRUE,
                          check_gaps = FALSE,
                          fix = FALSE, 
-                         file = getOption("tsdbr.file", "ts.db")) {
+                         conn = getOption("tsdbr.conn", NULL)) {
   check_flag(check_limits)
   check_flag(check_period)
   check_flag(check_gaps)
   check_flag(fix)
   
-  conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  on.exit(ts_disconnect_db(conn), add = TRUE)
-  
+
   if(check_limits) {
     limits <- DBI::dbGetQuery(
       conn, "SELECT d.Station, d.DateTimeData,
@@ -43,7 +41,7 @@ ts_doctor_db <- function(check_limits = TRUE,
         limits$UploadedUTC <- sys_time_utc()
         
         DBI::dbGetQuery(conn, "DELETE FROM Upload;")
-        add(limits, "Upload", file)
+        add(limits, "Upload", conn)
         
         DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
         
@@ -126,7 +124,7 @@ ts_doctor_db <- function(check_limits = TRUE,
         span$UploadedUTC <- sys_time_utc()
         
         DBI::dbGetQuery(conn, "DELETE FROM Upload;")
-        add(span, "Upload", file)
+        add(span, "Upload", conn)
         
         DBI::dbGetQuery(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
         

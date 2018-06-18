@@ -4,10 +4,10 @@
 \alias{ts_get_parameters}
 \title{Get Parameter Table}
 \usage{
-ts_get_parameters(file = getOption("tsdbr.file", "ts.db"))
+ts_get_parameters(conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the requested data.

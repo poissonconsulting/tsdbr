@@ -17,6 +17,18 @@ SQLite database of environmental time series data.
 tsdbr is designed to be simple to use with minimal dependencies and
 maximal database integrity independence.
 
+## Utilisation
+
+``` r
+library(tsdbr)
+conn <- ts_create_db(":memory:")
+options(tsdbr.conn = conn)
+ts_add_parameter("discharge", "cms")
+ts_add_site("Niagara Falls")
+ts_add_station("S1", "discharge", "hour", "Niagara Falls")
+ts_disconnect_db()
+```
+
 ## Installation
 
 To install the latest version from the Poisson drat
@@ -42,16 +54,16 @@ devtools::install_github("poissonconsulting/tsdbr")
 
 To cite package 'tsdbr' in publications use:
 
-  Joe Thorley (2018). tsdbr: Time Series Database. R package
-  version 0.0.0.9001.
+  Joe Thorley (2018). tsdbr: Environmental Time Series Databasing.
+  R package version 0.0.0.9008.
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
-    title = {tsdbr: Time Series Database},
+    title = {tsdbr: Environmental Time Series Databasing},
     author = {Joe Thorley},
     year = {2018},
-    note = {R package version 0.0.0.9001},
+    note = {R package version 0.0.0.9008},
   }
 ```
 

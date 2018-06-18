@@ -3,7 +3,7 @@
 #' @inheritParams ts_create_db
 #' @return A connection.
 #' @export
-ts_connect_db <- function(file = getOption("tsdbr.file", "ts.db")) {
+ts_connect_db <- function(file) {
   check_string(file)
   
   if(!file.exists(file))
@@ -18,23 +18,21 @@ ts_connect_db <- function(file = getOption("tsdbr.file", "ts.db")) {
 #'
 #' @param conn An object of class SQLiteConnection.
 #' @export
-ts_disconnect_db <- function(conn) {
-  if(!inherits(conn, "SQLiteConnection"))
-    stop("conn must be an SQLiteConnection", call. = FALSE)
+ts_disconnect_db <- function(conn = getOption("tsdbr.conn", NULL)) {
+  check_conn(conn)
   DBI::dbDisconnect(conn)
 }
 
 #' Get Table
 #'
 #' @param table A string of the table to get.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the table
 #' @export
-ts_get_table <- function(table, file = getOption("tsdbr.file", "ts.db")) {
+ts_get_table <- function(table, conn = getOption("tsdbr.conn", NULL)) {
   check_string(table)
-  conn <- ts_connect_db(file)
-  on.exit(ts_disconnect_db(conn))
-  
+  check_conn(conn)
+
   if(!DBI::dbExistsTable(conn, table))
     stop("table '", table, "' does not exist", call. = FALSE)
   

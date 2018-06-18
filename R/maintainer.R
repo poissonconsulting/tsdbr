@@ -2,17 +2,14 @@
 #' 
 #' Sets maintainer.
 #' @param maintainer A string of the maintainer.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A string of the old maintainer.
 #' @export
 ts_set_maintainer <- function(maintainer = ts_sys_user(), 
-                              file = getOption("tsdbr.file", "ts.db")) {
+                              conn = getOption("tsdbr.conn", NULL)) {
   check_string(maintainer)
-  old <- ts_get_maintainer(file = file)
-  
-  conn <- ts_connect_db(file)
-  on.exit(ts_disconnect_db(conn))
-  
+  old <- ts_get_maintainer(conn = conn)
+
   DBI::dbGetQuery(conn, 
                   paste0("UPDATE Database 
                          SET Maintainer = '", maintainer, "'"))
@@ -22,9 +19,9 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
 #' Get Maintainer
 #' 
 #' Gets maintainer as a string.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A string of the maintainer.
 #' @export
-ts_get_maintainer <- function(file = getOption("tsdbr.file", "ts.db")) {
-  ts_get_table("Database", file = file)$Maintainer
+ts_get_maintainer <- function(conn = getOption("tsdbr.conn", NULL)) {
+  ts_get_table("Database", conn = conn)$Maintainer
 }

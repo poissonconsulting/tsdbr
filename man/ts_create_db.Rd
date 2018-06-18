@@ -4,8 +4,8 @@
 \alias{ts_create_db}
 \title{Create Time-Series Database}
 \usage{
-ts_create_db(file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L,
-  periods = c("year", "month", "day", "hour", "minute", "second"))
+ts_create_db(file, utc_offset = 0L, periods = c("year", "month", "day",
+  "hour", "minute", "second"))
 }
 \arguments{
 \item{file}{A string of the name of the database file.}
@@ -14,6 +14,9 @@ ts_create_db(file = getOption("tsdbr.file", "ts.db"), utc_offset = 0L,
 
 \item{periods}{A character vector of the permitted periods. 
 Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'}
+}
+\value{
+A connection to the database.
 }
 \description{
 Creates an empty SQLite database to store time series data.

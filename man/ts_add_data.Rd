@@ -5,7 +5,7 @@
 \title{Add Data}
 \usage{
 ts_add_data(data, aggregate = FALSE, na_rm = FALSE, resolution = "abort",
-  file = getOption("tsdbr.file", "ts.db"))
+  conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{data}{A data frame of data with columns Station, DateTime, Recorded.
@@ -19,7 +19,7 @@ This also has the effect of rounding down single values.}
 \item{resolution}{A string of the action to take with regard to existing values.
 Options are 'abort', 'ignore' or 'replace'.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the imported parameters.

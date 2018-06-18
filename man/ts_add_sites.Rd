@@ -4,14 +4,14 @@
 \alias{ts_add_sites}
 \title{Add Site}
 \usage{
-ts_add_sites(sites, file = getOption("tsdbr.file", "ts.db"))
+ts_add_sites(sites, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{sites}{A data frame of parameters with columns Site.
 The optional columns are
 Longitude, Latitude, Organization, SiteName and Comments.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the imported parameters.

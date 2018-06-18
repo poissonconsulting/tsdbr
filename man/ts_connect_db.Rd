@@ -4,7 +4,7 @@
 \alias{ts_connect_db}
 \title{Connect to Database}
 \usage{
-ts_connect_db(file = getOption("tsdbr.file", "ts.db"))
+ts_connect_db(file)
 }
 \arguments{
 \item{file}{A string of the name of the database file.}

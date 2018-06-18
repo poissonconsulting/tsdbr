@@ -5,12 +5,12 @@
 \title{Set Disclaimer}
 \usage{
 ts_set_disclaimer(disclaimer = "THE DATA ARE COPYRIGHTED",
-  file = getOption("tsdbr.file", "ts.db"))
+  conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{disclaimer}{A string of the disclaimer.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A string of the old disclaimer.

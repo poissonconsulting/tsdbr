@@ -4,10 +4,10 @@
 \alias{ts_get_maintainer}
 \title{Get Maintainer}
 \usage{
-ts_get_maintainer(file = getOption("tsdbr.file", "ts.db"))
+ts_get_maintainer(conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A string of the maintainer.

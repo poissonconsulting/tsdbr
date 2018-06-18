@@ -2,7 +2,7 @@
 #'
 #' @param data A data frame of data with columns Station, DateTime, Recorded.
 #' Additional optional columns include Corrected, Status, Comments.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @param aggregate A flag indicating whether to aggregate and average multiple values within the same station period.
 #' This also has the effect of rounding down single values.
 #' @param na_rm A flag indicating whether to remove missing values (if possible) when aggregating.
@@ -12,15 +12,16 @@
 #' @export
 ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
                         resolution = "abort",
-                        file = getOption("tsdbr.file", "ts.db")) {
+                        conn = getOption("tsdbr.conn", NULL)) {
   check_data(data,
              values = list(Station = "",
                            DateTime = Sys.time(),
                            Recorded = c(1, NA)),
              nrow = TRUE,
              key = c("Station", "DateTime"))
+  check_conn(conn)
   
-  tz <- get_tz(file)
+  tz <- get_tz(conn)
   
   if(tz == "GMT") {
     checkor(check_tzone(data$DateTime, "UTC"),check_tzone(data$DateTime, "GMT"))
@@ -51,7 +52,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "CommentsData")]
   
-  stations <- ts_get_table("Station", file)
+  stations <- ts_get_table("Station", conn)
   
   if(any(!unique(data$Station) %in% stations$Station))
     stop("unknown stations", call. = FALSE)
@@ -73,13 +74,11 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data <- aggregate_time(data, na_rm = na_rm) 
   }
   data$UploadedUTC <- sys_time_utc()
-  conn <- ts_connect_db(file)
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  on.exit(ts_disconnect_db(conn), add = TRUE)
   DBI::dbGetQuery(conn, "DELETE FROM Upload;")
   
-  add(data, "Upload", file)
+  add(data, "Upload", conn)
   
   period <- DBI::dbGetQuery(conn, "SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
@@ -122,7 +121,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' The possible values are 'reasonable', 'questionable' or 'erroneous'.
 #' @param fill A flag indicating whether to fill in missing values.
 #' @param na_replace A scalar indicating what to use to fill in missing values.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
 #' @export
@@ -134,24 +133,22 @@ ts_get_data <- function(stations = NULL,
                         status = "questionable",
                         fill = FALSE,
                         na_replace = NA,
-                        file = getOption("tsdbr.file", "ts.db")) {
+                        conn = getOption("tsdbr.conn", NULL)) {
   check_date(start_date)
   check_date(end_date)
-  check_vector(period, ts_get_periods(file = file), length = 1, only = TRUE)
+  check_vector(period, ts_get_periods(conn = conn), length = 1, only = TRUE)
   check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
   check_flag(fill)
   check_length1(na_replace)
+  check_conn(conn)
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
-  conn <- ts_connect_db(file)
-  on.exit(ts_disconnect_db(conn))
-  
   checkor(check_null(stations), 
-          check_vector(stations, ts_get_stations(file = file)$Station, 
+          check_vector(stations, ts_get_stations(conn = conn)$Station, 
                        length = TRUE, unique = TRUE, only = TRUE))
 
-  if(is.null(stations)) stations <- ts_get_stations(file = file)$Station
+  if(is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
 
   data <- DBI::dbGetQuery(conn, paste0(
     "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
@@ -179,7 +176,7 @@ ts_get_data <- function(stations = NULL,
   data$Status <- sub("3", "erroneous", data$Status)
   data$Status <- ordered(data$Status, levels = status_values())
   
-  tz <- get_tz(file)
+  tz <- get_tz(conn)
   data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
   
   if(fill) {

@@ -4,10 +4,10 @@
 \alias{ts_get_sites}
 \title{Get Site Table}
 \usage{
-ts_get_sites(file = getOption("tsdbr.file", "ts.db"))
+ts_get_sites(conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the requested data.

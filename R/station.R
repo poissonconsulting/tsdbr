@@ -5,10 +5,10 @@
 #' @param period A string of the period. The possible values are 'year', 'month',
 #' 'day', 'hour', 'minute' and 'second'.
 #' @param site A string of the site.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, period, site, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_station <- function(station, parameter, period, site, conn = getOption("tsdbr.conn", NULL)) {
   check_string(station)
   check_string(parameter)
   check_string(period)
@@ -19,7 +19,7 @@ ts_add_station <- function(station, parameter, period, site, file = getOption("t
                          Period = period,
                          Site = site,
                          stringsAsFactors = FALSE)
-  ts_add_stations(stations, file)
+  ts_add_stations(stations, conn)
 }
 
 #' Add Stations
@@ -27,10 +27,10 @@ ts_add_station <- function(station, parameter, period, site, file = getOption("t
 #' @param stations A data frame of stations with columns Station, Parameter,
 #' Period and Site. The optional columns are
 #' Depth, LowerLimit, UpperLimit, StationName, StationID and Comments.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return The imported station data.
 #' @export
-ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
   check_data(stations,
              values = list(Station  = "",
                            Parameter = "",
@@ -70,7 +70,7 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
                          "StationName", "StationID",
                          "CommentsStation")]
   
-  add(stations, "Station", file)
+  add(stations, "Station", conn)
 }
 
 #' Get Stations Table
@@ -79,31 +79,28 @@ ts_add_stations <- function(stations, file = getOption("tsdbr.file", "ts.db")) {
 #' @param parameters A character of the parameters to filter by.
 #' @param sites A character of the sites to filter by.
 #' @param periods A character vector of the periods to filter by.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the requested data.
 #' @export
 ts_get_stations <- function(
   parameters = NULL,
   periods = c("year", "month", "day", "hour", "minute", "second"),
   sites = NULL,
-  file = getOption("tsdbr.file", "ts.db")) {
-  
-  conn <- ts_connect_db(file)
-  on.exit(ts_disconnect_db(conn))
-  
+  conn = getOption("tsdbr.conn", NULL)) {
+
   checkor(check_null(parameters), 
-          check_vector(parameters, ts_get_parameters(file = file)$Parameter, 
+          check_vector(parameters, ts_get_parameters(conn = conn)$Parameter, 
                        length = TRUE, unique = TRUE, only = TRUE))
   
-  check_vector(periods, ts_get_periods(file = file), 
+  check_vector(periods, ts_get_periods(conn = conn), 
                length = TRUE, unique = TRUE, only = TRUE)
   
   checkor(check_null(sites), 
-          check_vector(sites, ts_get_sites(file = file)$Site, 
+          check_vector(sites, ts_get_sites(conn = conn)$Site, 
                        length = TRUE, unique = TRUE, only = TRUE))
   
-  if(is.null(parameters)) parameters <- ts_get_parameters(file = file)$Parameter
-  if(is.null(sites)) sites <- ts_get_sites(file = file)$Site
+  if(is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
+  if(is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
   
   data <- DBI::dbGetQuery(conn, paste0("SELECT *
     FROM Station

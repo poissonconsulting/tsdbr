@@ -24,6 +24,18 @@ tsdbr provide functions to create, populate, maintain and query an SQLite databa
 
 tsdbr is designed to be simple to use with minimal dependencies and maximal database integrity independence.
 
+## Utilisation
+
+```{r, warning=FALSE}
+library(tsdbr)
+conn <- ts_create_db(":memory:")
+options(tsdbr.conn = conn)
+ts_add_parameter("discharge", "cms")
+ts_add_site("Niagara Falls")
+ts_add_station("S1", "discharge", "hour", "Niagara Falls")
+ts_disconnect_db()
+```
+
 ## Installation
 
 To install the latest version from the Poisson drat [repository](https://github.com/poissonconsulting/drat)

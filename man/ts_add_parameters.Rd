@@ -4,12 +4,12 @@
 \alias{ts_add_parameters}
 \title{Add Parameters}
 \usage{
-ts_add_parameters(parameters, file = getOption("tsdbr.file", "ts.db"))
+ts_add_parameters(parameters, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{parameters}{A data frame of parameters with columns Parameter and Units.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the imported parameters.

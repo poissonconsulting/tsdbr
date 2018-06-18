@@ -4,13 +4,13 @@
 \alias{ts_set_maintainer}
 \title{Set Maintainer}
 \usage{
-ts_set_maintainer(maintainer = ts_sys_user(), file = getOption("tsdbr.file",
-  "ts.db"))
+ts_set_maintainer(maintainer = ts_sys_user(), conn = getOption("tsdbr.conn",
+  NULL))
 }
 \arguments{
 \item{maintainer}{A string of the maintainer.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A string of the old maintainer.

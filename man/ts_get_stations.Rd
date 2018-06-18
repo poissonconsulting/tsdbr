@@ -5,8 +5,8 @@
 \title{Get Stations Table}
 \usage{
 ts_get_stations(parameters = NULL, periods = c("year", "month", "day",
-  "hour", "minute", "second"), sites = NULL, file = getOption("tsdbr.file",
-  "ts.db"))
+  "hour", "minute", "second"), sites = NULL, conn = getOption("tsdbr.conn",
+  NULL))
 }
 \arguments{
 \item{parameters}{A character of the parameters to filter by.}
@@ -15,7 +15,7 @@ ts_get_stations(parameters = NULL, periods = c("year", "month", "day",
 
 \item{sites}{A character of the sites to filter by.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the requested data.

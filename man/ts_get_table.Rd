@@ -4,12 +4,12 @@
 \alias{ts_get_table}
 \title{Get Table}
 \usage{
-ts_get_table(table, file = getOption("tsdbr.file", "ts.db"))
+ts_get_table(table, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{table}{A string of the table to get.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 A data frame of the table

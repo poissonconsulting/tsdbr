@@ -8,19 +8,19 @@
 #' Possible values are 'Station', 'StationName' and 'StationID'.
 #' @param to A string indicating the coding to translate to. 
 #' Possible values are 'Station', 'StationName' and 'StationID'.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #'
 #' @return The translated data
 #' @export
 ts_translate_stations <- function(data, from = "StationID", to = "Station",
-                                  file = getOption("tsdbr.file", "ts.db")) {
+                                  conn = getOption("tsdbr.conn", NULL)) {
   check_data(data, values = list(Station = ""))
   check_vector(from, c("Station", "StationName", "StationID"), length = 1)
   check_vector(to, c("Station", "StationName", "StationID"), length = 1)
   
   if(from == to) return(data)
   
-  stations <- ts_get_stations(file = file)
+  stations <- ts_get_stations(conn = conn)
   
   stations_from <- data["Station"]
   colnames(stations_from) <- from

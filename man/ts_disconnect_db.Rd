@@ -4,7 +4,7 @@
 \alias{ts_disconnect_db}
 \title{Disconnect from Database}
 \usage{
-ts_disconnect_db(conn)
+ts_disconnect_db(conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{conn}{An object of class SQLiteConnection.}

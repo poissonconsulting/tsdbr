@@ -2,10 +2,10 @@
 #'
 #' @param parameter A string of the parameter name.
 #' @param units A string of the units
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameter <- function(parameter, units, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_parameter <- function(parameter, units, conn = getOption("tsdbr.conn", NULL)) {
   check_string(parameter)
   check_string(units)
   
@@ -13,16 +13,16 @@ ts_add_parameter <- function(parameter, units, file = getOption("tsdbr.file", "t
                            Units = units,
                            stringsAsFactors = FALSE)
   
-  ts_add_parameters(parameters, file)
+  ts_add_parameters(parameters, conn)
 }
 
 #' Add Parameters
 #'
 #' @param parameters A data frame of parameters with columns Parameter and Units.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db")) {
+ts_add_parameters <- function(parameters, conn = getOption("tsdbr.conn", NULL)) {
   check_data(parameters,
              values = list(Parameter = "",
                            Units = ""),
@@ -31,16 +31,16 @@ ts_add_parameters <- function(parameters, file = getOption("tsdbr.file", "ts.db"
   
   parameters <- parameters[c("Parameter", "Units")]
   
-  add(parameters, "Parameter", file)
+  add(parameters, "Parameter", conn)
 }
 
 #' Get Parameter Table
 #' 
 #' Gets parameter table as a data frame.
-#' @inheritParams ts_create_db
+#' @inheritParams ts_disconnect_db
 #' @return A data frame of the requested data.
 #' @export
-ts_get_parameters <- function(file = getOption("tsdbr.file", "ts.db")) {
-  ts_get_table("Parameter", file = file)
+ts_get_parameters <- function(conn = getOption("tsdbr.conn", NULL)) {
+  ts_get_table("Parameter", conn = conn)
 }
 

@@ -4,14 +4,14 @@
 \alias{ts_add_stations}
 \title{Add Stations}
 \usage{
-ts_add_stations(stations, file = getOption("tsdbr.file", "ts.db"))
+ts_add_stations(stations, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{stations}{A data frame of stations with columns Station, Parameter,
 Period and Site. The optional columns are
 Depth, LowerLimit, UpperLimit, StationName, StationID and Comments.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 The imported station data.

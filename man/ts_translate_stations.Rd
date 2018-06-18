@@ -5,7 +5,7 @@
 \title{Translate Stations}
 \usage{
 ts_translate_stations(data, from = "StationID", to = "Station",
-  file = getOption("tsdbr.file", "ts.db"))
+  conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{data}{A data frame with the column Station of the station coding.}
@@ -16,7 +16,7 @@ Possible values are 'Station', 'StationName' and 'StationID'.}
 \item{to}{A string indicating the coding to translate to. 
 Possible values are 'Station', 'StationName' and 'StationID'.}
 
-\item{file}{A string of the name of the database file.}
+\item{conn}{An object of class SQLiteConnection.}
 }
 \value{
 The translated data
