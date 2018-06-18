@@ -105,5 +105,11 @@ test_that("package", {
   
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
   expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 13L)
+  
+  ts_delete_station("3S")
+  expect_warning(ts_delete_station("3S"), "station '3S' does not exist")
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 25L)
+  ts_delete_station("S2")
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 1L)
 })
 

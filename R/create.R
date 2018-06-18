@@ -100,8 +100,8 @@ ts_create_db <- function (file,
       Length(StationID) >= 1
     ),
     PRIMARY KEY (Station),
-    FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter)
-    FOREIGN KEY (Site) REFERENCES Site (Site)
+    FOREIGN KEY (Parameter) REFERENCES Parameter (Parameter) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (Site) REFERENCES Site (Site) ON UPDATE CASCADE ON DELETE CASCADE
   )"))
   
   data_sql <- "CREATE TABLE Data (
@@ -117,7 +117,7 @@ ts_create_db <- function (file,
       DATETIME(UploadedUTC) IS UploadedUTC
     ),
     PRIMARY KEY (Station, DateTimeData),
-    FOREIGN KEY (Station) REFERENCES Station (Station),
+    FOREIGN KEY (Station) REFERENCES Station (Station) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (Status) REFERENCES Status (Status)
 );"
   

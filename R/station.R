@@ -22,6 +22,25 @@ ts_add_station <- function(station, parameter, site, period, conn = getOption("t
   ts_add_stations(stations, conn)
 }
 
+#' Delete Station
+#' 
+#' Deletes all records associated with a station from the database.
+#'
+#' @param station A string of the station name.
+#' @inheritParams ts_disconnect_db
+#' @export
+ts_delete_station <- function(station, conn = getOption("tsdbr.conn", NULL)) {
+  check_string(station)
+  if(!station %in% ts_get_stations(conn = conn)$Station) {
+    warning("station '", station, "' does not exist")
+    return(invisible())
+  }
+  DBI::dbGetQuery(conn, paste0("DELETE
+    FROM Station
+    WHERE Station == '", station, "'"))
+  invisible()
+}
+
 #' Add Stations
 #' 
 #' @param stations A data frame of stations with columns Station, Parameter,
