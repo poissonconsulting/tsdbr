@@ -9,7 +9,7 @@ test_that("package", {
   options(tsdbr.conn = conn)
 
   expect_error(DBI::dbGetQuery(conn, paste0(
-    "INSERT INTO Database VALUES(0, '0', 'user', 'Disclaimer');")), 
+    "INSERT INTO Database VALUES('tsdbr', '0', 'user', 0, 'Disclaimer');")), 
     "only one row permitted!")
   
   parameters <- data.frame(Parameter = "Temp",

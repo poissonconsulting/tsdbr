@@ -25,11 +25,12 @@ ts_create_db <- function (file,
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
-
+  
   DBI::dbGetQuery(conn, "CREATE TABLE Database (
-    UTC_Offset  INTEGER NOT NULL,
-    VersionTSDBR TEXT NOT NULL,
+    Type TEXT NOT NULL,
+    Version TEXT NOT NULL,
     Maintainer TEXT NOT NULL,
+    UTC_Offset  INTEGER NOT NULL,
     Disclaimer TEXT NOT NULL,
     CHECK (
       UTC_Offset >= -12 AND UTC_Offset <= 14
@@ -135,14 +136,14 @@ ts_create_db <- function (file,
     SELECT Station, STRFTIME('%Y', DateTimeData) AS Year, COUNT(*) AS DataCount
     FROM Data 
     GROUP BY Station, Year")
-
+  
   DBI::dbGetQuery(conn, "CREATE VIEW DataNULL AS
     SELECT Station, STRFTIME('%Y', DateTimeData) AS Year, COUNT(*) AS DataNULL
     FROM Data
     WHERE Corrected IS NULL 
     GROUP BY Station, Year")
   
-    DBI::dbGetQuery(conn, "CREATE VIEW ProportionNULL AS
+  DBI::dbGetQuery(conn, "CREATE VIEW ProportionNULL AS
     SELECT Station, Year, DataNULL / DataCount AS ProportionNULL
     FROM DataCount
     NATURAL JOIN DataNULL")
@@ -244,12 +245,15 @@ ts_create_db <- function (file,
     BEGIN
       INSERT INTO Log VALUES(DATETIME('now'), 'UPDATE', 'Station', NULL);
     END;"))
-  
-  DBI::dbGetQuery(conn, 
-                  paste0("INSERT INTO Database VALUES(", utc_offset,
-                         ",'", utils::packageVersion('tsdbr'), "'",
-                         ", '", ts_sys_user(),"'",
-                         ", 'THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND');"))
+
+  DBI::dbGetQuery(
+    conn, 
+    paste0(
+      "INSERT INTO Database VALUES('tsdb'",
+      ", '", utils::packageVersion('tsdbr'), "'",
+      ", '", ts_sys_user(), "'",
+      ", '", utc_offset, "'",
+      ", 'THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND');"))
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES(DATETIME('now'), 
                                'INSERT',
                                'Database',
