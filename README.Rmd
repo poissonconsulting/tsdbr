@@ -20,9 +20,7 @@ knitr::opts_chunk$set(
 
 # tsdbr
 
-tsdbr provide functions to create, populate, maintain and query an SQLite database of environmental time series data.
-
-tsdbr is designed to be simple to use with minimal dependencies and maximal database integrity independence.
+`tsdbr` is designed to create, populate, maintain and query SQLite databases of environmental time series data.
 
 ## Utilisation
 

@@ -11,11 +11,8 @@ MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org
 
 # tsdbr
 
-tsdbr provide functions to create, populate, maintain and query an
-SQLite database of environmental time series data.
-
-tsdbr is designed to be simple to use with minimal dependencies and
-maximal database integrity independence.
+`tsdbr` is designed to create, populate, maintain and query SQLite
+databases of environmental time series data.
 
 ## Utilisation
 
@@ -75,7 +72,7 @@ devtools::install_github("poissonconsulting/tsdbr")
 To cite package 'tsdbr' in publications use:
 
   Joe Thorley (2018). tsdbr: Environmental Time Series Databasing.
-  R package version 0.0.0.9009.
+  R package version 0.0.0.9011.
 
 A BibTeX entry for LaTeX users is
 
@@ -83,7 +80,7 @@ A BibTeX entry for LaTeX users is
     title = {tsdbr: Environmental Time Series Databasing},
     author = {Joe Thorley},
     year = {2018},
-    note = {R package version 0.0.0.9009},
+    note = {R package version 0.0.0.9011},
   }
 ```
 

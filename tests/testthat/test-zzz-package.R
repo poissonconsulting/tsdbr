@@ -101,5 +101,8 @@ test_that("package", {
   
   expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
                  "the following stations are unrecognised: 'S1'")
+  
+  expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
+  expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 13L)
 })
   
