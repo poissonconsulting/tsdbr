@@ -54,7 +54,11 @@ round_down_time <- function(data) {
 }
 
 aggregate_time <- function(data, na_rm) {
-  data <- split(data, data[c("Station", "DateTimeData")], drop = TRUE)
+  if(!anyDuplicated(data$DateTimeData)) {
+    return(data[c("Station", "DateTimeData", "Recorded", "Corrected", "Status",
+                   "CommentsData")])
+  }
+  data <- split(data, data$DateTimeData, drop = TRUE)
   data <- lapply(data, FUN = function(x) {
     data.frame(Station = x$Station[1],
                DateTimeData = x$DateTimeData[1],
@@ -63,6 +67,14 @@ aggregate_time <- function(data, na_rm) {
                Status = max(x$Status),
                CommentsData = NA_character_,
                stringsAsFactors = FALSE) })
+  data <- do.call("rbind", data)
+  row.names(data) <- NULL
+  data
+}
+
+aggregate_time_station <- function(data, na_rm) {
+  data <- split(data, data["Station"], drop = TRUE)
+  data <- lapply(data, aggregate_time, na_rm = na_rm)
   data <- do.call("rbind", data)
   row.names(data) <- NULL
   data
@@ -113,5 +125,3 @@ plural <- function(x, n = 1L, end = "") {
 ts_get_periods <- function(conn = getOption("tsdbr.conn", NULL)) {
   c("year", "month", "day", "hour", "minute", "second")
 }
-
-

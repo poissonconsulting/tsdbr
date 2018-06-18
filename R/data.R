@@ -71,7 +71,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data <- round_down_time(data)
     data$Period <- NULL
     
-    data <- aggregate_time(data, na_rm = na_rm) 
+    data <- aggregate_time_station(data, na_rm = na_rm) 
   }
   data$UploadedUTC <- sys_time_utc()
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
@@ -164,7 +164,7 @@ ts_get_data <- function(stations = NULL,
       data <- round_down_time(data)
       data$Period <- NULL
       
-      data <- aggregate_time(data, na_rm = na_rm)
+      data <- aggregate_time_station(data, na_rm = na_rm)
     }
     
     status <- as.integer(ordered(status, status_values()))
