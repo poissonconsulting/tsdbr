@@ -2,7 +2,6 @@ context("package")
 
 test_that("package", {
   file <- ":memory:"
-  file <- "tsdbr.sqlite"
   if(file.exists(file)) unlink(file)
   conn <- ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour"))
   teardown(ts_disconnect_db(conn))
