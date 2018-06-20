@@ -123,7 +123,7 @@ test_that("package", {
   DBI::dbWriteTable(conn, name = "Data", value = data, row.names = FALSE, append = TRUE)
   
   expect_message(ts_doctor_db(check_period = FALSE), "the following stations have non-erroneous [(]corrected[)] data that are outside the lower and upper limits.*1\\s+S2\\s+2\\s*$")
-  expect_message(ts_doctor_db(check_limits = FALSE), "the following stations have date time data that are inconsistent with their periods.*1\\s+S2\\s+3\\s*$")
+  expect_message(ts_doctor_db(check_limits = FALSE), "the following stations have date time data that are inconsistent with their periods: 'S2'")
  
     expect_message(ts_doctor_db(check_gaps = TRUE), "the following stations have gaps in their data.*1\\s+S2\\s+4\\s*$")
     
