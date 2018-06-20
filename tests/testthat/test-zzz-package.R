@@ -109,6 +109,9 @@ test_that("package", {
   expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 0L)
   expect_identical(nrow(ts_get_data("3S", start_date = as.Date("1999-09-01"),
                            end_date = as.Date("2000-09-01"), period = "month", fill = TRUE)), 13L)
+  expect_identical(colnames(nrow(ts_get_data("3S", period = "month", fill = TRUE))),
+                   colnames(nrow(ts_get_data("3S", start_date = as.Date("1999-09-01"),
+                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE))))
   
   data <- data.frame(Station = "S2",
                      DateTimeData = c("2000-09-02 00:00:00", # gap on two
