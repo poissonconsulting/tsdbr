@@ -118,8 +118,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' The possible values are 'year', 'month', 'day', 'hour', 'minute' and 'second'.
 #' @param status A string of the worse type of data to get.
 #' The possible values are 'reasonable', 'questionable' or 'erroneous'.
-#' @param fill A flag indicating whether to fill in missing values.
-#' @param na_replace A scalar indicating what to use to fill in missing values.
+#' @param fill A flag indicating whether to fill in gaps (with missing values).
 #' @inheritParams ts_disconnect_db
 #' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
@@ -131,14 +130,12 @@ ts_get_data <- function(stations = NULL,
                         na_rm = FALSE,
                         status = "questionable",
                         fill = FALSE,
-                        na_replace = NA,
                         conn = getOption("tsdbr.conn", NULL)) {
   check_date(start_date)
   check_date(end_date)
   check_vector(period, ts_get_periods(conn = conn), length = 1, only = TRUE)
   check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
   check_flag(fill)
-  check_length1(na_replace)
   check_conn(conn)
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
@@ -183,7 +180,6 @@ ts_get_data <- function(stations = NULL,
     all <- expand.grid(Station = stations, DateTimeData = datetimes,
                        stringsAsFactors = FALSE)
     data <- merge(data, all, by = c("Station", "DateTimeData"), all.y = TRUE)
-    data$Corrected[is.na(data$Corrected)] <- as.numeric(na_replace)
     data$Status[is.na(data$Status)] <- "reasonable"
   }
   
