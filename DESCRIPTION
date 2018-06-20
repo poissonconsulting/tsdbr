@@ -1,6 +1,6 @@
 Package: tsdbr
-Version: 0.0.0.9012
-Date: 2018-06-18
+Version: 0.0.0.9013
+Date: 2018-06-19
 Title: Environmental Time Series Databasing
 Description: Creates, populates, maintains and queries 
   SQLite databases of environmental time series data.

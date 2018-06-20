@@ -19,6 +19,10 @@ ts_doctor_db <- function(check_limits = TRUE,
   
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
+  
+  span <- FALSE
+  period <- FALSE
+  limits <- FALSE
 
   if(check_limits) {
     limits <- DBI::dbGetQuery(
@@ -135,5 +139,5 @@ ts_doctor_db <- function(check_limits = TRUE,
     }
     span <- nrow(span) > 0
   }
-  !limits & !period & !span
+  !limits && !period && !span
 }
