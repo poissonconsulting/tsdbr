@@ -45,7 +45,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  data$DateTimeData <- as.character(data$DateTime)
+  data$DateTimeData <- format(data$DateTime, format = "%Y-%m-%d %H:%M:%S")
   data$CommentsData <- data$Comments
   data$Status <- as.integer(data$Status)
   
