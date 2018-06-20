@@ -55,9 +55,9 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   stations <- ts_get_table("Station", conn)
   
   check_vector(data$Station, stations$Station, only = TRUE)
-
+  
   data <- merge(data, stations[c("Station", "LowerLimit", "UpperLimit")], by = "Station")
-
+  
   data$Status[is.na(data$Corrected)] <- 1L
   data$Status[!is.na(data$Corrected) & !is.na(data$LowerLimit) & data$Corrected < data$LowerLimit] <- 3L
   data$Status[!is.na(data$Corrected) & !is.na(data$UpperLimit) & data$Corrected > data$UpperLimit] <- 3L
@@ -124,28 +124,54 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations = NULL,
-                        start_date = end_date - 366L, 
-                        end_date = Sys.Date(),
+                        start_date = NULL, 
+                        end_date = NULL,
                         period = "hour",
                         na_rm = FALSE,
                         status = "questionable",
                         fill = FALSE,
                         conn = getOption("tsdbr.conn", NULL)) {
-  check_date(start_date)
-  check_date(end_date)
+  checkor(check_null(start_date), check_date(start_date))
+  checkor(check_null(end_date), check_date(end_date))
   check_vector(period, ts_get_periods(conn = conn), length = 1, only = TRUE)
   check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
   check_flag(fill)
   check_conn(conn)
   
-  if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
-  
   checkor(check_null(stations), 
           check_vector(stations, ts_get_stations(conn = conn)$Station, 
                        length = TRUE, unique = TRUE, only = TRUE))
-
+  
   if(is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
+  
+  if(is.null(start_date) || is.null(end_date)) {
+    span <- DBI::dbGetQuery(conn, paste0("
+    SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
+    FROM Data
+    WHERE Station ", in_commas(stations), "
+    GROUP BY Station"))
+    
+    if(!nrow(span)) {
+      return(data.frame(Station = character(0),
+                        DateTime = as.POSIXct(character(0), tz = get_tz(conn)),
+                        Recorded = numeric(0),
+                        Corrected = numeric(0),
+                        Status = ts_integer_to_status(integer(0)),
+                        Site = character(0),
+                        Depth = numeric(0),
+                        Parameter = character(0),
+                        Units = character(0),
+                        StationName = character(0),
+                        Comments = character(0),
+                        stringsAsFactors = FALSE))
+    }
 
+    if(is.null(start_date)) start_date <- min(as.Date(span$Start))
+    if(is.null(end_date)) end_date <- max(as.Date(span$End))
+  }
+  
+  if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
+  
   data <- DBI::dbGetQuery(conn, paste0(
     "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
@@ -168,7 +194,7 @@ ts_get_data <- function(stations = NULL,
     
   }
   data$Status <- ts_integer_to_status(data$Status)
-
+  
   tz <- get_tz(conn)
   data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
   

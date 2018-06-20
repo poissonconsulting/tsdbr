@@ -72,9 +72,12 @@ test_that("package", {
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 24L)
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"))), 21L)
   expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 1L)
-  expect_identical(nrow(ts_get_data()), 0L)
-  expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 367L)
-  expect_equal(ts_get_data(stations = "S2", end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, status = "erroneous")$Corrected, c(rep(NA, 12), 9.227273),
+  expect_identical(nrow(ts_get_data(start_date = as.Date("2001-01-01"),
+                                    end_date = as.Date("2001-02-01"))), 0L)
+  expect_identical(nrow(ts_get_data(stations = "S1", start_date = as.Date("1999-09-01"), 
+                                    end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 367L)
+  expect_equal(ts_get_data(stations = "S2",  start_date = as.Date("1999-09-01"),
+                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, status = "erroneous")$Corrected, c(rep(NA, 12), 9.227273),
                tolerance = 0.0000001)
   expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour", fill = TRUE)$Corrected, rep(NA_real_, 50))
   expect_identical(ts_get_log()$TableLog, c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data"))
@@ -103,7 +106,9 @@ test_that("package", {
                  "the following stations are unrecognised: 'S1'")
   
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
-  expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 13L)
+  expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 0L)
+  expect_identical(nrow(ts_get_data("3S", start_date = as.Date("1999-09-01"),
+                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE)), 13L)
   
   data <- data.frame(Station = "S2",
                      DateTimeData = c("2000-09-02 00:00:00", # gap on two
@@ -135,7 +140,5 @@ test_that("package", {
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 25L)
   ts_delete_station("S2")
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 1L)
-  
-  
 })
 
