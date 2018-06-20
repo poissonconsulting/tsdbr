@@ -23,7 +23,7 @@ ts_doctor_db <- function(check_limits = TRUE,
   span <- FALSE
   period <- FALSE
   limits <- FALSE
-
+  
   if(check_limits) {
     limits <- DBI::dbGetQuery(
       conn, "SELECT d.Station, d.DateTimeData,
@@ -35,9 +35,10 @@ ts_doctor_db <- function(check_limits = TRUE,
         d.Status != 3;")
     
     if(nrow(limits)) {
-      message("there are ", nrow(limits), " non-erroneous (corrected) values at ", 
-              length(unique(limits$Station)), " stations",
-              " that are outside the lower and upper limits")
+      table <- table(limits$Station)
+      table <- as.data.frame(table)
+      colnames(table) <- c("Station", "Count")
+      
       if(fix) {
         limits$Status <- 3L
         limits <- limits[c("Station", "DateTimeData", "Recorded",
@@ -53,6 +54,10 @@ ts_doctor_db <- function(check_limits = TRUE,
                                'UPDATE', 'Data', 'REPLACE fix limits');"))
         limits <- limits[integer(0),]
       }
+      message("the following stations ", ifelse(fix, "had", "have"), 
+              " non-erroneous (corrected) data", 
+              " that are outside the lower and upper limits:\n",
+              paste0(utils::capture.output(table), collapse = "\n"))
     } 
     limits <- nrow(limits) > 0
   }
@@ -75,15 +80,17 @@ ts_doctor_db <- function(check_limits = TRUE,
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
       (MonthData == 1 AND Period IN ('year'));")
-
+    
     if(nrow(period)) {
-      message("there are ", 
-              length(unique(period$Station)), " stations",
-              " with date times that are inconsistent with the period")
-      
+      table <- table(period$Station)
+      table <- as.data.frame(table)
+      colnames(table) <- c("Station", "Count")
       if(fix) {
         warning("fix period not yet implemented")
       }
+      message("the following stations ", ifelse(FALSE, "had", "have"), 
+              " date time data that are inconsistent with their periods:\n",
+              paste0(utils::capture.output(table), collapse = "\n"))
     }
     period <- nrow(period) > 0
   }
@@ -116,8 +123,9 @@ ts_doctor_db <- function(check_limits = TRUE,
     span$ID <- NULL
     
     if(nrow(span)) {
-      message("there are ", nrow(span), " gaps in ",
-              nrow(limits), " stations")
+      table <- table(span$Station)
+      table <- as.data.frame(table)
+      colnames(table) <- c("Station", "Count")
       
       if(fix) {
         span$Recorded <- NA_real_
@@ -136,6 +144,9 @@ ts_doctor_db <- function(check_limits = TRUE,
                                'INSERT', 'Data', 'ABORT - fix gaps');"))
         span <- span[integer(0),]
       }
+      message("the following stations ", ifelse(fix, "had", "have"), 
+              " gaps in their data:\n",
+              paste0(utils::capture.output(table), collapse = "\n"))
     }
     span <- nrow(span) > 0
   }
