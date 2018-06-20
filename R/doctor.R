@@ -65,21 +65,15 @@ ts_doctor_db <- function(check_limits = TRUE,
   if(check_period) {
     
     period <- DBI::dbGetQuery(conn, "
-    SELECT d.Station AS Station, s.Period AS Period,
-      MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
-      MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
-      MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
-      MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
-      MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
+    SELECT d.Station AS Station, s.Period AS Period, d.DateTimeData AS DATETIME
     FROM Station s
     INNER JOIN Data d ON s.Station = d.Station
-    GROUP BY s.Station, s.Period
-    HAVING
-      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
-      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
-      (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
+    WHERE
+      (STRFTIME('%S', d.DateTimeData) != '00' AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+      (STRFTIME('%M', d.DateTimeData) != '00' AND Period IN ('year', 'month', 'day', 'hour')) OR
+      (STRFTIME('%H', d.DateTimeData) != '00' AND Period IN ('year', 'month', 'day')) OR
+      (STRFTIME('%d', d.DateTimeData) != '01' AND Period IN ('year', 'month')) OR
+      (STRFTIME('%m', d.DateTimeData) != '01' AND Period IN ('year'));")
     
     if(nrow(period)) {
       table <- table(period$Station)
