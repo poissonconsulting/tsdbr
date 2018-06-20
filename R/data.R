@@ -47,7 +47,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   
   data$DateTimeData <- format(data$DateTime, format = "%Y-%m-%d %H:%M:%S")
   data$CommentsData <- data$Comments
-  data$Status <- as.integer(data$Status)
+  data$Status <- ts_status_to_integer(data$Status)
   
   data <- data[c("Station", "DateTimeData", "Recorded",
                  "Corrected", "Status", "CommentsData")]
