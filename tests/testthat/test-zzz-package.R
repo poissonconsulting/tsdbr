@@ -2,7 +2,7 @@ context("package")
 
 test_that("package", {
   file <- ":memory:"
-  #  file <- "tsdbr.sqlite" to see
+  file <- "tsdbr.sqlite"
   if(file.exists(file)) unlink(file)
   conn <- ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour"))
   teardown(ts_disconnect_db(conn))
@@ -106,10 +106,33 @@ test_that("package", {
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
   expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 13L)
   
+  data <- data.frame(Station = "S2",
+                     DateTimeData = c("2000-10-01 00:01:00", # gap on two
+                                      "2000-10-01 00:03:00",
+                                      "2000-10-01 00:03:01", # extra period
+                                      "2000-10-01 00:04:00",
+                                      "2000-10-01 00:05:00",                            
+                                      "2000-10-01 00:06:00"),
+                     Recorded = NA_real_,
+                     Corrected = c(50,50,50,50,-1,101),
+                     Status = 1L,
+                     UploadedUTC = "2018-06-19 00:01:00",
+                     CommentsData = NA_character_,
+                     stringsAsFactors = FALSE)
+  
+  DBI::dbWriteTable(conn, name = "Data", value = data, row.names = FALSE, append = TRUE)
+  
+  expect_message(ts_doctor_db(check_period = FALSE, fix = TRUE), "the following stations had non-erroneous [(]corrected[)] data that are outside the lower and upper limits")
+  expect_true(ts_doctor_db(check_period = FALSE))
+  expect_message(ts_doctor_db(), "the following stations have date time data that are inconsistent with their periods")
+  expect_false(ts_doctor_db())
+  
   ts_delete_station("3S")
   expect_warning(ts_delete_station("3S"), "station '3S' does not exist")
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 25L)
   ts_delete_station("S2")
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 1L)
+  
+  
 })
 
