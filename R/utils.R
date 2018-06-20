@@ -1,3 +1,31 @@
+#' Status to Integer
+#'
+#' Converts an ordered factor of status values to an integer vector.
+#' @param x An ordered factor of status values. 
+#' @return An integer vector.
+#' @export
+#' @examples
+#' ts_status_to_integer(ordered("questionable", 
+#'  c("reasonable", "questionable", "erroneous")))
+ts_status_to_integer <- function(x) {
+  check_vector(x, ordered(status_values(), levels = status_values()))
+  as.integer(x)
+}
+
+#' Status to Integer
+#'
+#' Converts an integer vector to an ordered factor of status values.
+#' @param x An integer vector.
+#' @return An ordered factor of status values.
+#' @export
+#' @examples
+#' ts_integer_to_status(1:3)
+ts_integer_to_status <- function(x) {
+  check_vector(x, 1:3)
+  x <- status_values()[x]
+  ordered(x, levels = status_values())
+}
+
 add <- function(data, table, conn) {
   DBI::dbWriteTable(conn, table, data, append = TRUE)
   invisible(data)

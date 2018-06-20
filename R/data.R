@@ -170,11 +170,8 @@ ts_get_data <- function(stations = NULL,
     data <- data[data$Status <= status,]
     
   }
-  data$Status <- sub("1", "reasonable", data$Status)
-  data$Status <- sub("2", "questionable", data$Status)
-  data$Status <- sub("3", "erroneous", data$Status)
-  data$Status <- ordered(data$Status, levels = status_values())
-  
+  data$Status <- ts_integer_to_status(data$Status)
+
   tz <- get_tz(conn)
   data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
   

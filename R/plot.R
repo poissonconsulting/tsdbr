@@ -37,7 +37,7 @@ ts_plot_data <- function(data) {
   }
   
   if(missing_column(data, "Status")) {
-    data$Status <- ordered("reasonable", status_values())
+    data$Status <- ts_integer_to_status(1L)
   } else check_vector(data$Status, ordered(status_values(), status_values()))
   
   recorded <- data
