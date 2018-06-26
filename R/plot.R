@@ -48,7 +48,10 @@ ts_plot_data <- function(data) {
   
   if (missing_column(data, "Recorded")) {
     data$Recorded <- data$Corrected
+  } else if (missing_column(data, "Corrected")) {
+    data$Corrected <- data$Recorded
   }
+
   
   if(missing_column(data, "Status")) {
     data$Status <- ts_integer_to_status(1L)
