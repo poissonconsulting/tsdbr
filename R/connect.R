@@ -38,5 +38,5 @@ ts_get_table <- function(table, conn = getOption("tsdbr.conn", NULL)) {
   
   table <- DBI::dbReadTable(conn, table)
   rownames(table) <- NULL
-  table
+  as_tibble(table)
 }

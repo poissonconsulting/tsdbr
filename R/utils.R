@@ -26,9 +26,16 @@ ts_integer_to_status <- function(x) {
   ordered(x, levels = status_values())
 }
 
+as_tibble <- function(data) {
+  if (requireNamespace("tibble", quietly = TRUE)) {
+    data <- tibble::as_tibble(data)
+  }
+  data
+}
+
 add <- function(data, table, conn) {
   DBI::dbWriteTable(conn, table, data, append = TRUE)
-  invisible(data)
+  invisible(as_tibble(data))
 }
 
 get_utc_offset <- function(conn) {
@@ -84,7 +91,7 @@ round_down_time <- function(data) {
 aggregate_time <- function(data, na_rm) {
   if(!anyDuplicated(data$DateTimeData)) {
     return(data[c("Station", "DateTimeData", "Recorded", "Corrected", "Status",
-                   "CommentsData")])
+                  "CommentsData")])
   }
   data <- split(data, data$DateTimeData, drop = TRUE)
   data <- lapply(data, FUN = function(x) {

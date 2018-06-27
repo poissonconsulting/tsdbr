@@ -14,7 +14,7 @@ test_that("package", {
   parameters <- data.frame(Parameter = "Temp",
                            Units = "degC", stringsAsFactors = FALSE)
   
-  expect_identical(parameters, ts_add_parameter("Temp", "degC"))
+  expect_identical(tibble::as_tibble(parameters), ts_add_parameter("Temp", "degC"))
   
   expect_is(ts_add_site("Mount Doom"), "data.frame")
   
@@ -63,7 +63,7 @@ test_that("package", {
   data <- ts_get_data(stations = "S1")
   expect_is(data, "data.frame")
   expect_identical(ts_get_parameters(), 
-                   data.frame(Parameter = "Temp", Units = "degC", stringsAsFactors = FALSE))
+                   tibble::as_tibble(data.frame(Parameter = "Temp", Units = "degC", stringsAsFactors = FALSE)))
   
   expect_identical(nrow(ts_get_stations()), 2L)
   

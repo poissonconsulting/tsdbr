@@ -129,5 +129,5 @@ ts_get_stations <- function(
                                        "AND Period ", in_commas(periods),
                                        "AND Site ", in_commas(sites)))
   rownames(data) <- NULL
-  data
+  as_tibble(data)
 }

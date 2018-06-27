@@ -1,20 +1,21 @@
 Package: tsdbr
-Version: 0.0.0.9016
-Date: 2018-06-26
+Version: 0.0.0.9017
+Date: 2018-06-27
 Title: Environmental Time Series Databasing
 Description: Creates, populates, maintains and queries 
   SQLite databases of environmental time series data.
 Authors@R: person("Joe", "Thorley", email = "joe@poissonconsulting.ca", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Imports: 
-    checkr (>= 0.2.0.9004),
+    checkr,
     DBI,
     RSQLite,
     utils
 Suggests: 
+    covr,
     ggplot2,
     testthat,
-    covr
+    tibble
 Additional_Repositories: http://poissonconsulting.github.io/drat
 Encoding: UTF-8
 LazyData: true

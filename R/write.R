@@ -23,5 +23,5 @@ ts_write_csv <- function(data, file = "tsdbr.csv") {
   
   data <- data[c("Year", "Month", "Day", "Hour", "Minute", "Second", colnames)]
   utils::write.csv(data, file = file, row.names = FALSE)
-  invisible(data)
+  invisible(as_tibble(data))
 }

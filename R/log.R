@@ -8,5 +8,5 @@ ts_get_log <- function(conn = getOption("tsdbr.conn", NULL)) {
   data <- DBI::dbGetQuery(conn, "SELECT *
     FROM Log")
   rownames(data) <- NULL
-  data
+  as_tibble(data)
 }

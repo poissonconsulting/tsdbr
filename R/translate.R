@@ -35,5 +35,5 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
     warning("the following stations are unrecognised: ", punctuate(missing, "and"), 
             call. = FALSE)
   }
-  data
+  as_tibble(data)
 }

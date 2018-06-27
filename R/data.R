@@ -106,7 +106,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
   
-  invisible(data)
+  invisible(as_tibble(data))
 }
 
 #' Get Data
@@ -225,5 +225,6 @@ ts_get_data <- function(stations = NULL,
   data$Comments <- NULL
   data$Comments <- comments
   rownames(data) <- NULL
-  data
+  
+  as_tibble(data)
 }
