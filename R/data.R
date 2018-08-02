@@ -18,8 +18,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
              values = list(Station = "",
                            DateTime = Sys.time(),
                            Recorded = c(1, NA)),
-             nrow = TRUE,
-             key = c("Station", "DateTime"))
+             nrow = TRUE)
   
   check_conn(conn)
   
@@ -78,7 +77,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     if(length(duplicates)) {
       stop("there are ", 
            length(duplicates), " stations",
-           " with date times that are inconsistent with the period", call. = FALSE)
+           " with the same rounded-down date times", call. = FALSE)
     }
   }
   data$UploadedUTC <- sys_time_utc()
