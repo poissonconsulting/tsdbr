@@ -40,8 +40,7 @@ ts_plot_data <- function(data) {
   check_data(data,
              values = list(Station = "",
                            DateTime = Sys.time()),
-             nrow = TRUE,
-             key = c("Station", "DateTime"))
+             nrow = TRUE)
   
   checkor(check_data(data, list(Recorded = c(1, NA))),
           check_data(data, list(Corrected = c(1, NA))))
@@ -52,7 +51,6 @@ ts_plot_data <- function(data) {
     data$Corrected <- data$Recorded
   }
 
-  
   if(missing_column(data, "Status")) {
     data$Status <- ts_integer_to_status(1L)
   } else check_vector(data$Status, ordered(status_values(), status_values()))
