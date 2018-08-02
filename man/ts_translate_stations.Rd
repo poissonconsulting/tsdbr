@@ -5,7 +5,7 @@
 \title{Translate Stations}
 \usage{
 ts_translate_stations(data, from = "StationID", to = "Station",
-  conn = getOption("tsdbr.conn", NULL))
+  na_rm = TRUE, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{data}{A data frame with the column Station of the station coding.}
@@ -13,7 +13,9 @@ ts_translate_stations(data, from = "StationID", to = "Station",
 \item{from}{A string indicating the coding to translate from. 
 Possible values are 'Station', 'StationName' and 'StationID'.}
 
-\item{to}{A string indicating the coding to translate to. 
+\item{to}{A string indicating the coding to translate to.}
+
+\item{na_rm}{A flag indicating whether to remove missing stations.
 Possible values are 'Station', 'StationName' and 'StationID'.}
 
 \item{conn}{An object of class SQLiteConnection.}

@@ -99,12 +99,13 @@ test_that("package", {
                  "Recorded", "Corrected",
                  "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
  
-  expect_identical(nrow(ts_translate_stations(data)), nrow(data))
+  expect_identical(nrow(ts_translate_stations(data, na_rm = FALSE)), nrow(data))
+  expect_identical(nrow(ts_translate_stations(data, na_rm = TRUE)), 0L)
    
   expect_warning(ts_translate_stations(data), 
                  "the following stations are unrecognised: 'S1' and 'S2'")
   
-  expect_identical(nrow(ts_translate_stations(data, from = "Station", to = "StationID")), nrow(data))
+  expect_identical(nrow(ts_translate_stations(data, from = "Station", to = "StationID")), 21L)
   
   expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
                  "the following stations are unrecognised: 'S1'")

@@ -30,13 +30,17 @@ ts_add_data(data)
 data <- ts_get_data(start_date = as.Date("2000-09-01"),
                     end_date = as.Date("2000-09-02"))
 print(head(data))
-#>   Station            DateTime Recorded Corrected     Status Comments
-#> 1      S1 2000-09-01 00:00:00       -2        -2 reasonable     <NA>
-#> 2      S1 2000-09-01 01:00:00       -1        -1 reasonable     <NA>
-#> 3      S1 2000-09-01 02:00:00        0         0 reasonable     <NA>
-#> 4      S1 2000-09-01 03:00:00        1         1 reasonable     <NA>
-#> 5      S1 2000-09-01 04:00:00        2         2 reasonable     <NA>
-#> 6      S1 2000-09-01 05:00:00        3         3 reasonable     <NA>
+#> # A tibble: 6 x 11
+#>   Station DateTime            Recorded Corrected Status    Site      Depth
+#>   <chr>   <dttm>                 <dbl>     <dbl> <ord>     <chr>     <dbl>
+#> 1 S1      2000-09-01 00:00:00       -2        -2 reasonab… Niagara …    NA
+#> 2 S1      2000-09-01 01:00:00       -1        -1 reasonab… Niagara …    NA
+#> 3 S1      2000-09-01 02:00:00        0         0 reasonab… Niagara …    NA
+#> 4 S1      2000-09-01 03:00:00        1         1 reasonab… Niagara …    NA
+#> 5 S1      2000-09-01 04:00:00        2         2 reasonab… Niagara …    NA
+#> 6 S1      2000-09-01 05:00:00        3         3 reasonab… Niagara …    NA
+#> # ... with 4 more variables: Parameter <chr>, Units <chr>,
+#> #   StationName <chr>, Comments <chr>
 ts_plot_data(data)
 ```
 
@@ -72,7 +76,7 @@ devtools::install_github("poissonconsulting/tsdbr")
 To cite package 'tsdbr' in publications use:
 
   Joe Thorley (2018). tsdbr: Environmental Time Series Databasing.
-  R package version 0.0.0.9011.
+  R package version 0.0.0.9018.
 
 A BibTeX entry for LaTeX users is
 
@@ -80,7 +84,7 @@ A BibTeX entry for LaTeX users is
     title = {tsdbr: Environmental Time Series Databasing},
     author = {Joe Thorley},
     year = {2018},
-    note = {R package version 0.0.0.9011},
+    note = {R package version 0.0.0.9018},
   }
 ```
 

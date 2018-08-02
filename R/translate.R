@@ -7,12 +7,14 @@
 #' @param from A string indicating the coding to translate from. 
 #' Possible values are 'Station', 'StationName' and 'StationID'.
 #' @param to A string indicating the coding to translate to. 
+#' @param na_rm A flag indicating whether to remove missing stations.
 #' Possible values are 'Station', 'StationName' and 'StationID'.
 #' @inheritParams ts_disconnect_db
 #'
 #' @return The translated data
 #' @export
 ts_translate_stations <- function(data, from = "StationID", to = "Station",
+                                  na_rm = TRUE,
                                   conn = getOption("tsdbr.conn", NULL)) {
   check_data(data, values = list(Station = ""))
   check_vector(from, c("Station", "StationName", "StationID"), length = 1)
@@ -44,6 +46,7 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
   data <- merge(data, stations, by = "..ID")
   data <- data[order(data$..ID),]
   data <- data[colnames_data]
+  if(na_rm) data <- data[!is.na(data$Station),]
   
   as_tibble(data)
 }
