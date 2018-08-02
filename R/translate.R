@@ -17,23 +17,33 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
   check_data(data, values = list(Station = ""))
   check_vector(from, c("Station", "StationName", "StationID"), length = 1)
   check_vector(to, c("Station", "StationName", "StationID"), length = 1)
+  check_missing_colnames(data, "..ID")
   
   if(from == to) return(data)
   
   stations <- ts_get_stations(conn = conn)
   
-  stations_from <- data["Station"]
-  colnames(stations_from) <- from
+  colnames_data <- colnames(data)
+  
+  data$..ID <- 1:nrow(data)
+  stations_from <- data[c("Station", "..ID")]
+  colnames(stations_from) <- c(from, "..ID")
   stations <- stations[c(from, to)]
 
   stations <- merge(stations, stations_from, all.y = TRUE, by = from)
-  rm(stations_from)
-  data$Station <- stations[[to]]
-  
+
   missing <- unique(stations[[from]][is.na(stations[[to]])])
   if(length(missing)) {
     warning("the following stations are unrecognised: ", punctuate(missing, "and"), 
             call. = FALSE)
   }
+  
+  stations <- stations[c(to, "..ID")]
+  colnames(stations) <- c("Station", "..ID")
+  data$Station <- NULL
+  data <- merge(data, stations, by = "..ID")
+  data <- data[order(data$..ID),]
+  data <- data[colnames_data]
+  
   as_tibble(data)
 }

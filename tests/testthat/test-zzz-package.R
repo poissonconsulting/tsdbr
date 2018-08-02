@@ -98,9 +98,13 @@ test_that("package", {
                c("Year", "Month", "Day", "Hour", "Minute", "Second", "Station",
                  "Recorded", "Corrected",
                  "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
-  
+ 
+  expect_identical(nrow(ts_translate_stations(data)), nrow(data))
+   
   expect_warning(ts_translate_stations(data), 
                  "the following stations are unrecognised: 'S1' and 'S2'")
+  
+  expect_identical(nrow(ts_translate_stations(data, from = "Station", to = "StationID")), nrow(data))
   
   expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
                  "the following stations are unrecognised: 'S1'")
