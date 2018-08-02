@@ -59,10 +59,10 @@ in_commas <- function(x) {
   paste0("IN ('", paste0(x, collapse = "','"), "')")
 }
 
-average <- function(x, na_rm) {
-  if(!na_rm) return(mean(x))
+aggregate_na_rm <- function(x, fun, na_rm) {
+  if(!na_rm) return(fun(x))
   if(all(is.na(x))) return(x[1])
-  mean(x, na.rm = TRUE)
+  fun(x[!is.na(x)])
 }
 
 round_down_time <- function(data) { 
@@ -88,7 +88,7 @@ round_down_time <- function(data) {
   data
 }
 
-aggregate_time <- function(data, na_rm) {
+aggregate_time <- function(data, na_rm, aggregate) {
   if(!anyDuplicated(data$DateTimeData)) {
     return(data[c("Station", "DateTimeData", "Recorded", "Corrected", "Status",
                   "CommentsData")])
@@ -97,8 +97,8 @@ aggregate_time <- function(data, na_rm) {
   data <- lapply(data, FUN = function(x) {
     data.frame(Station = x$Station[1],
                DateTimeData = x$DateTimeData[1],
-               Recorded = average(x$Recorded, na_rm = na_rm), 
-               Corrected = average(x$Corrected, na_rm = na_rm),
+               Recorded = aggregate_na_rm(x$Recorded, aggregate, na_rm = na_rm), 
+               Corrected = aggregate_na_rm(x$Corrected, aggregate, na_rm = na_rm),
                Status = max(x$Status),
                CommentsData = NA_character_,
                stringsAsFactors = FALSE) })
@@ -107,9 +107,9 @@ aggregate_time <- function(data, na_rm) {
   data
 }
 
-aggregate_time_station <- function(data, na_rm) {
+aggregate_time_station <- function(data, na_rm, aggregate) {
   data <- split(data, data["Station"], drop = TRUE)
-  data <- lapply(data, aggregate_time, na_rm = na_rm)
+  data <- lapply(data, aggregate_time, na_rm = na_rm, aggregate = aggregate)
   data <- do.call("rbind", data)
   row.names(data) <- NULL
   data

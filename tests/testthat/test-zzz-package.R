@@ -58,7 +58,7 @@ test_that("package", {
   data$Station <- "S1"
   expect_error(ts_add_data(data), "there are 1 stations with date times that are inconsistent with the period")
   
-  expect_is(ts_add_data(data, aggregate = TRUE), "data.frame")
+  expect_is(ts_add_data(data, aggregate = mean), "data.frame")
   
   data <- ts_get_data(stations = "S1")
   expect_is(data, "data.frame")

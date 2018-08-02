@@ -1,16 +1,17 @@
 #' Add Data
+#' 
+#' Times are rounded down prior to import.
 #'
 #' @param data A data frame of data with columns Station, DateTime, Recorded.
 #' Additional optional columns include Corrected, Status, Comments.
 #' @inheritParams ts_disconnect_db
-#' @param aggregate A flag indicating whether to aggregate and average multiple values within the same station period.
-#' This also has the effect of rounding down single values.
+#' @param aggregate A function to aggregate multiple values within the same station period.
 #' @param na_rm A flag indicating whether to remove missing values (if possible) when aggregating.
 #' @param resolution A string of the action to take with regard to existing values.
 #' Options are 'abort', 'ignore' or 'replace'.
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
+ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
                         resolution = "abort",
                         conn = getOption("tsdbr.conn", NULL)) {
   check_data(data,
@@ -19,6 +20,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
                            Recorded = c(1, NA)),
              nrow = TRUE,
              key = c("Station", "DateTime"))
+  
   check_conn(conn)
   
   tz <- get_tz(conn)
@@ -41,7 +43,7 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
     data$Comments <- NA_character_
   } else check_vector(data$Comments, c("", NA))
   
-  check_flag(aggregate)
+  checkor(check_null(aggregate), check_function(aggregate))
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
@@ -65,12 +67,19 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
   data$LowerLimit <- NULL
   data$UpperLimit <- NULL
   
-  if(aggregate) {
-    data <- merge(data, stations[c("Station", "Period")], by = "Station")
-    data <- round_down_time(data)
-    data$Period <- NULL
-    
-    data <- aggregate_time_station(data, na_rm = na_rm) 
+  data <- merge(data, stations[c("Station", "Period")], by = "Station")
+  data <- round_down_time(data)
+  data$Period <- NULL
+  
+  if(!is.null(aggregate)) {
+    data <- aggregate_time_station(data, na_rm = na_rm, aggregate = aggregate)
+  } else {
+    duplicates <- unique(data[duplicated(data[c("Station", "DateTimeData")]),]$Station)
+    if(length(duplicates)) {
+      stop("there are ", 
+           length(duplicates), " stations",
+           " with date times that are inconsistent with the period", call. = FALSE)
+    }
   }
   data$UploadedUTC <- sys_time_utc()
   on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
@@ -95,11 +104,6 @@ ts_add_data <- function(data, aggregate = FALSE, na_rm = FALSE,
       (DayData == 1 AND Period IN ('year', 'month')) OR
       (MonthData == 1 AND Period IN ('year'));")
   
-  if(nrow(period)) {
-    stop("there are ", 
-         length(unique(period$Station)), " stations",
-         " with date times that are inconsistent with the period", call. = FALSE)
-  }
   x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
                                     " INTO Data SELECT * FROM Upload;"))
   
@@ -165,7 +169,7 @@ ts_get_data <- function(stations = NULL,
                         Comments = character(0),
                         stringsAsFactors = FALSE))
     }
-
+    
     if(is.null(start_date)) start_date <- min(as.Date(span$Start))
     if(is.null(end_date)) end_date <- max(as.Date(span$End))
   }
@@ -186,7 +190,7 @@ ts_get_data <- function(stations = NULL,
       data <- round_down_time(data)
       data$Period <- NULL
       
-      data <- aggregate_time_station(data, na_rm = na_rm)
+      data <- aggregate_time_station(data, na_rm = na_rm, aggregate = mean)
     }
     
     status <- as.integer(ordered(status, status_values()))

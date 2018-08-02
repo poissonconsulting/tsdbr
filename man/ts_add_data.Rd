@@ -4,15 +4,14 @@
 \alias{ts_add_data}
 \title{Add Data}
 \usage{
-ts_add_data(data, aggregate = FALSE, na_rm = FALSE, resolution = "abort",
+ts_add_data(data, aggregate = NULL, na_rm = FALSE, resolution = "abort",
   conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{data}{A data frame of data with columns Station, DateTime, Recorded.
 Additional optional columns include Corrected, Status, Comments.}
 
-\item{aggregate}{A flag indicating whether to aggregate and average multiple values within the same station period.
-This also has the effect of rounding down single values.}
+\item{aggregate}{A function to aggregate multiple values within the same station period.}
 
 \item{na_rm}{A flag indicating whether to remove missing values (if possible) when aggregating.}
 
@@ -25,5 +24,5 @@ Options are 'abort', 'ignore' or 'replace'.}
 A data frame of the imported parameters.
 }
 \description{
-Add Data
+Times are rounded down prior to import.
 }
