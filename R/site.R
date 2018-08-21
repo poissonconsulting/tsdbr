@@ -5,7 +5,7 @@
 #' @param latitude A numeric of the site latitude.
 #' @param organization A string of the organization name.
 #' @param site_name A string of the site name.
-#' @param comments A string of comments.
+#' @param comments A string of site comments.
 
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
