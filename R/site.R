@@ -15,11 +15,11 @@ ts_add_site <- function(site, longitude = NA_real_, latitude = NA_real_,
                         comments = NA_character_,
                         conn = getOption("tsdbr.conn", NULL)) {
   check_string(site)
-  check_vector(sites$longitude, c(-180, 180, NA))
-  check_vector(sites$latitude, c(-90, 90, NA))
-  check_vector(sites$organization, c("", NA))
-  check_vector(sites$site_name, c("", NA))
-  check_vector(sites$comments, c("", NA))
+  check_vector(longitude, c(-180, 180, NA))
+  check_vector(latitude, c(-90, 90, NA))
+  check_vector(organization, c("", NA))
+  check_vector(site_name, c("", NA))
+  check_vector(comments, c("", NA))
 
   sites <- data.frame(Site = site,
                       Longitude = longitude,

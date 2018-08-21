@@ -5,8 +5,8 @@
 \title{Get Data}
 \usage{
 ts_get_data(stations = NULL, start_date = NULL, end_date = NULL,
-  period = "hour", na_rm = FALSE, status = "questionable", fill = FALSE,
-  conn = getOption("tsdbr.conn", NULL))
+  period = "hour", na_rm = FALSE, status = "questionable",
+  fill = FALSE, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
 \item{stations}{A character vector of the stations.}

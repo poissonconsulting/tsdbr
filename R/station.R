@@ -24,12 +24,12 @@ ts_add_station <- function(station, parameter, site, period,
   check_string(parameter)
   check_string(site)
   check_string(period)
-  check_vector(stations$LowerLimit, c(1, NA))
-  check_vector(stations$UpperLimit, c(1, NA))
-  check_vector(stations$Depth, c(1, NA))
-  check_vector(stations$StationName, c("", NA))
-  check_vector(stations$StationID, c("", NA))
-  check_vector(stations$Comments, c("", NA))
+  check_vector(lower_limit, c(1, NA))
+  check_vector(upper_limit, c(1, NA))
+  check_vector(depth, c(1, NA))
+  check_vector(station_name, c("", NA))
+  check_vector(station_id, c("", NA))
+  check_vector(comments, c("", NA))
   
   stations <- data.frame(Station = station,
                          Parameter = parameter,

@@ -4,11 +4,13 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, site, period,
-  conn = getOption("tsdbr.conn", NULL))
+ts_add_station(station, parameter, site, period, lower_limit = NA_real_,
+  upper_limit = NA_real_, depth = NA_real_,
+  station_name = NA_character_, station_id = NA_character_,
+  comments = NA_character_, conn = getOption("tsdbr.conn", NULL))
 }
 \arguments{
-\item{station}{A string of the station}
+\item{station}{A string of the station.}
 
 \item{parameter}{A string of the parameter.}
 
@@ -16,6 +18,18 @@ ts_add_station(station, parameter, site, period,
 
 \item{period}{A string of the period. The possible values are 'year', 'month',
 'day', 'hour', 'minute' and 'second'.}
+
+\item{lower_limit}{A numeric of the lower limit.}
+
+\item{upper_limit}{A numeric of the upper limit.}
+
+\item{depth}{A numeric of the depth.}
+
+\item{station_name}{A string of the station name.}
+
+\item{station_id}{A string of the station id.}
+
+\item{comments}{A string of the station comments.}
 
 \item{conn}{An object of class SQLiteConnection.}
 }
