@@ -1,23 +1,46 @@
 #' Add Station
 #'
-#' @param station A string of the station
+#' @param station A string of the station.
 #' @param parameter A string of the parameter.
 #' @param site A string of the site.
 #' @param period A string of the period. The possible values are 'year', 'month',
 #' 'day', 'hour', 'minute' and 'second'.
+#' @param lower_limit A numeric of the lower limit.
+#' @param upper_limit A numeric of the upper limit.
+#' @param depth A numeric of the depth.
+#' @param station_name A string of the station name.
+#' @param station_id A string of the station id.
+#' @param comments A string of the station comments.
+#' 
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, site, period, conn = getOption("tsdbr.conn", NULL)) {
+ts_add_station <- function(station, parameter, site, period, 
+                           lower_limit = NA_real_, upper_limit = NA_real_,
+                           depth = NA_real_, station_name = NA_character_,
+                           station_id = NA_character_, comments = NA_character_,
+                           conn = getOption("tsdbr.conn", NULL)) {
   check_string(station)
   check_string(parameter)
   check_string(site)
   check_string(period)
+  check_vector(stations$LowerLimit, c(1, NA))
+  check_vector(stations$UpperLimit, c(1, NA))
+  check_vector(stations$Depth, c(1, NA))
+  check_vector(stations$StationName, c("", NA))
+  check_vector(stations$StationID, c("", NA))
+  check_vector(stations$Comments, c("", NA))
   
   stations <- data.frame(Station = station,
                          Parameter = parameter,
                          Period = period,
                          Site = site,
+                         LowerLimit = lower_limit,
+                         UpperLimit = upper_limit,
+                         Depth = depth,
+                         StationName = station_name,
+                         StationID = station_id,
+                         CommentsStation = comments,
                          stringsAsFactors = FALSE)
   ts_add_stations(stations, conn)
 }
