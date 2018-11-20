@@ -4,6 +4,8 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/poissonconsulting/tsdbr.svg?branch=master)](https://travis-ci.org/poissonconsulting/tsdbr)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/poissonconsulting/tsdbr?branch=master&svg=true)](https://ci.appveyor.com/project/poissonconsulting/tsdbr)
 [![Coverage
 status](https://codecov.io/gh/poissonconsulting/tsdbr/branch/master/graph/badge.svg)](https://codecov.io/github/poissonconsulting/tsdbr?branch=master)
 [![License:
@@ -31,14 +33,14 @@ data <- ts_get_data(start_date = as.Date("2000-09-01"),
                     end_date = as.Date("2000-09-02"))
 print(head(data))
 #> # A tibble: 6 x 11
-#>   Station DateTime            Recorded Corrected Status    Site      Depth
-#>   <chr>   <dttm>                 <dbl>     <dbl> <ord>     <chr>     <dbl>
-#> 1 S1      2000-09-01 00:00:00       -2        -2 reasonab… Niagara …    NA
-#> 2 S1      2000-09-01 01:00:00       -1        -1 reasonab… Niagara …    NA
-#> 3 S1      2000-09-01 02:00:00        0         0 reasonab… Niagara …    NA
-#> 4 S1      2000-09-01 03:00:00        1         1 reasonab… Niagara …    NA
-#> 5 S1      2000-09-01 04:00:00        2         2 reasonab… Niagara …    NA
-#> 6 S1      2000-09-01 05:00:00        3         3 reasonab… Niagara …    NA
+#>   Station DateTime            Recorded Corrected Status Site  Depth
+#>   <chr>   <dttm>                 <dbl>     <dbl> <ord>  <chr> <dbl>
+#> 1 S1      2000-09-01 00:00:00       -2        -2 reaso… Niag…    NA
+#> 2 S1      2000-09-01 01:00:00       -1        -1 reaso… Niag…    NA
+#> 3 S1      2000-09-01 02:00:00        0         0 reaso… Niag…    NA
+#> 4 S1      2000-09-01 03:00:00        1         1 reaso… Niag…    NA
+#> 5 S1      2000-09-01 04:00:00        2         2 reaso… Niag…    NA
+#> 6 S1      2000-09-01 05:00:00        3         3 reaso… Niag…    NA
 #> # ... with 4 more variables: Parameter <chr>, Units <chr>,
 #> #   StationName <chr>, Comments <chr>
 ts_plot_data(data)
@@ -56,36 +58,9 @@ To install the latest version from the Poisson drat
 [repository](https://github.com/poissonconsulting/drat)
 
 ``` r
-# install.packages("drat")
+install.packages("drat")
 drat::addRepo("poissonconsulting")
 install.packages("tsdbr")
-```
-
-To install the latest development version from
-[GitHub](https://github.com/poissonconsulting/tsdbr)
-
-``` r
-# install.packages("devtools")
-devtools::install_github("poissonconsulting/tsdbr")
-```
-
-## Citation
-
-``` 
-
-To cite package 'tsdbr' in publications use:
-
-  Joe Thorley (2018). tsdbr: Environmental Time Series Databasing.
-  R package version 0.0.0.9018.
-
-A BibTeX entry for LaTeX users is
-
-  @Manual{,
-    title = {tsdbr: Environmental Time Series Databasing},
-    author = {Joe Thorley},
-    year = {2018},
-    note = {R package version 0.0.0.9018},
-  }
 ```
 
 ## Contribution

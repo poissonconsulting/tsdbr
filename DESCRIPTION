@@ -1,6 +1,5 @@
 Package: tsdbr
-Version: 0.0.0.9019
-Date: 2018-08-01
+Version: 0.0.0.9020
 Title: Environmental Time Series Databasing
 Description: Creates, populates, maintains and queries 
   SQLite databases of environmental time series data.
@@ -20,4 +19,4 @@ Additional_Repositories: http://poissonconsulting.github.io/drat
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
