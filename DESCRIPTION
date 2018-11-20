@@ -15,7 +15,8 @@ Suggests:
     ggplot2,
     testthat,
     tibble
-Additional_Repositories: http://poissonconsulting.github.io/drat
+Remotes:
+    poissonconsulting/checkr
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
