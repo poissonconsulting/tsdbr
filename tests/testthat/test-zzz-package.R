@@ -69,28 +69,28 @@ test_that("package", {
   
   expect_identical(ts_get_stations(periods = c("hour"))$Station, "S2")
   
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 24L)
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"))), 21L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE, status = "erroneous")), 24L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE)), 21L)
   expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 1L)
   expect_identical(nrow(ts_get_data(start_date = as.Date("2001-01-01"),
-                                    end_date = as.Date("2001-02-01"))), 0L)
+                                    end_date = as.Date("2001-02-01"), fill = FALSE)), 0L)
   expect_identical(nrow(ts_get_data(stations = "S1", start_date = as.Date("1999-09-01"), 
-                                    end_date = as.Date("2000-09-01"), period = "day", fill = TRUE)), 367L)
+                                    end_date = as.Date("2000-09-01"), period = "day")), 367L)
   expect_equal(ts_get_data(stations = "S2",  start_date = as.Date("1999-09-01"),
-                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE, na_rm = TRUE, status = "erroneous")$Corrected, c(rep(NA, 12), 9.227273),
+                           end_date = as.Date("2000-09-01"), period = "month", na_rm = TRUE, status = "erroneous")$Corrected, c(rep(NA, 12), 9.227273),
                tolerance = 0.0000001)
-  expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour", fill = TRUE)$Corrected, rep(NA_real_, 50))
+  expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour")$Corrected, rep(NA_real_, 50))
   expect_identical(ts_get_log()$TableLog, c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data"))
   
   expect_true(ts_doctor_db(check_gaps = TRUE, fix = TRUE))
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 25L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", fill = FALSE)), 25L)
   expect_identical(ts_set_disclaimer(), 
                    "THE DATA ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND")
   expect_identical(ts_get_disclaimer(), "THE DATA ARE COPYRIGHTED")
   expect_identical(ts_set_maintainer("me"), ts_sys_user())
   expect_identical(ts_get_maintainer(), "me")
   
-  data <- ts_get_data(end_date = as.Date("2000-09-01"))
+  data <- ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE)
   expect_identical(colnames(data), c("Station", "DateTime", "Recorded", "Corrected",
                                      "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
   expect_identical(nrow(data), 22L)
@@ -111,12 +111,12 @@ test_that("package", {
                  "the following stations are unrecognised: 'S1'")
   
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
-  expect_identical(nrow(ts_get_data("3S", period = "month", fill = TRUE)), 0L)
+  expect_identical(nrow(ts_get_data("3S", period = "month")), 0L)
   expect_identical(nrow(ts_get_data("3S", start_date = as.Date("1999-09-01"),
-                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE)), 13L)
-  expect_identical(colnames(nrow(ts_get_data("3S", period = "month", fill = TRUE))),
+                           end_date = as.Date("2000-09-01"), period = "month")), 13L)
+  expect_identical(colnames(nrow(ts_get_data("3S", period = "month"))),
                    colnames(nrow(ts_get_data("3S", start_date = as.Date("1999-09-01"),
-                           end_date = as.Date("2000-09-01"), period = "month", fill = TRUE))))
+                           end_date = as.Date("2000-09-01"), period = "month"))))
   
   data <- data.frame(Station = "S2",
                      DateTimeData = c("2000-09-02 00:00:00", # gap on two
@@ -145,7 +145,7 @@ test_that("package", {
   
   ts_delete_station("3S")
   expect_warning(ts_delete_station("3S"), "station '3S' does not exist")
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 25L)
+  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", fill = FALSE)), 25L)
   ts_delete_station("S2")
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous")), 1L)
 })

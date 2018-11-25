@@ -132,7 +132,7 @@ ts_get_data <- function(stations = NULL,
                         period = "hour",
                         na_rm = FALSE,
                         status = "questionable",
-                        fill = FALSE,
+                        fill = TRUE,
                         conn = getOption("tsdbr.conn", NULL)) {
   checkor(check_null(start_date), check_date(start_date))
   checkor(check_null(end_date), check_date(end_date))
