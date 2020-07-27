@@ -3,7 +3,12 @@
 .RData
 .Ruserdata
 
-*.sqlite
-*.db
-*.csv
-*.pdf
+.DS_Store
+.Renviron
+.RProfile
+.httr-oauth
+
+*.html
+
+docs/
+inst/docs/
