@@ -54,8 +54,8 @@ ts_disconnect_db()
 
 ## Installation
 
-To install the latest version from the Poisson drat
-[repository](https://github.com/poissonconsulting/drat)
+To install the latest version from GitHub
+[repository](https://github.com/poissonconsulting/tsdbr)
 
 ``` r
 # install.packages("remotes")
