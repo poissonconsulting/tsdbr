@@ -1,9 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R build
 status](https://github.com/poissonconsulting/tsdbr/workflows/R-CMD-check/badge.svg)](https://github.com/poissonconsulting/tsdbr/actions)
 [![Codecov test
@@ -36,13 +36,13 @@ print(head(data))
 #> # A tibble: 6 x 11
 #>   Station DateTime            Recorded Corrected Status Site  Depth Parameter
 #>   <chr>   <dttm>                 <dbl>     <dbl> <ord>  <chr> <dbl> <chr>    
-#> 1 S1      2000-09-01 00:00:00       -2        -2 reaso~ Niag~    NA discharge
-#> 2 S1      2000-09-01 01:00:00       -1        -1 reaso~ Niag~    NA discharge
-#> 3 S1      2000-09-01 02:00:00        0         0 reaso~ Niag~    NA discharge
-#> 4 S1      2000-09-01 03:00:00        1         1 reaso~ Niag~    NA discharge
-#> 5 S1      2000-09-01 04:00:00        2         2 reaso~ Niag~    NA discharge
-#> 6 S1      2000-09-01 05:00:00        3         3 reaso~ Niag~    NA discharge
-#> # ... with 3 more variables: Units <chr>, StationName <chr>, Comments <chr>
+#> 1 S1      2000-09-01 00:00:00       -2        -2 reaso… Niag…    NA discharge
+#> 2 S1      2000-09-01 01:00:00       -1        -1 reaso… Niag…    NA discharge
+#> 3 S1      2000-09-01 02:00:00        0         0 reaso… Niag…    NA discharge
+#> 4 S1      2000-09-01 03:00:00        1         1 reaso… Niag…    NA discharge
+#> 5 S1      2000-09-01 04:00:00        2         2 reaso… Niag…    NA discharge
+#> 6 S1      2000-09-01 05:00:00        3         3 reaso… Niag…    NA discharge
+#> # … with 3 more variables: Units <chr>, StationName <chr>, Comments <chr>
 ts_plot_data(data)
 ```
 
