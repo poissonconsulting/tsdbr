@@ -39,12 +39,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
@@ -69,45 +63,42 @@
 <div id="utilisation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#utilisation" class="anchor"></a>Utilisation</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">tsdbr</span>)
-<span class="kw">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ts_create_db.html">ts_create_db</a></span>(<span class="st">":memory:"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(tsdbr.conn = <span class="kw">conn</span>)
-<span class="fu"><a href="reference/ts_add_parameter.html">ts_add_parameter</a></span>(<span class="st">"discharge"</span>, <span class="st">"cms"</span>)
-<span class="fu"><a href="reference/ts_add_site.html">ts_add_site</a></span>(<span class="st">"Niagara Falls"</span>)
-<span class="fu"><a href="reference/ts_add_station.html">ts_add_station</a></span>(<span class="st">"S1"</span>, <span class="st">"discharge"</span>, <span class="st">"Niagara Falls"</span>, <span class="st">"hour"</span>)
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(Station = <span class="st">"S1"</span>, DateTime = <span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html">ISOdate</a></span>(<span class="fl">2000</span>, <span class="fl">9</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">:</span><span class="fl">23</span>),
-                   Recorded = <span class="fl">0</span><span class="op">:</span><span class="fl">23</span> <span class="op">-</span> <span class="fl">2</span>,
-                   stringsAsFactors = <span class="fl">FALSE</span>)
-<span class="fu"><a href="reference/ts_add_data.html">ts_add_data</a></span>(<span class="kw">data</span>)
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ts_get_data.html">ts_get_data</a></span>(start_date = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="st">"2000-09-01"</span>),
-                    end_date = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="st">"2000-09-02"</span>))
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">data</span>))
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">tsdbr</span><span class="op">)</span>
+<span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ts_create_db.html">ts_create_db</a></span><span class="op">(</span><span class="st">":memory:"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>tsdbr.conn <span class="op">=</span> <span class="va">conn</span><span class="op">)</span>
+<span class="fu"><a href="reference/ts_add_parameter.html">ts_add_parameter</a></span><span class="op">(</span><span class="st">"discharge"</span>, <span class="st">"cms"</span><span class="op">)</span>
+<span class="fu"><a href="reference/ts_add_site.html">ts_add_site</a></span><span class="op">(</span><span class="st">"Niagara Falls"</span><span class="op">)</span>
+<span class="fu"><a href="reference/ts_add_station.html">ts_add_station</a></span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"discharge"</span>, <span class="st">"Niagara Falls"</span>, <span class="st">"hour"</span><span class="op">)</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Station <span class="op">=</span> <span class="st">"S1"</span>, DateTime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html">ISOdate</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">9</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">:</span><span class="fl">23</span><span class="op">)</span>,
+                   Recorded <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">23</span> <span class="op">-</span> <span class="fl">2</span>,
+                   stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="reference/ts_add_data.html">ts_add_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ts_get_data.html">ts_get_data</a></span><span class="op">(</span>start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2000-09-01"</span><span class="op">)</span>,
+                    end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2000-09-02"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 11</span>
 <span class="co">#&gt;   Station DateTime            Recorded Corrected Status Site  Depth Parameter</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;dttm&gt;                 &lt;dbl&gt;     &lt;dbl&gt; &lt;ord&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;    </span>
-<span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reaso~ Niag~    NA discharge</span>
-<span class="co">#&gt; # ... with 3 more variables: Units &lt;chr&gt;, StationName &lt;chr&gt;, Comments &lt;chr&gt;</span>
-<span class="fu"><a href="reference/ts_plot_data.html">ts_plot_data</a></span>(<span class="kw">data</span>)
-</pre></div>
+<span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; # … with 3 more variables: Units &lt;chr&gt;, StationName &lt;chr&gt;, Comments &lt;chr&gt;</span>
+<span class="fu"><a href="reference/ts_plot_data.html">ts_plot_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="reference/ts_disconnect_db.html">ts_disconnect_db</a></span>()
-</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/ts_disconnect_db.html">ts_disconnect_db</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>To install the latest version from the Poisson drat <a href="https://github.com/poissonconsulting/drat">repository</a></p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co"># install.packages("remotes")</span>
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"poissonconsulting/tsdbr"</span>)
-</pre></div>
+<p>To install the latest version from GitHub <a href="https://github.com/poissonconsulting/tsdbr">repository</a></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"poissonconsulting/tsdbr"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="contribution" class="section level2">
 <h2 class="hasAnchor">
@@ -149,7 +140,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="lifecycle"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/poissonconsulting/tsdbr/actions"><img src="https://github.com/poissonconsulting/tsdbr/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://codecov.io/gh/poissonconsulting/tsdbr?branch=master"><img src="https://codecov.io/gh/poissonconsulting/tsdbr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a></li>
@@ -164,7 +155,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
