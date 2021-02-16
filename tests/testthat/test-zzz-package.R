@@ -1,5 +1,3 @@
-context("package")
-
 test_that("package", {
   file <- ":memory:"
   if(file.exists(file)) unlink(file)
