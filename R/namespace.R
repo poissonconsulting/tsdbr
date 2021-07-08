@@ -1,2 +1,3 @@
-#' @import checkr
+#' @import chk
+#' @importFrom checkr check_tzone
 NULL

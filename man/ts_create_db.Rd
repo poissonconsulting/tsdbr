@@ -4,15 +4,18 @@
 \alias{ts_create_db}
 \title{Create Time-Series Database}
 \usage{
-ts_create_db(file, utc_offset = 0L, periods = c("year", "month", "day",
-  "hour", "minute", "second"))
+ts_create_db(
+  file,
+  utc_offset = 0L,
+  periods = c("year", "month", "day", "hour", "minute", "second")
+)
 }
 \arguments{
 \item{file}{A string of the name of the database file.}
 
 \item{utc_offset}{A integer of the utc offset which must lie between -12 and 14.}
 
-\item{periods}{A character vector of the permitted periods. 
+\item{periods}{A character vector of the permitted periods.
 Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'}
 }
 \value{

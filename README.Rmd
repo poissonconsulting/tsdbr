@@ -33,12 +33,16 @@ options(tsdbr.conn = conn)
 ts_add_parameter("discharge", "cms")
 ts_add_site("Niagara Falls")
 ts_add_station("S1", "discharge", "Niagara Falls", "hour")
-data <- data.frame(Station = "S1", DateTime = ISOdate(2000, 9, 1, 0:23),
-                   Recorded = 0:23 - 2,
-                   stringsAsFactors = FALSE)
+data <- data.frame(
+  Station = "S1", DateTime = ISOdate(2000, 9, 1, 0:23),
+  Recorded = 0:23 - 2,
+  stringsAsFactors = FALSE
+)
 ts_add_data(data)
-data <- ts_get_data(start_date = as.Date("2000-09-01"),
-                    end_date = as.Date("2000-09-02"))
+data <- ts_get_data(
+  start_date = as.Date("2000-09-01"),
+  end_date = as.Date("2000-09-02")
+)
 print(head(data))
 ts_plot_data(data)
 ts_disconnect_db()
