@@ -14,21 +14,28 @@ ts_add_site <- function(site, longitude = NA_real_, latitude = NA_real_,
                         organization = NA_character_, site_name = NA_character_,
                         comments = NA_character_,
                         conn = getOption("tsdbr.conn", NULL)) {
-  check_string(site)
-  check_vector(longitude, c(-180, 180, NA))
-  check_vector(latitude, c(-90, 90, NA))
-  check_vector(organization, c("", NA))
-  check_vector(site_name, c("", NA))
-  check_vector(comments, c("", NA))
+  chk_string(site)
+  chk_vector(longitude)
+  check_values(longitude, c(-180, 180, NA))
+  chk_vector(latitude)
+  check_values(latitude, c(-90, 90, NA))
+  chk_vector(organization)
+  check_values(organization, c("", NA))
+  chk_vector(site_name)
+  check_values(site_name, c("", NA))
+  chk_vector(comments)
+  check_values(comments, c("", NA))
 
-  sites <- data.frame(Site = site,
-                      Longitude = longitude,
-                      Latitude = latitude,
-                      Organization = organization,
-                      SiteName = site_name,
-                      Comments = comments,
-                           stringsAsFactors = FALSE)
-  
+  sites <- data.frame(
+    Site = site,
+    Longitude = longitude,
+    Latitude = latitude,
+    Organization = organization,
+    SiteName = site_name,
+    Comments = comments,
+    stringsAsFactors = FALSE
+  )
+
   ts_add_sites(sites, conn)
 }
 
@@ -42,41 +49,57 @@ ts_add_site <- function(site, longitude = NA_real_, latitude = NA_real_,
 #' @export
 ts_add_sites <- function(sites, conn = getOption("tsdbr.conn", NULL)) {
   check_data(sites,
-             values = list(Site = ""),
-             key = "Site",
-             nrow = TRUE)
-  
-  if(missing_column(sites, "Longitude")) {
+    values = list(Site = ""),
+    key = "Site",
+    nrow = TRUE
+  )
+
+  if (missing_column(sites, "Longitude")) {
     sites$Longitude <- NA_real_
-  } else check_vector(sites$Longitude, c(-180, 180, NA))
-  
-  if(missing_column(sites, "Latitude")) {
+  } else {
+    chk_vector(sites$Longitude)
+    check_values(sites$Longitude, c(-180, 180, NA))
+  }
+  if (missing_column(sites, "Latitude")) {
     sites$Latitude <- NA_real_
-  } else check_vector(sites$Latitude, c(-90, 90, NA))
+  } else {
+    chk_vector(sites$Latitude)
+    check_values(sites$Latitude, c(-90, 90, NA))
+  }
 
-  if(missing_column(sites, "Organization")) {
+  if (missing_column(sites, "Organization")) {
     sites$Organization <- NA_character_
-  } else check_vector(sites$Organization, c("", NA))
+  } else {
+    chk_vector(sites$Organization)
+    check_values(sites$Organization, c("", NA))
+  }
 
-  if(missing_column(sites, "SiteName")) {
+  if (missing_column(sites, "SiteName")) {
     sites$SiteName <- NA_character_
-  } else check_vector(sites$SiteName, c("", NA))
-  
-  if(missing_column(sites, "Comments")) {
+  } else {
+    chk_vector(sites$SiteName)
+    check_values(sites$SiteName, c("", NA))
+  }
+  if (missing_column(sites, "Comments")) {
     sites$Comments <- NA_character_
-  } else check_vector(sites$Comments, c("", NA))
-  
+  } else {
+    chk_vector(sites$Comments)
+    check_values(sites$Comments, c("", NA))
+  }
+
   sites$CommentsSite <- sites$Comments
-  
-  sites <- sites[c("Site", "Longitude", "Latitude",
-                         "Organization", "SiteName", "CommentsSite")]
-  
+
+  sites <- sites[c(
+    "Site", "Longitude", "Latitude",
+    "Organization", "SiteName", "CommentsSite"
+  )]
+
   add(sites, "Site", conn)
 }
 
 
 #' Get Site Table
-#' 
+#'
 #' Gets site table as a data frame.
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the requested data.

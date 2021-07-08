@@ -4,10 +4,19 @@
 \alias{ts_add_station}
 \title{Add Station}
 \usage{
-ts_add_station(station, parameter, site, period, lower_limit = NA_real_,
-  upper_limit = NA_real_, depth = NA_real_,
-  station_name = NA_character_, station_id = NA_character_,
-  comments = NA_character_, conn = getOption("tsdbr.conn", NULL))
+ts_add_station(
+  station,
+  parameter,
+  site,
+  period,
+  lower_limit = NA_real_,
+  upper_limit = NA_real_,
+  depth = NA_real_,
+  station_name = NA_character_,
+  station_id = NA_character_,
+  comments = NA_character_,
+  conn = getOption("tsdbr.conn", NULL)
+)
 }
 \arguments{
 \item{station}{A string of the station.}

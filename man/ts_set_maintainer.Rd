@@ -4,8 +4,10 @@
 \alias{ts_set_maintainer}
 \title{Set Maintainer}
 \usage{
-ts_set_maintainer(maintainer = ts_sys_user(),
-  conn = getOption("tsdbr.conn", NULL))
+ts_set_maintainer(
+  maintainer = ts_sys_user(),
+  conn = getOption("tsdbr.conn", NULL)
+)
 }
 \arguments{
 \item{maintainer}{A string of the maintainer.}

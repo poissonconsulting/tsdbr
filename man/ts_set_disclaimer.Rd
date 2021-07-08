@@ -4,8 +4,10 @@
 \alias{ts_set_disclaimer}
 \title{Set Disclaimer}
 \usage{
-ts_set_disclaimer(disclaimer = "THE DATA ARE COPYRIGHTED",
-  conn = getOption("tsdbr.conn", NULL))
+ts_set_disclaimer(
+  disclaimer = "THE DATA ARE COPYRIGHTED",
+  conn = getOption("tsdbr.conn", NULL)
+)
 }
 \arguments{
 \item{disclaimer}{A string of the disclaimer.}

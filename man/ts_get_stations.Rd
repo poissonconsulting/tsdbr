@@ -4,9 +4,12 @@
 \alias{ts_get_stations}
 \title{Get Stations Table}
 \usage{
-ts_get_stations(parameters = NULL, periods = c("year", "month", "day",
-  "hour", "minute", "second"), sites = NULL,
-  conn = getOption("tsdbr.conn", NULL))
+ts_get_stations(
+  parameters = NULL,
+  periods = c("year", "month", "day", "hour", "minute", "second"),
+  sites = NULL,
+  conn = getOption("tsdbr.conn", NULL)
+)
 }
 \arguments{
 \item{parameters}{A character of the parameters to filter by.}
