@@ -116,8 +116,13 @@ Its useful if the data are provided with different station codings to the main o
 Its useful if the data are provided with different station codings to the main ones used in the database.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ts_translate_stations</span><span class='op'>(</span><span class='va'>data</span>, from <span class='op'>=</span> <span class='st'>"StationID"</span>, to <span class='op'>=</span> <span class='st'>"Station"</span>,
-  na_rm <span class='op'>=</span> <span class='cn'>TRUE</span>, conn <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"tsdbr.conn"</span>, <span class='cn'>NULL</span><span class='op'>)</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>ts_translate_stations</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  from <span class='op'>=</span> <span class='st'>"StationID"</span>,
+  to <span class='op'>=</span> <span class='st'>"Station"</span>,
+  na_rm <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  conn <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"tsdbr.conn"</span>, <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,7 +133,7 @@ Its useful if the data are provided with different station codings to the main o
     </tr>
     <tr>
       <th>from</th>
-      <td><p>A string indicating the coding to translate from. 
+      <td><p>A string indicating the coding to translate from.
 Possible values are 'Station', 'StationName' and 'StationID'.</p></td>
     </tr>
     <tr>
@@ -161,11 +166,11 @@ Possible values are 'Station', 'StationName' and 'StationID'.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Joe Thorley.</p>
+  <p><p>Developed by Joe Thorley.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
