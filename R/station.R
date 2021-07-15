@@ -72,7 +72,7 @@ ts_delete_station <- function(station, conn = getOption("tsdbr.conn", NULL)) {
     warning("station '", station, "' does not exist")
     return(invisible())
   }
-  DBI::dbGetQuery(conn, paste0("DELETE
+  DBI::dbExecute(conn, paste0("DELETE
     FROM Station
     WHERE Station == '", station, "'"))
   invisible()

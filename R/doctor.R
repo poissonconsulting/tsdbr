@@ -17,8 +17,8 @@ ts_doctor_db <- function(check_limits = TRUE,
   chk_flag(check_gaps)
   chk_flag(fix)
 
-  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
-  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
+  on.exit(DBI::dbExecute(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbExecute(conn, "VACUUM;"), add = TRUE)
 
   span <- FALSE
   period <- FALSE
@@ -48,12 +48,12 @@ ts_doctor_db <- function(check_limits = TRUE,
         )]
         limits$UploadedUTC <- sys_time_utc()
 
-        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(limits, "Upload", conn)
 
-        DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
 
-        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
+        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
                                'UPDATE', 'Data', 'REPLACE fix limits');"))
         limits <- limits[integer(0), ]
       }
@@ -143,12 +143,12 @@ ts_doctor_db <- function(check_limits = TRUE,
 
         span$UploadedUTC <- sys_time_utc()
 
-        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(span, "Upload", conn)
 
-        DBI::dbGetQuery(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
 
-        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
+        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
                                'INSERT', 'Data', 'ABORT - fix gaps');"))
         span <- span[integer(0), ]
       }
