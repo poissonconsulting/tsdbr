@@ -6,7 +6,7 @@ test_that("package", {
   options(tsdbr.conn = conn)
 
   expect_error(
-    DBI::dbGetQuery(conn, paste0(
+    DBI::dbExecute(conn, paste0(
       "INSERT INTO Database VALUES('tsdbr', '0', 'user', 0, 'Disclaimer');"
     )),
     "only one row permitted!"

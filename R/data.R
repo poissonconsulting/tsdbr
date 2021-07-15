@@ -99,9 +99,9 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     }
   }
   data$UploadedUTC <- sys_time_utc()
-  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
-  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+  on.exit(DBI::dbExecute(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbExecute(conn, "VACUUM;"), add = TRUE)
+  DBI::dbExecute(conn, "DELETE FROM Upload;")
 
   add(data, "Upload", conn)
 
@@ -126,7 +126,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     " INTO Data SELECT * FROM Upload;"
   ))
 
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
+  DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
 
   invisible(as_tibble(data))
