@@ -11,7 +11,7 @@ ts_connect_db <- function(file) {
   }
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), file)
-  DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
+  DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")
   conn
 }
 
