@@ -53,7 +53,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     check_values(data$Comments, c("", NA))
   }
 
-  chkor(chk_null(aggregate), chk_function(aggregate))
+  chk_null_or(aggregate, vld = vld_function)
   chk_flag(na_rm)
   chk_vector(resolution)
   check_values(resolution, c("abort", "ignore", "replace"))
@@ -154,8 +154,8 @@ ts_get_data <- function(stations = NULL,
                         status = "questionable",
                         fill = TRUE,
                         conn = getOption("tsdbr.conn", NULL)) {
-  chkor(chk_null(start_date), chk_date(start_date))
-  chkor(chk_null(end_date), chk_date(end_date))
+  chk_null_or(start_date, vld = vld_date)
+  chk_null_or(end_date, vld = vld_date)
 
   chk_vector(period)
   check_values(period, ts_get_periods(conn = conn))
