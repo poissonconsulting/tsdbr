@@ -166,21 +166,24 @@ ts_get_stations <- function(parameters = NULL,
                             periods = c("year", "month", "day", "hour", "minute", "second"),
                             sites = NULL,
                             conn = getOption("tsdbr.conn", NULL)) {
-  chkor(chk_null(parameters), c(
-    chk_vector(parameters), check_values(parameters, ts_get_parameters(conn = conn)$Parameter),
-    chk_unique(parameters), check_dim(parameters, values = TRUE)
-  ))
+  if(!is.null(parameters)) {
+    chk_vector(parameters)
+    check_values(parameters, ts_get_parameters(conn = conn)$Parameter)
+    check_dim(parameters, values = TRUE)
+    chk_unique(parameters)
+  }
 
   chk_vector(periods)
   check_dim(periods, values = TRUE)
   chk_unique(periods)
   check_values(periods, ts_get_periods(conn = conn))
 
-  chkor(chk_null(sites), c(
-    chk_vector(sites), check_values(sites, ts_get_sites(conn = conn)$Site),
-    check_dim(sites, values = TRUE), chk_unique(sites)
-  ))
-
+  if(!is.null(sites)) {
+    chk_vector(sites)
+    check_values(sites, ts_get_sites(conn = conn)$Site)
+    check_dim(sites, values = TRUE)
+    chk_unique(sites)
+  }
   if (is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
   if (is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
 

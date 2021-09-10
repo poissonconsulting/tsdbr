@@ -167,15 +167,13 @@ ts_get_data <- function(stations = NULL,
 
   chk_flag(fill)
   check_conn(conn)
-
-  chkor(
-    chk_null(stations),
-    c(
-      chk_vector(stations), check_values(stations, ts_get_stations(conn = conn)$Station),
-      check_dim(stations, values = TRUE), chk_unique(stations)
-    )
-  )
-
+ 
+  if(!is.null(stations)) {
+    chk_vector(stations)
+    check_values(stations, ts_get_stations(conn = conn)$Station)
+    check_dim(stations, values = TRUE)
+    chk_unique(stations)
+}
 
   if (is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
 
