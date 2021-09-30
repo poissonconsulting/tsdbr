@@ -6,7 +6,6 @@ Description: Creates, populates, maintains and queries
 Authors@R: person("Joe", "Thorley", email = "joe@poissonconsulting.ca", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Imports: 
-    checkr,
     chk,
     DBI,
     RSQLite,

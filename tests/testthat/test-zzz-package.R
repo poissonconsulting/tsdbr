@@ -50,7 +50,7 @@ test_that("package", {
 
   expect_error(
     ts_add_data(data),
-    "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]"
+    "`data\\$DateTime` time zone must be 'Etc\\/GMT\\+8' \\(not 'GMT'\\)\\."
   )
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
 
