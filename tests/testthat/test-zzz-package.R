@@ -98,13 +98,24 @@ test_that("package", {
 
   expect_identical(ts_get_stations(periods = c("hour"))$Station, "S2")
 
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE, status = "erroneous")), 24L)
-  expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE)), 21L)
-  expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 1L)
-  expect_identical(nrow(ts_get_data(
-    start_date = as.Date("2001-01-01"),
-    end_date = as.Date("2001-02-01"), fill = FALSE
-  )), 0L)
+  expect_identical(
+    nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE, status = "erroneous")), 
+    24L
+  )
+  expect_identical(
+    nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE)), 
+    21L
+  )
+  expect_identical(
+    nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 
+    1L
+  )
+  expect_identical(
+    nrow(ts_get_data(
+      start_date = as.Date("2001-01-01"),
+      end_date = as.Date("2001-02-01"), fill = FALSE
+    )), 0L
+  )
   expect_identical(nrow(ts_get_data(
     stations = "S1", start_date = as.Date("1999-09-01"),
     end_date = as.Date("2000-09-01"), period = "day"
@@ -115,8 +126,14 @@ test_that("package", {
   )$Corrected, c(rep(NA, 12), 9.227273),
   tolerance = 0.0000001
   )
-  expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour")$Corrected, rep(NA_real_, 50))
-  expect_identical(ts_get_log()$TableLog, c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data"))
+  expect_identical(
+    ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour")$Corrected, 
+    rep(NA_real_, 50)
+  )
+  expect_identical(
+    ts_get_log()$TableLog, 
+    c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data")
+  )
 
   expect_message(
     expect_true(
