@@ -6,7 +6,6 @@ Description: Creates, populates, maintains and queries
 Authors@R: person("Joe", "Thorley", email = "joe@poissonconsulting.ca", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Imports: 
-    checkr,
     chk,
     DBI,
     RSQLite,
@@ -14,8 +13,9 @@ Imports:
 Suggests: 
     covr,
     ggplot2,
-    testthat,
-    tibble
+    testthat (>= 3.0.0),
+    tibble,
+    withr
 Remotes:
     poissonconsulting/chk,
     poissonconsulting/checkr
@@ -23,3 +23,4 @@ Encoding: UTF-8
 LazyData: true
 ByteCompile: true
 RoxygenNote: 7.1.2
+Config/testthat/edition: 3

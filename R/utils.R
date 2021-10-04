@@ -187,3 +187,36 @@ plural <- function(x, n = 1L, end = "") {
 ts_get_periods <- function(conn = getOption("tsdbr.conn", NULL)) {
   c("year", "month", "day", "hour", "minute", "second")
 }
+
+# simplified version of check_tzone from checkr to remove dependency
+vld_tzone <- function(x, tzone = "UTC", x_name = NULL) {
+  tzone <- chk::chk_string(tzone)
+
+  if (is.null(x_name))
+    x_name <- chk::deparse_backtick_chk(substitute(x))
+
+  attr_tzone <- attr(x, "tzone")
+  if (is.null(attr_tzone)) attr_tzone <- "NULL"
+  if (tzone != attr_tzone) {
+    FALSE
+  } else {
+    TRUE
+  }
+}
+
+check_tzone <- function(x, tzone = "UTC", x_name = NULL) {
+ 
+  if (vld_tzone(x, tzone, x_name)) {
+    return(invisible())
+  }
+  
+  if (is.null(x_name)) {
+    x_name <- chk::deparse_backtick_chk(substitute(x))
+  }
+  
+  attr_tzone <- attr(x, "tzone")
+  if (is.null(attr_tzone)) attr_tzone <- "NULL"
+  chk::abort_chk(
+    x_name, " time zone must be '", tzone, "' (not '", attr_tzone, "')"
+  )
+}

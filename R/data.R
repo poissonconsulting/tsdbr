@@ -27,7 +27,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   tz <- get_tz(conn)
 
   if (tz == "GMT") {
-    chkor(check_tzone(data$DateTime, "UTC"), check_tzone(data$DateTime, "GMT"))
+    chk::chkor_vld(vld_tzone(data$DateTime, "UTC"), vld_tzone(data$DateTime, "GMT"))
   } else {
     check_tzone(data$DateTime, tz)
   }
