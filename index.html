@@ -58,13 +58,13 @@
   <div class="contents col-md-9">
 
 
-<div id="tsdbr" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#tsdbr" class="anchor" aria-hidden="true"></a>tsdbr</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="tsdbr">tsdbr<a class="anchor" aria-label="anchor" href="#tsdbr"></a>
+</h1></div>
 <p><code>tsdbr</code> is designed to create, populate, maintain and query SQLite databases of environmental time series data.</p>
-<div id="utilisation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#utilisation" class="anchor" aria-hidden="true"></a>Utilisation</h2>
+<div class="section level2">
+<h2 id="utilisation">Utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tsdbr</span><span class="op">)</span>
 <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ts_create_db.html">ts_create_db</a></span><span class="op">(</span><span class="st">":memory:"</span><span class="op">)</span>
@@ -82,35 +82,35 @@
 <span class="co">#&gt; # A tibble: 6 x 11</span>
 <span class="co">#&gt;   Station DateTime            Recorded Corrected Status Site  Depth Parameter</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;dttm&gt;                 &lt;dbl&gt;     &lt;dbl&gt; &lt;ord&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;    </span>
-<span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reasoâ¦ Niagâ¦    NA discharge</span>
-<span class="co">#&gt; # â¦ with 3 more variables: Units &lt;chr&gt;, StationName &lt;chr&gt;, Comments &lt;chr&gt;</span>
+<span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reaso… Niag…    NA discharge</span>
+<span class="co">#&gt; # … with 3 more variables: Units &lt;chr&gt;, StationName &lt;chr&gt;, Comments &lt;chr&gt;</span>
 <span class="fu"><a href="reference/ts_plot_data.html">ts_plot_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/ts_disconnect_db.html">ts_disconnect_db</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>To install the latest version from GitHub <a href="https://github.com/poissonconsulting/tsdbr" class="external-link">repository</a></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"poissonconsulting/tsdbr"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="contribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contribution" class="anchor" aria-hidden="true"></a>Contribution</h2>
+<div class="section level2">
+<h2 id="contribution">Contribution<a class="anchor" aria-label="anchor" href="#contribution"></a>
+</h2>
 <p>Please report any <a href="https://github.com/poissonconsulting/tsdbr/issues" class="external-link">issues</a>.</p>
 <p><a href="https://github.com/poissonconsulting/tsdbr/pulls" class="external-link">Pull requests</a> are always welcome.</p>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor" aria-hidden="true"></a>Code of Conduct</h2>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
 <p>Please note that the tsdbr project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
@@ -122,7 +122,7 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
 
@@ -131,6 +131,13 @@
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+</ul>
+</div>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing tsdbr</a></li>
 </ul>
 </div>
 
@@ -162,7 +169,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>
