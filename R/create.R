@@ -42,7 +42,6 @@ ts_create_db <- function (file,
     TableLog TEXT NOT NULL,
     CommentsLog TEXT,
     CHECK (
-      DATETIME(LoggedUTC) IS LoggedUTC AND
       OperationLog IN ('UPDATE', 'DELETE', 'INSERT')
   ));")
   
@@ -111,11 +110,7 @@ ts_create_db <- function (file,
     Corrected REAL,
     Status INTEGER NOT NULL,
     UploadedUTC TEXT NOT NULL,
-    CommentsData TEXT
-    CHECK (
-      DATETIME(DateTimeData) IS DateTimeData AND
-      DATETIME(UploadedUTC) IS UploadedUTC
-    ),
+    CommentsData TEXT,
     PRIMARY KEY (Station, DateTimeData),
     FOREIGN KEY (Station) REFERENCES Station (Station) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (Status) REFERENCES Status (Status)
