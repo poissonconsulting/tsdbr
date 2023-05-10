@@ -9,7 +9,7 @@ ts_connect_db <- function(file) {
   if(!file.exists(file))
     stop("file '", file, "' does not exist", call. = FALSE)
   
-  conn <- DBI::dbConnect(RSQLite::SQLite(), file)
+  conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
   conn
 }

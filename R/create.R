@@ -23,7 +23,7 @@ ts_create_db <- function (file,
   if(!dir.exists(dirname(file)))
     stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
   
-  conn <- DBI::dbConnect(RSQLite::SQLite(), file)
+  conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
   DBI::dbGetQuery(conn, "PRAGMA foreign_keys = ON;")
   
   DBI::dbGetQuery(conn, "CREATE TABLE Database (
