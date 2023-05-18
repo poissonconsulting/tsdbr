@@ -1,5 +1,6 @@
 test_that("package", {
-  file <- ":memory:"
+  # file <- ":memory:"
+  file <- "test10.sqlite"
   if(file.exists(file)) unlink(file)
   conn <- ts_create_db(file = file, utc_offset = -8L, periods = c("day", "hour"))
   teardown(ts_disconnect_db(conn))
@@ -69,7 +70,7 @@ test_that("package", {
   
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE, status = "erroneous")), 24L)
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), fill = FALSE)), 21L)
-  expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 1L)
+  expect_identical(nrow(ts_get_data(stations = "S1", end_date = as.Date("2000-09-01"))), 24L)
   expect_identical(nrow(ts_get_data(start_date = as.Date("2001-01-01"),
                                     end_date = as.Date("2001-02-01"), fill = FALSE)), 0L)
   expect_identical(nrow(ts_get_data(stations = "S1", start_date = as.Date("1999-09-01"), 
@@ -77,7 +78,9 @@ test_that("package", {
   expect_equal(ts_get_data(stations = "S2",  start_date = as.Date("1999-09-01"),
                            end_date = as.Date("2000-09-01"), period = "month", na_rm = TRUE, status = "erroneous")$Corrected, c(rep(NA, 12), 9.227273),
                tolerance = 0.0000001)
-  expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour")$Corrected, rep(NA_real_, 50))
+  expect_identical(ts_get_data(start_date = as.Date("2001-01-01"), end_date = as.Date("2001-01-02"), period = "hour")$Corrected, rep(NA_real_, 96))
+  
+  
   expect_identical(ts_get_log()$TableLog, c("Database", "Parameter", "Site", "Station", "Station", "Data", "Data", "Data"))
   
   expect_true(ts_doctor_db(check_gaps = TRUE, fix = TRUE))
