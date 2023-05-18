@@ -37,7 +37,7 @@ ts_create_db <- function (file,
     ));")
   
   DBI::dbGetQuery(conn, "CREATE TABLE Log (
-    LoggedUTC TEXT NOT NULL,
+    LoggedUTC TIMESTAMP NOT NULL,
     OperationLog TEXT NOT NULL,
     TableLog TEXT NOT NULL,
     CommentsLog TEXT,
@@ -105,11 +105,11 @@ ts_create_db <- function (file,
   
   data_sql <- "CREATE TABLE Data (
     Station TEXT NOT NULL,
-	  DateTimeData TEXT NOT NULL,
+	  DateTimeData TIMESTAMP NOT NULL,
     Recorded REAL,
     Corrected REAL,
     Status INTEGER NOT NULL,
-    UploadedUTC TEXT NOT NULL,
+    UploadedUTC TIMESTAMP NOT NULL,
     CommentsData TEXT,
     PRIMARY KEY (Station, DateTimeData),
     FOREIGN KEY (Station) REFERENCES Station (Station) ON UPDATE CASCADE ON DELETE CASCADE,
