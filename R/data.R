@@ -46,7 +46,8 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  data$DateTimeData <- format(data$DateTime, format = "%Y-%m-%d %H:%M:%S")
+  # data$DateTimeData <- format(data$DateTime, format = "%Y-%m-%d %H:%M:%S")
+  data$DateTimeData <- data$DateTime
   data$CommentsData <- data$Comments
   data$Status <- ts_status_to_integer(data$Status)
   
@@ -147,6 +148,16 @@ ts_get_data <- function(stations = NULL,
   
   if(is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
   
+  tz <- get_tz(conn)
+  
+  if(!is.null(start_date)) {
+    start_date <- as.numeric(dttr2::dtt_date_time(start_date, tz = tz))
+  }
+  
+  if(!is.null(end_date)) {
+    end_date <- as.numeric(dttr2::dtt_date_time(paste(end_date, "23:59:59", sep = " "), tz = tz))
+  }
+  
   if(is.null(start_date) || is.null(end_date)) {
     span <- DBI::dbGetQuery(conn, paste0("
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
@@ -169,8 +180,15 @@ ts_get_data <- function(stations = NULL,
                         stringsAsFactors = FALSE))
     }
     
-    if(is.null(start_date)) start_date <- min(as.Date(span$Start))
-    if(is.null(end_date)) end_date <- max(as.Date(span$End))
+    if(is.null(start_date)) {
+      start_date <- min(dttr2::dtt_date(dttr2::dtt_adjust_tz(dttr2::dtt_date_time(span$Start, tz = "UTC"), tz = tz)))
+      start_date <- as.numeric(dttr2::dtt_date_time(start_date, tz = tz))
+    }
+    if(is.null(end_date)) {
+      end_date <- max(dttr2::dtt_date(dttr2::dtt_adjust_tz(dttr2::dtt_date_time(span$End, tz = "UTC"), tz = tz)))
+      end_date <- as.numeric(dttr2::dtt_date_time(paste(end_date, "23:59:59", sep = " "), tz = tz))
+    }
+    
   }
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
@@ -179,9 +197,11 @@ ts_get_data <- function(stations = NULL,
     "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
     WHERE Station ", in_commas(stations), " AND
-    DATE(DateTimeData) >= '", start_date, "' AND
-    DATE(DateTimeData) <= '", end_date, "'
+    DateTimeData >= '", start_date, "' AND
+    DateTimeData <= '", end_date, "'
     "))
+  
+  data$DateTimeData <- dttr2::dtt_adjust_tz(data$DateTimeData, tz = tz)
   
   if(nrow(data)) {  
     if(period != "second") {
@@ -191,20 +211,19 @@ ts_get_data <- function(stations = NULL,
       
       data <- aggregate_time_station(data, na_rm = na_rm, aggregate = mean)
     }
-    
     status <- as.integer(ordered(status, status_values()))
     data <- data[data$Status <= status,]
-    
   }
+  
   data$Status <- ts_integer_to_status(data$Status)
   
-  tz <- get_tz(conn)
-  data$DateTimeData <- as.POSIXct(data$DateTimeData, tz = tz)
   
   if(fill) {
-    datetimes <- seq(as.POSIXct(as.character(start_date), tz = tz), 
-                     as.POSIXct(as.character(end_date), tz = tz),
-                     by = period)
+    datetimes <- seq(
+      dttr2::dtt_adjust_tz(dttr2::dtt_date_time(start_date), tz = tz), 
+      dttr2::dtt_adjust_tz(dttr2::dtt_date_time(end_date), tz = tz),
+      by = period
+    )
     
     all <- expand.grid(Station = stations, DateTimeData = datetimes,
                        stringsAsFactors = FALSE)
