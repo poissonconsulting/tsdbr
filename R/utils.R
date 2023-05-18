@@ -66,25 +66,12 @@ aggregate_na_rm <- function(x, fun, na_rm) {
 }
 
 round_down_time <- function(data) { 
-  data$DateTimeData[data$Period == "minute"] <- 
-    sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-        "\\1-\\2-\\3 \\4:\\5:00", 
-        data$DateTimeData[data$Period == "minute"])
-  
-  data$DateTimeData[data$Period == "hour"] <- 
-    sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-        "\\1-\\2-\\3 \\4:00:00", 
-        data$DateTimeData[data$Period == "hour"])
-  
-  data$DateTimeData[data$Period == "day"] <- 
-    sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-        "\\1-\\2-\\3 00:00:00", 
-        data$DateTimeData[data$Period == "day"])
-  
-  data$DateTimeData[data$Period == "month"] <- 
-    sub("(\\d{4,4})-(\\d{2,2})-(\\d{2,2}) (\\d{2,2}):(\\d{2,2}):(\\d{2,2})", 
-        "\\1-\\2-01 00:00:00", 
-        data$DateTimeData[data$Period == "month"])
+
+  data$DateTimeData[data$Period == "minute"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "minute"], units = "minutes")
+  data$DateTimeData[data$Period == "hour"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "hour"], units = "hours")
+  data$DateTimeData[data$Period == "day"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "day"], units = "days")
+  data$DateTimeData[data$Period == "month"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "month"], units = "months")
+
   data
 }
 
