@@ -9,7 +9,8 @@ Imports:
     checkr,
     DBI,
     RSQLite,
-    utils
+    utils,
+    dttr2
 Suggests: 
     covr,
     ggplot2,
