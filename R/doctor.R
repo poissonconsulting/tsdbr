@@ -8,7 +8,7 @@
 #' @return A flag indicating whether or not the database passed the checks (or was fixed)
 #' @export
 ts_doctor_db <- function(check_limits = TRUE,
-                         check_period = TRUE,
+                         check_period = FALSE,
                          check_gaps = FALSE,
                          fix = FALSE, 
                          conn = getOption("tsdbr.conn", NULL)) {
@@ -63,32 +63,37 @@ ts_doctor_db <- function(check_limits = TRUE,
   }
   
   if(check_period) {
-    period <- DBI::dbGetQuery(conn, "
-    SELECT d.Station AS Station, s.Period AS Period,
-      MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
-      MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
-      MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
-      MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
-      MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
-    FROM Station s
-    INNER JOIN Data d ON s.Station = d.Station
-    GROUP BY s.Station, s.Period
-    HAVING
-      (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
-      (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
-      (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
-      (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
     
-    if(nrow(period)) {
-      if(fix) {
-        warning("fix period not yet implemented")
-      }
-      message("the following stations ", ifelse(FALSE, "had", "have"), 
-              " date time data that are inconsistent with their periods: ",
-              punctuate(period$Station, "and"))
-    }
-    period <- nrow(period) > 0
+    warning("check for data period is temporarily disabled")
+    
+    # period <- DBI::dbGetQuery(conn, "
+    #   SELECT d.Station AS Station, s.Period AS Period,
+    #     MAX(STRFTIME('%m', d.DateTimeData)) != '01' AS MonthData,
+    #     MAX(STRFTIME('%d', d.DateTimeData)) != '01' AS DayData,
+    #     MAX(STRFTIME('%H', d.DateTimeData)) != '00' AS HourData,
+    #     MAX(STRFTIME('%M', d.DateTimeData)) != '00' AS MinuteData,
+    #     MAX(STRFTIME('%S', d.DateTimeData)) != '00' AS SecondData
+    #   FROM Station s
+    #   INNER JOIN Data d ON s.Station = d.Station
+    #   GROUP BY s.Station, s.Period
+    #   HAVING
+    #     (SecondData == 1 AND Period IN ('year', 'month', 'day', 'hour', 'minute')) OR
+    #     (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
+    #     (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
+    #     (DayData == 1 AND Period IN ('year', 'month')) OR
+    #     (MonthData == 1 AND Period IN ('year'));")
+    # 
+    # if(nrow(period)) {
+    #   if(fix) {
+    #     warning("fix period not yet implemented")
+    #   }
+    #   message("the following stations ", ifelse(FALSE, "had", "have"), 
+    #           " date time data that are inconsistent with their periods: ",
+    #           punctuate(period$Station, "and"))
+    # }
+    # 
+    # period <- nrow(period) > 0
+    
   }
   
   if(check_gaps) {
@@ -119,6 +124,7 @@ ts_doctor_db <- function(check_limits = TRUE,
     
     span$Station <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\1", span$ID)
     span$DateTimeData <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\3", span$ID)
+    span$DateTimeData <- as.numeric(dttr2::dtt_date_time(span$DateTimeData))
     span$ID <- NULL
     
     if(nrow(span)) {
@@ -131,7 +137,6 @@ ts_doctor_db <- function(check_limits = TRUE,
         span$Corrected <- NA_real_
         span$Status <- 1L
         span$CommentsData <- NA_character_
-        
         span$UploadedUTC <- sys_time_utc()
         
         DBI::dbGetQuery(conn, "DELETE FROM Upload;")
@@ -149,5 +154,5 @@ ts_doctor_db <- function(check_limits = TRUE,
     }
     span <- nrow(span) > 0
   }
-  !limits && !period && !span
+  !limits && !span # && !period
 }
