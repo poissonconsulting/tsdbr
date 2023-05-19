@@ -108,8 +108,11 @@ ts_doctor_db <- function(check_limits = TRUE,
     span <- do.call("rbind", span)
     
     data <- DBI::dbGetQuery(
-      conn, "SELECT Station || ' ' ||DateTimeData AS ID
-              FROM Data")
+      conn, "SELECT Station, DateTimeData FROM Data")
+    
+    data$DateTimeData <- as.character(data$DateTimeData)
+    data$DateTimeData[!grepl(" ", data$DateTimeData)] <- paste(data$DateTimeData[!grepl(" ", data$DateTimeData)], "00:00:00")
+    data <- data.frame(ID = paste(data$Station, data$DateTimeData))
     
     span <- data.frame(ID = setdiff(span$ID, data$ID))
     rm(data)
