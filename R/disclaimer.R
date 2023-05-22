@@ -11,7 +11,7 @@ ts_set_disclaimer <- function(
   check_string(disclaimer)
   old <- ts_get_disclaimer(conn = conn)
 
-  DBI::dbGetQuery(conn, 
+  DBI::dbExecute(conn, 
                   paste0("UPDATE Database 
                          SET Disclaimer = '", disclaimer, "'"))
   invisible(old)

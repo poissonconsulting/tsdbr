@@ -5,8 +5,8 @@
 #' @return A data frame of the requested data.
 #' @export
 ts_get_log <- function(conn = getOption("tsdbr.conn", NULL)) {
-  data <- DBI::dbGetQuery(conn, "SELECT *
-    FROM Log")
+  data <- DBI::dbFetch(DBI::dbSendStatement(conn, "SELECT *
+    FROM Log"))
   rownames(data) <- NULL
   as_tibble(data)
 }

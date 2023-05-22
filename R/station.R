@@ -58,7 +58,7 @@ ts_delete_station <- function(station, conn = getOption("tsdbr.conn", NULL)) {
     warning("station '", station, "' does not exist")
     return(invisible())
   }
-  DBI::dbGetQuery(conn, paste0("DELETE
+  DBI::dbExecute(conn, paste0("DELETE
     FROM Station
     WHERE Station == '", station, "'"))
   invisible()
@@ -146,11 +146,11 @@ ts_get_stations <- function(
   if(is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
   if(is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
   
-  data <- DBI::dbGetQuery(conn, paste0("SELECT *
+  data <- DBI::dbFetch(DBI::dbSendStatement(conn, paste0("SELECT *
     FROM Station
     WHERE Parameter ", in_commas(parameters),
                                        "AND Period ", in_commas(periods),
-                                       "AND Site ", in_commas(sites)))
+                                       "AND Site ", in_commas(sites))))
   rownames(data) <- NULL
   as_tibble(data)
 }

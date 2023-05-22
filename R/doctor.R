@@ -17,22 +17,22 @@ ts_doctor_db <- function(check_limits = TRUE,
   check_flag(check_gaps)
   check_flag(fix)
   
-  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
-  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
+  on.exit(DBI::dbExecute(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbExecute(conn, "VACUUM;"), add = TRUE)
   
   span <- FALSE
   period <- FALSE
   limits <- FALSE
   
   if(check_limits) {
-    limits <- DBI::dbGetQuery(
-      conn, "SELECT d.Station, d.DateTimeData,
+    limits <- DBI::dbFetch(DBI::dbSendStatement(conn,
+      "SELECT d.Station, d.DateTimeData,
         d.Recorded, d.Corrected, 
         d.CommentsData
       FROM Station s
       INNER JOIN Data d ON s.Station = d.Station
       WHERE (d.Corrected < s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
-        d.Status != 3;")
+        d.Status != 3;"))
     
     if(nrow(limits)) {
       table <- table(limits$Station)
@@ -45,12 +45,12 @@ ts_doctor_db <- function(check_limits = TRUE,
                            "Corrected", "Status", "CommentsData")]      
         limits$UploadedUTC <- sys_time_utc()
         
-        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(limits, "Upload", conn)
         
-        DBI::dbGetQuery(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
         
-        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
+        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
                                'UPDATE', 'Data', 'REPLACE fix limits');"))
         limits <- limits[integer(0),]
       }
@@ -97,11 +97,11 @@ ts_doctor_db <- function(check_limits = TRUE,
   }
   
   if(check_gaps) {
-    span <- DBI::dbGetQuery(conn,
+    span <- DBI::dbFetch(DBI::dbSendStatement(conn,
                             "SELECT s.Station AS Station, s.Period AS Period,
               d.Start AS Start, d.End AS End
               FROM Station AS s INNER JOIN
-              DataSpan AS d ON s.Station = d.Station")
+              DataSpan AS d ON s.Station = d.Station"))
     
     span <- split(span, 1:nrow(span))
     span <- lapply(span, FUN = function(x) {
@@ -112,8 +112,8 @@ ts_doctor_db <- function(check_limits = TRUE,
       data.frame(ID = paste(x$Station, datetimes)) })
     span <- do.call("rbind", span)
     
-    data <- DBI::dbGetQuery(
-      conn, "SELECT Station, DateTimeData FROM Data")
+    data <- DBI::dbFetch(DBI::dbSendStatement(conn,
+                                              "SELECT Station, DateTimeData FROM Data"))
     
     data$DateTimeData <- as.character(data$DateTimeData)
     data$DateTimeData[!grepl(" ", data$DateTimeData)] <- paste(data$DateTimeData[!grepl(" ", data$DateTimeData)], "00:00:00")
@@ -139,12 +139,12 @@ ts_doctor_db <- function(check_limits = TRUE,
         span$CommentsData <- NA_character_
         span$UploadedUTC <- sys_time_utc()
         
-        DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+        DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(span, "Upload", conn)
         
-        DBI::dbGetQuery(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
         
-        DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
+        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
                                'INSERT', 'Data', 'ABORT - fix gaps');"))
         span <- span[integer(0),]
       }

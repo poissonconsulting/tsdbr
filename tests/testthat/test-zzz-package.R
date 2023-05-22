@@ -6,7 +6,7 @@ test_that("package", {
   teardown(ts_disconnect_db(conn))
   options(tsdbr.conn = conn)
   
-  expect_error(DBI::dbGetQuery(conn, paste0(
+  expect_error(DBI::dbExecute(conn, paste0(
     "INSERT INTO Database VALUES('tsdbr', '0', 'user', 0, 'Disclaimer');")), 
     "only one row permitted!")
   

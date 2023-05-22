@@ -46,7 +46,6 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   check_flag(na_rm)
   check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
   
-  # data$DateTimeData <- format(data$DateTime, format = "%Y-%m-%d %H:%M:%S")
   data$DateTimeData <- data$DateTime
   data$CommentsData <- data$Comments
   data$Status <- ts_status_to_integer(data$Status)
@@ -82,13 +81,13 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     }
   }
   data$UploadedUTC <- sys_time_utc()
-  on.exit(DBI::dbGetQuery(conn, "DELETE FROM Upload;"))
-  on.exit(DBI::dbGetQuery(conn, "VACUUM;"), add = TRUE)
-  DBI::dbGetQuery(conn, "DELETE FROM Upload;")
+  on.exit(DBI::dbExecute(conn, "DELETE FROM Upload;"))
+  on.exit(DBI::dbExecute(conn, "VACUUM;"), add = TRUE)
+  DBI::dbExecute(conn, "DELETE FROM Upload;")
   
   add(data, "Upload", conn)
   
-  period <- DBI::dbGetQuery(conn, "SELECT s.Station As Station, s.Period AS Period, 
+  period <- DBI::dbFetch(DBI::dbSendStatement(conn, "SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
       MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
@@ -102,12 +101,12 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
+      (MonthData == 1 AND Period IN ('year'));"))
   
-  x <- DBI::dbGetQuery(conn, paste0("INSERT OR ", toupper(resolution), 
+  x <- DBI::dbExecute(conn, paste0("INSERT OR ", toupper(resolution), 
                                     " INTO Data SELECT * FROM Upload;"))
   
-  DBI::dbGetQuery(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
+  DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
   
   invisible(as_tibble(data))
@@ -159,11 +158,11 @@ ts_get_data <- function(stations = NULL,
   }
   
   if(is.null(start_date) || is.null(end_date)) {
-    span <- DBI::dbGetQuery(conn, paste0("
+    span <- DBI::dbFetch(DBI::dbSendStatement(conn, paste0("
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data
     WHERE Station ", in_commas(stations), "
-    GROUP BY Station"))
+    GROUP BY Station")))
     
     if(!nrow(span)) {
       return(data.frame(Station = character(0),
@@ -193,13 +192,13 @@ ts_get_data <- function(stations = NULL,
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
-  data <- DBI::dbGetQuery(conn, paste0(
+  data <- DBI::dbFetch(DBI::dbSendStatement(conn, paste0(
     "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
     WHERE Station ", in_commas(stations), " AND
     DateTimeData >= '", start_date, "' AND
     DateTimeData <= '", end_date, "'
-    "))
+    ")))
   
   data$DateTimeData <- dttr2::dtt_adjust_tz(data$DateTimeData, tz = tz)
   
