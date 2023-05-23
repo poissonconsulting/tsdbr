@@ -4,8 +4,13 @@
 \alias{ts_add_data}
 \title{Add Data}
 \usage{
-ts_add_data(data, aggregate = NULL, na_rm = FALSE,
-  resolution = "abort", conn = getOption("tsdbr.conn", NULL))
+ts_add_data(
+  data,
+  aggregate = NULL,
+  na_rm = FALSE,
+  resolution = "abort",
+  conn = getOption("tsdbr.conn", NULL)
+)
 }
 \arguments{
 \item{data}{A data frame of data with columns Station, DateTime, Recorded.

@@ -4,8 +4,11 @@
 \alias{ts_create_db}
 \title{Create Time-Series Database}
 \usage{
-ts_create_db(file, utc_offset = 0L, periods = c("year", "month", "day",
-  "hour", "minute", "second"))
+ts_create_db(
+  file,
+  utc_offset = 0L,
+  periods = c("year", "month", "day", "hour", "minute", "second")
+)
 }
 \arguments{
 \item{file}{A string of the name of the database file.}
