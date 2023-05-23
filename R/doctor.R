@@ -25,14 +25,14 @@ ts_doctor_db <- function(check_limits = TRUE,
   limits <- FALSE
   
   if(check_limits) {
-    limits <- DBI::dbFetch(DBI::dbSendStatement(conn,
-      "SELECT d.Station, d.DateTimeData,
-        d.Recorded, d.Corrected, 
-        d.CommentsData
-      FROM Station s
-      INNER JOIN Data d ON s.Station = d.Station
-      WHERE (d.Corrected < s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
-        d.Status != 3;"))
+    res <- DBI::dbSendStatement(conn,
+            "SELECT d.Station, d.DateTimeData, d.Recorded, d.Corrected, d.CommentsData
+            FROM Station s
+            INNER JOIN Data d ON s.Station = d.Station
+            WHERE (d.Corrected < s.LowerLimit OR d.Corrected > s.UpperLimit)  AND
+            d.Status != 3;")
+    limits <- DBI::dbFetch(res)
+    DBI::dbClearResult(res)
     
     if(nrow(limits)) {
       table <- table(limits$Station)
@@ -97,11 +97,14 @@ ts_doctor_db <- function(check_limits = TRUE,
   }
   
   if(check_gaps) {
-    span <- DBI::dbFetch(DBI::dbSendStatement(conn,
-                            "SELECT s.Station AS Station, s.Period AS Period,
+    
+    res <- DBI::dbSendStatement(conn,
+              "SELECT s.Station AS Station, s.Period AS Period,
               d.Start AS Start, d.End AS End
               FROM Station AS s INNER JOIN
-              DataSpan AS d ON s.Station = d.Station"))
+              DataSpan AS d ON s.Station = d.Station")
+    span <- DBI::dbFetch(res)
+    DBI::dbClearResult(res)
     
     span <- split(span, 1:nrow(span))
     span <- lapply(span, FUN = function(x) {
@@ -112,8 +115,9 @@ ts_doctor_db <- function(check_limits = TRUE,
       data.frame(ID = paste(x$Station, datetimes)) })
     span <- do.call("rbind", span)
     
-    data <- DBI::dbFetch(DBI::dbSendStatement(conn,
-                                              "SELECT Station, DateTimeData FROM Data"))
+    res <- DBI::dbSendStatement(conn, "SELECT Station, DateTimeData FROM Data")
+    data <- DBI::dbFetch(res)
+    DBI::dbClearResult(res)
     
     data$DateTimeData <- as.character(data$DateTimeData)
     data$DateTimeData[!grepl(" ", data$DateTimeData)] <- paste(data$DateTimeData[!grepl(" ", data$DateTimeData)], "00:00:00")

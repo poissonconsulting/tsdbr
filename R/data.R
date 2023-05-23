@@ -87,7 +87,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   
   add(data, "Upload", conn)
   
-  period <- DBI::dbFetch(DBI::dbSendStatement(conn, "SELECT s.Station As Station, s.Period AS Period, 
+  res <- DBI::dbSendStatement(conn, "SELECT s.Station As Station, s.Period AS Period, 
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
       MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
@@ -101,7 +101,9 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));"))
+      (MonthData == 1 AND Period IN ('year'));")
+  period <- DBI::dbFetch(res)
+  DBI::dbClearResult(res)
   
   x <- DBI::dbExecute(conn, paste0("INSERT OR ", toupper(resolution), 
                                     " INTO Data SELECT * FROM Upload;"))
@@ -158,11 +160,13 @@ ts_get_data <- function(stations = NULL,
   }
   
   if(is.null(start_date) || is.null(end_date)) {
-    span <- DBI::dbFetch(DBI::dbSendStatement(conn, paste0("
+    res <- DBI::dbSendStatement(conn, paste0("
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data
     WHERE Station ", in_commas(stations), "
-    GROUP BY Station")))
+    GROUP BY Station"))
+    span <- DBI::dbFetch(res, n = -1)
+    DBI::dbClearResult(res)
     
     if(!nrow(span)) {
       return(data.frame(Station = character(0),
@@ -192,13 +196,18 @@ ts_get_data <- function(stations = NULL,
   
   if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
   
-  data <- DBI::dbFetch(DBI::dbSendStatement(conn, paste0(
-    "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
+  res <- DBI::dbSendStatement(
+    conn, 
+    paste0(
+      "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
     WHERE Station ", in_commas(stations), " AND
     DateTimeData >= '", start_date, "' AND
     DateTimeData <= '", end_date, "'
-    ")))
+    ")
+    )
+  data <- DBI::dbFetch(res, n = -1)
+  DBI::dbClearResult(res)
   
   data$DateTimeData <- dttr2::dtt_adjust_tz(data$DateTimeData, tz = tz)
   
