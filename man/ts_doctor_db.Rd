@@ -13,18 +13,22 @@ ts_doctor_db(
 )
 }
 \arguments{
-\item{check_limits}{A flag indicating whether to check if corrected values outside the lower and upper limits are coded as erroneous.}
+\item{check_limits}{A flag indicating whether to check if corrected values
+outside the lower and upper limits are coded as erroneous.}
 
-\item{check_period}{A flag indicating whether to check if the periods are valid.}
+\item{check_period}{A flag indicating whether to check if the periods are
+valid.}
 
-\item{check_gaps}{A flag indicating whether to check if there are any gaps in the data given the period.}
+\item{check_gaps}{A flag indicating whether to check if there are any gaps in
+the data given the period.}
 
 \item{fix}{A flag indicating whether to fix any problems}
 
 \item{conn}{An object of class SQLiteConnection.}
 }
 \value{
-A flag indicating whether or not the database passed the checks (or was fixed)
+A flag indicating whether or not the database passed the checks (or
+  was fixed)
 }
 \description{
 Doctor Database

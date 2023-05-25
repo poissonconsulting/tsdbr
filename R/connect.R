@@ -4,12 +4,13 @@
 #' @return A connection.
 #' @export
 ts_connect_db <- function(file) {
-  check_string(file)
-  
-  if(!file.exists(file))
+  chk_string(file)
+
+  if (!file.exists(file)) {
     stop("file '", file, "' does not exist", call. = FALSE)
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
+
   DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")
   conn
 }
@@ -30,12 +31,13 @@ ts_disconnect_db <- function(conn = getOption("tsdbr.conn", NULL)) {
 #' @return A data frame of the table
 #' @export
 ts_get_table <- function(table, conn = getOption("tsdbr.conn", NULL)) {
-  check_string(table)
+  chk_string(table)
   check_conn(conn)
 
-  if(!DBI::dbExistsTable(conn, table))
+  if (!DBI::dbExistsTable(conn, table)) {
     stop("table '", table, "' does not exist", call. = FALSE)
-  
+  }
+
   table <- DBI::dbReadTable(conn, table)
   rownames(table) <- NULL
   as_tibble(table)

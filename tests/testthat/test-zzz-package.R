@@ -157,4 +157,3 @@ test_that("package", {
   ts_delete_station("S2")
   expect_identical(nrow(ts_get_data(end_date = as.Date("2000-09-01"), status = "erroneous", fill = FALSE)), 1L)
 })
-

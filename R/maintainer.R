@@ -1,11 +1,11 @@
 #' Set Maintainer
-#' 
+#'
 #' Sets maintainer.
 #' @param maintainer A string of the maintainer.
 #' @inheritParams ts_disconnect_db
 #' @return A string of the old maintainer.
 #' @export
-ts_set_maintainer <- function(maintainer = ts_sys_user(), 
+ts_set_maintainer <- function(maintainer = ts_sys_user(),
                               conn = getOption("tsdbr.conn", NULL)) {
   check_string(maintainer)
   old <- ts_get_maintainer(conn = conn)
@@ -17,7 +17,7 @@ ts_set_maintainer <- function(maintainer = ts_sys_user(),
 }
 
 #' Get Maintainer
-#' 
+#'
 #' Gets maintainer as a string.
 #' @inheritParams ts_disconnect_db
 #' @return A string of the maintainer.

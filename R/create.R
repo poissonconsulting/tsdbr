@@ -5,23 +5,21 @@
 #'
 #' @param file A string of the name of the database file.
 #' @param utc_offset A integer of the utc offset which must lie between -12 and 14.
-#' @param periods A character vector of the permitted periods. 
+#' @param periods A character vector of the permitted periods.
 #' Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'
 #' @return A connection to the database.
 #' @export
-ts_create_db <- function (file, 
-                          utc_offset = 0L,
-                          periods = c("year", "month", "day", "hour", "minute", "second")) {
+ts_create_db <- function(file,
+                         utc_offset = 0L,
+                         periods = c("year", "month", "day", "hour", "minute", "second")) {
   check_string(file)
   check_scalar(utc_offset, c(-12L, 14L))
   check_vector(periods, c("year", "month", "day", "hour", "minute", "second"),
                length = TRUE, unique = TRUE, named = FALSE)
   
-  if(file.exists(file))
-    stop("file '", file, "' already exists", call. = FALSE)
+  if(file.exists(file)) stop("file '", file, "' already exists", call. = FALSE)
   
-  if(!dir.exists(dirname(file)))
-    stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
+  if(!dir.exists(dirname(file))) stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
   DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")

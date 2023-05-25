@@ -1,5 +1,5 @@
 #' Add Data
-#' 
+#'
 #' Times are rounded down prior to import.
 #'
 #' @param data A data frame of data with columns Station, DateTime, Recorded.
@@ -129,7 +129,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
 #' @return A data frame of the requested data.
 #' @export
 ts_get_data <- function(stations = NULL,
-                        start_date = NULL, 
+                        start_date = NULL,
                         end_date = NULL,
                         period = "hour",
                         na_rm = FALSE,
