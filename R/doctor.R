@@ -1,16 +1,20 @@
 #' Doctor Database
 #'
-#' @param check_limits A flag indicating whether to check if corrected values outside the lower and upper limits are coded as erroneous.
-#' @param check_period A flag indicating whether to check if the periods are valid.
-#' @param check_gaps A flag indicating whether to check if there are any gaps in the data given the period.
+#' @param check_limits A flag indicating whether to check if corrected values
+#'   outside the lower and upper limits are coded as erroneous.
+#' @param check_period A flag indicating whether to check if the periods are
+#'   valid.
+#' @param check_gaps A flag indicating whether to check if there are any gaps in
+#'   the data given the period.
 #' @param fix A flag indicating whether to fix any problems
 #' @inheritParams ts_disconnect_db
-#' @return A flag indicating whether or not the database passed the checks (or was fixed)
+#' @return A flag indicating whether or not the database passed the checks (or
+#'   was fixed)
 #' @export
 ts_doctor_db <- function(check_limits = TRUE,
                          check_period = FALSE,
                          check_gaps = FALSE,
-                         fix = FALSE, 
+                         fix = FALSE,
                          conn = getOption("tsdbr.conn", NULL)) {
   check_flag(check_limits)
   check_flag(check_period)

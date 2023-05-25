@@ -16,6 +16,8 @@ An integer vector.
 Converts an ordered factor of status values to an integer vector.
 }
 \examples{
-ts_status_to_integer(ordered("questionable", 
- c("reasonable", "questionable", "erroneous")))
+ts_status_to_integer(ordered(
+  "questionable",
+  c("reasonable", "questionable", "erroneous")
+))
 }

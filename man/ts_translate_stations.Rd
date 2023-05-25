@@ -15,7 +15,7 @@ ts_translate_stations(
 \arguments{
 \item{data}{A data frame with the column Station of the station coding.}
 
-\item{from}{A string indicating the coding to translate from. 
+\item{from}{A string indicating the coding to translate from.
 Possible values are 'Station', 'StationName' and 'StationID'.}
 
 \item{to}{A string indicating the coding to translate to.}

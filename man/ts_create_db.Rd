@@ -15,7 +15,7 @@ ts_create_db(
 
 \item{utc_offset}{A integer of the utc offset which must lie between -12 and 14.}
 
-\item{periods}{A character vector of the permitted periods. 
+\item{periods}{A character vector of the permitted periods.
 Possible values are 'year', 'month', 'day', 'hour', 'minute', 'second'}
 }
 \value{
