@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - [master, fix_add_data]
   pull_request:
     branches:
       - master
