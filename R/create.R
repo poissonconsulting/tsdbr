@@ -12,14 +12,21 @@
 ts_create_db <- function(file,
                          utc_offset = 0L,
                          periods = c("year", "month", "day", "hour", "minute", "second")) {
-  check_string(file)
-  check_scalar(utc_offset, c(-12L, 14L))
-  check_vector(periods, c("year", "month", "day", "hour", "minute", "second"),
-               length = TRUE, unique = TRUE, named = FALSE)
+  chk_string(file)
+  chk_scalar(utc_offset)
+  chk_range(utc_offset, c(-12L, 14L))
+  chk_vector(periods)
+  check_values(periods, c("year", "month", "day", "hour", "minute", "second"))
+  check_dim(periods, values = TRUE)
+  chk_unique(periods)
   
-  if(file.exists(file)) stop("file '", file, "' already exists", call. = FALSE)
+  if (file.exists(file)) {
+    stop("file '", file, "' already exists", call. = FALSE)
+  } 
   
-  if(!dir.exists(dirname(file))) stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
+  if (!dir.exists(dirname(file))) {
+    stop("directory '", dirname(file) , "' does not exist", call. = FALSE)
+  } 
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
   DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")
@@ -141,8 +148,10 @@ ts_create_db <- function(file,
     FROM DataCount
     NATURAL JOIN DataNULL")
   
-  status <- data.frame(Status = 1:3,
-                       Description = c("reasonable", "questionable", "erroneous"))
+  status <- data.frame(
+    Status = 1:3,
+    Description = c("reasonable", "questionable", "erroneous")
+    )
   
   DBI::dbWriteTable(conn, name = "Status", value = status, row.names = FALSE, append = TRUE)
   

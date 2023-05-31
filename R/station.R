@@ -168,19 +168,26 @@ ts_get_stations <- function(
   sites = NULL,
   conn = getOption("tsdbr.conn", NULL)) {
   
-  checkor(check_null(parameters), 
-          check_vector(parameters, ts_get_parameters(conn = conn)$Parameter, 
-                       length = TRUE, unique = TRUE, only = TRUE))
+  if(!is.null(parameters)) {
+    chk_vector(parameters)
+    check_values(parameters, ts_get_parameters(conn = conn)$Parameter)
+    check_dim(parameters, values = TRUE)
+    chk_unique(parameters)
+  }
   
-  check_vector(periods, ts_get_periods(conn = conn), 
-               length = TRUE, unique = TRUE, only = TRUE)
+  chk_vector(periods)
+  check_dim(periods, values = TRUE)
+  chk_unique(periods)
+  check_values(periods, ts_get_periods(conn = conn))
   
-  checkor(check_null(sites), 
-          check_vector(sites, ts_get_sites(conn = conn)$Site, 
-                       length = TRUE, unique = TRUE, only = TRUE))
-  
-  if(is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
-  if(is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
+  if(!is.null(sites)) {
+    chk_vector(sites)
+    check_values(sites, ts_get_sites(conn = conn)$Site)
+    check_dim(sites, values = TRUE)
+    chk_unique(sites)
+  }
+  if (is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
+  if (is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
   
   res <- DBI::dbSendStatement(conn, paste0("SELECT * FROM Station WHERE Parameter ",
                                            in_commas(parameters), "AND Period ",

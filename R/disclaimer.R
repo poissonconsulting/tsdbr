@@ -7,7 +7,7 @@
 #' @export
 ts_set_disclaimer <- function(disclaimer = "THE DATA ARE COPYRIGHTED",
                               conn = getOption("tsdbr.conn", NULL)) {
-  check_string(disclaimer)
+  chk_string(disclaimer)
   old <- ts_get_disclaimer(conn = conn)
 
   DBI::dbExecute(conn, 

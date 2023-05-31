@@ -7,12 +7,13 @@
 #' @export
 ts_set_maintainer <- function(maintainer = ts_sys_user(),
                               conn = getOption("tsdbr.conn", NULL)) {
-  check_string(maintainer)
+  chk_string(maintainer)
   old <- ts_get_maintainer(conn = conn)
 
-  DBI::dbExecute(conn, 
-                  paste0("UPDATE Database 
-                         SET Maintainer = '", maintainer, "'"))
+  DBI::dbExecute(
+    conn,
+    paste0("UPDATE Database SET Maintainer = '", maintainer, "'")
+  )
   invisible(old)
 }
 

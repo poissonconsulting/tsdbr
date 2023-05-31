@@ -16,10 +16,10 @@ ts_doctor_db <- function(check_limits = TRUE,
                          check_gaps = FALSE,
                          fix = FALSE,
                          conn = getOption("tsdbr.conn", NULL)) {
-  check_flag(check_limits)
-  check_flag(check_period)
-  check_flag(check_gaps)
-  check_flag(fix)
+  chk_flag(check_limits)
+  chk_flag(check_period)
+  chk_flag(check_gaps)
+  chk_flag(fix)
   
   on.exit(DBI::dbExecute(conn, "DELETE FROM Upload;"))
   on.exit(DBI::dbExecute(conn, "VACUUM;"), add = TRUE)

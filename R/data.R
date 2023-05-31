@@ -15,47 +15,63 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
                         resolution = "abort",
                         conn = getOption("tsdbr.conn", NULL)) {
   check_data(data,
-             values = list(Station = "",
-                           DateTime = Sys.time(),
-                           Recorded = c(1, NA)),
-             nrow = TRUE)
+    values = list(
+      Station = "",
+      DateTime = Sys.time(),
+      Recorded = c(1, NA)),
+    nrow = TRUE
+  )
   
   check_conn(conn)
   
   tz <- get_tz(conn)
   
   if(tz == "GMT") {
-    checkor(check_tzone(data$DateTime, "UTC"),check_tzone(data$DateTime, "GMT"))
+    chkor(check_tzone(data$DateTime, "UTC"),check_tzone(data$DateTime, "GMT"))
   } else {
     check_tzone(data$DateTime, tz)
   }
   
   if(missing_column(data, "Corrected")) {
     data$Corrected <- data$Recorded
-  } else check_vector(data$Corrected, c(1, NA))
+  } else {
+    chk_vector(data$Corrected)
+    check_values(data$Corrected, c(1, NA))
+  }
   
   if(missing_column(data, "Status")) {
     data$Status <- ordered("reasonable", status_values())
-  } else check_vector(data$Status, ordered(status_values(), status_values()))
+  } else {
+    chk_vector(data$Status)
+    check_values(data$Status, ordered(status_values(), status_values()))
+  }
   
   if(missing_column(data, "Comments")) {
     data$Comments <- NA_character_
-  } else check_vector(data$Comments, c("", NA))
+  } else {
+    chk_vector(data$Comments)
+    check_values(data$Comments, c("", NA))
+  }
   
-  checkor(check_null(aggregate), check_function(aggregate))
-  check_flag(na_rm)
-  check_vector(resolution, c("abort", "ignore", "replace"), length = 1)
+  chk_null_or(aggregate, vld = vld_function)
+  chk_flag(na_rm)
+  chk_vector(resolution)
+  check_values(resolution, c("abort", "ignore", "replace"))
+  check_dim(resolution, values = 1)
   
   data$DateTimeData <- data$DateTime
   data$CommentsData <- data$Comments
   data$Status <- ts_status_to_integer(data$Status)
   
-  data <- data[c("Station", "DateTimeData", "Recorded",
-                 "Corrected", "Status", "CommentsData")]
+  data <- data[c(
+    "Station", "DateTimeData", "Recorded",
+    "Corrected", "Status", "CommentsData"
+  )]
   
   stations <- ts_get_table("Station", conn)
   
-  check_vector(data$Station, stations$Station, only = TRUE)
+  chk_vector(data$Station)
+  check_values(data$Station, stations$Station)
   
   data <- merge(data, stations[c("Station", "LowerLimit", "UpperLimit")], by = "Station")
   
@@ -105,8 +121,10 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   period <- DBI::dbFetch(res)
   DBI::dbClearResult(res)
   
-  x <- DBI::dbExecute(conn, paste0("INSERT OR ", toupper(resolution), 
-                                    " INTO Data SELECT * FROM Upload;"))
+  x <- DBI::dbGetQuery(conn, paste0(
+    "INSERT OR ", toupper(resolution),
+    " INTO Data SELECT * FROM Upload;"
+  ))
   
   DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
@@ -136,17 +154,26 @@ ts_get_data <- function(stations = NULL,
                         status = "questionable",
                         fill = TRUE,
                         conn = getOption("tsdbr.conn", NULL)) {
-  checkor(check_null(start_date), check_date(start_date))
-  checkor(check_null(end_date), check_date(end_date))
-  check_vector(period, ts_get_periods(conn = conn), length = 1, only = TRUE)
-  check_vector(status, c("reasonable", "questionable", "erroneous"), length = 1)
-  check_flag(fill)
+  chk_null_or(start_date, vld = vld_date)
+  chk_null_or(end_date, vld = vld_date)
+  
+  chk_vector(period)
+  check_values(period, ts_get_periods(conn = conn))
+  check_dim(period, values = 1)
+  
+  chk_vector(status)
+  check_values(status, c("reasonable", "questionable", "erroneous"))
+  check_dim(status, values = 1)
+  
+  chk_flag(fill)
   check_conn(conn)
   
-  checkor(check_null(stations), 
-          check_vector(stations, ts_get_stations(conn = conn)$Station, 
-                       length = TRUE, unique = TRUE, only = TRUE))
-  
+  if(!is.null(stations)) {
+    chk_vector(stations)
+    check_values(stations, ts_get_stations(conn = conn)$Station)
+    check_dim(stations, values = TRUE)
+    chk_unique(stations)
+  }
   if(is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
   
   tz <- get_tz(conn)
