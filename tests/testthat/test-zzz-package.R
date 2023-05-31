@@ -41,7 +41,9 @@ test_that("package", {
   data$Recorded[4] <- NA
   
   expect_error(ts_add_data(data), 
-               "data[$]DateTime time zone must be 'Etc/GMT[+]8' [(]not 'GMT'[)]")
+               "`data$DateTime` time zone must be 'Etc/GMT+8' (not 'GMT').",
+               fixed = TRUE)
+  
   data$DateTime <- ISOdate(2000, 9, 1, 0:23, tz = "Etc/GMT+8")
   
   data <- data[-5,]
@@ -101,16 +103,13 @@ test_that("package", {
                  "Status", "Site", "Depth", "Parameter", "Units", "StationName", "Comments"))
  
 
-  expect_identical(nrow(ts_translate_stations(data, na_rm = FALSE)), nrow(data))
+  expect_warning(expect_identical(nrow(ts_translate_stations(data, na_rm = FALSE)), nrow(data)),
+                 "the following stations are unrecognised: 'S1' and 'S2'")
 
-  expect_identical(nrow(ts_translate_stations(data, na_rm = TRUE)), 0L)
-   
-  expect_warning(ts_translate_stations(data), 
+  expect_warning(expect_identical(nrow(ts_translate_stations(data, na_rm = TRUE)), 0L),
                  "the following stations are unrecognised: 'S1' and 'S2'")
   
-  expect_identical(nrow(ts_translate_stations(data, from = "Station", to = "StationID")), 21L)
-  
-  expect_warning(ts_translate_stations(data, from = "Station", to = "StationID"), 
+  expect_warning(expect_identical(nrow(ts_translate_stations(data, from = "Station", to = "StationID")), 21L),
                  "the following stations are unrecognised: 'S1'")
   
   expect_identical(nrow(ts_add_station("3S", "Temp", "Mount Doom", "hour")), 1L)
