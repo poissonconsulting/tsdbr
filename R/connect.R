@@ -13,6 +13,7 @@ ts_connect_db <- function(file) {
 
   DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")
   conn
+  }
 }
 
 #' Disconnect from Database
