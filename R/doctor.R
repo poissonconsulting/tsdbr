@@ -112,8 +112,8 @@ ts_doctor_db <- function(check_limits = TRUE,
     
     span <- split(span, 1:nrow(span))
     span <- lapply(span, FUN = function(x) {
-      datetimes <- seq(as.POSIXct(x$Start, tz = "UTC"),
-                       as.POSIXct(x$End, tz = "UTC"),
+      datetimes <- seq(as.POSIXct(x$Start, tz = "UTC", origin = "1970-01-01"),
+                       as.POSIXct(x$End, tz = "UTC", origin = "1970-01-01"),
                        by = x$Period)
       datetimes <- format(datetimes, format = "%Y-%m-%d %H:%M:%S")
       data.frame(ID = paste(x$Station, datetimes)) })
