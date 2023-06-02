@@ -121,11 +121,14 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   period <- DBI::dbFetch(res)
   DBI::dbClearResult(res)
   
-  x <- DBI::dbGetQuery(conn, paste0(
-    "INSERT OR ", toupper(resolution),
-    " INTO Data SELECT * FROM Upload;"
-  ))
+  res <- DBI::dbSendStatement(conn, paste0(
+      "INSERT OR ", toupper(resolution),
+      " INTO Data SELECT * FROM Upload;"
+    ))
   
+  x <- DBI::dbFetch(res)
+  DBI::dbClearResult(res)
+
   DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
                                'INSERT', 'Data', '", toupper(resolution), "');"))
   
