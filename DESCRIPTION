@@ -9,7 +9,8 @@ Imports:
     chk,
     DBI,
     RSQLite,
-    utils
+    utils,
+    dttr2
 Suggests: 
     covr,
     ggplot2,
@@ -21,5 +22,4 @@ Remotes:
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.2.0
-Config/testthat/edition: 3
+RoxygenNote: 7.2.3

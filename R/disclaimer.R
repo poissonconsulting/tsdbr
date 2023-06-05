@@ -10,11 +10,9 @@ ts_set_disclaimer <- function(disclaimer = "THE DATA ARE COPYRIGHTED",
   chk_string(disclaimer)
   old <- ts_get_disclaimer(conn = conn)
 
-  DBI::dbExecute(
-    conn,
-    paste0("UPDATE Database
-                         SET Disclaimer = '", disclaimer, "'")
-  )
+  DBI::dbExecute(conn, 
+                  paste0("UPDATE Database 
+                         SET Disclaimer = '", disclaimer, "'"))
   invisible(old)
 }
 

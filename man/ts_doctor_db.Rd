@@ -6,7 +6,7 @@
 \usage{
 ts_doctor_db(
   check_limits = TRUE,
-  check_period = TRUE,
+  check_period = FALSE,
   check_gaps = FALSE,
   fix = FALSE,
   conn = getOption("tsdbr.conn", NULL)
