@@ -8,12 +8,12 @@ ts_connect_db <- function(file) {
 
   if (!file.exists(file)) {
     stop("file '", file, "' does not exist", call. = FALSE)
+  }
   
   conn <- DBI::dbConnect(RSQLite::SQLite(), file, extended_types = TRUE)
 
   DBI::dbExecute(conn, "PRAGMA foreign_keys = ON;")
   conn
-  }
 }
 
 #' Disconnect from Database
