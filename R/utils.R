@@ -31,10 +31,8 @@ ts_integer_to_status <- function(x) {
 }
 
 as_tibble <- function(data) {
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    data <- tibble::as_tibble(data)
-  }
-  data
+  rlang::check_installed("tibble")
+  data <- tibble::as_tibble(data)
 }
 
 add <- function(data, table, conn) {
