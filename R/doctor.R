@@ -110,7 +110,7 @@ ts_doctor_db <- function(check_limits = TRUE,
     span <- DBI::dbFetch(res)
     DBI::dbClearResult(res)
     
-    span <- split(span, 1:nrow(span))
+    span <- split(span, seq_len(nrow(span)))
     span <- lapply(span, FUN = function(x) {
       datetimes <- seq(as.POSIXct(x$Start, tz = "UTC", origin = "1970-01-01"),
                        as.POSIXct(x$End, tz = "UTC", origin = "1970-01-01"),

@@ -33,7 +33,7 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
 
   colnames_data <- colnames(data)
 
-  data$..ID <- 1:nrow(data)
+  data$..ID <- seq_len(nrow(data))
   stations_from <- data[c("Station", "..ID")]
   colnames(stations_from) <- c(from, "..ID")
   stations <- stations[c(from, to)]
