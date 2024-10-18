@@ -28,7 +28,7 @@ the data given the period.}
 }
 \value{
 A flag indicating whether or not the database passed the checks (or
-  was fixed)
+was fixed)
 }
 \description{
 Doctor Database
