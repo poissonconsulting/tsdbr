@@ -163,24 +163,23 @@ ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
 #' @return A data frame of the requested data.
 #' @export
 ts_get_stations <- function(
-  parameters = NULL,
-  periods = c("year", "month", "day", "hour", "minute", "second"),
-  sites = NULL,
-  conn = getOption("tsdbr.conn", NULL)) {
-  
-  if(!is.null(parameters)) {
+    parameters = NULL,
+    periods = c("year", "month", "day", "hour", "minute", "second"),
+    sites = NULL,
+    conn = getOption("tsdbr.conn", NULL)) {
+  if (!is.null(parameters)) {
     chk_vector(parameters)
     check_values(parameters, ts_get_parameters(conn = conn)$Parameter)
     check_dim(parameters, values = TRUE)
     chk_unique(parameters)
   }
-  
+
   chk_vector(periods)
   check_dim(periods, values = TRUE)
   chk_unique(periods)
   check_values(periods, ts_get_periods(conn = conn))
-  
-  if(!is.null(sites)) {
+
+  if (!is.null(sites)) {
     chk_vector(sites)
     check_values(sites, ts_get_sites(conn = conn)$Site)
     check_dim(sites, values = TRUE)
@@ -188,11 +187,13 @@ ts_get_stations <- function(
   }
   if (is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
   if (is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
-  
-  res <- DBI::dbSendStatement(conn, paste0("SELECT * FROM Station WHERE Parameter ",
-                                           in_commas(parameters), "AND Period ",
-                                           in_commas(periods), "AND Site ",
-                                           in_commas(sites)))
+
+  res <- DBI::dbSendStatement(conn, paste0(
+    "SELECT * FROM Station WHERE Parameter ",
+    in_commas(parameters), "AND Period ",
+    in_commas(periods), "AND Site ",
+    in_commas(sites)
+  ))
   data <- DBI::dbFetch(res)
   DBI::dbClearResult(res)
   rownames(data) <- NULL

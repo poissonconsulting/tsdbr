@@ -73,8 +73,7 @@ aggregate_na_rm <- function(x, fun, na_rm) {
   fun(x[!is.na(x)])
 }
 
-round_down_time <- function(data) { 
-
+round_down_time <- function(data) {
   data$DateTimeData[data$Period == "minute"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "minute"], units = "minutes")
   data$DateTimeData[data$Period == "hour"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "hour"], units = "hours")
   data$DateTimeData[data$Period == "day"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "day"], units = "days")
@@ -171,8 +170,9 @@ ts_get_periods <- function(conn = getOption("tsdbr.conn", NULL)) {
 vld_tzone <- function(x, tzone = "UTC", x_name = NULL) {
   tzone <- chk::chk_string(tzone)
 
-  if (is.null(x_name))
+  if (is.null(x_name)) {
     x_name <- chk::deparse_backtick_chk(substitute(x))
+  }
 
   attr_tzone <- attr(x, "tzone")
   if (is.null(attr_tzone)) attr_tzone <- "NULL"
@@ -184,15 +184,14 @@ vld_tzone <- function(x, tzone = "UTC", x_name = NULL) {
 }
 
 check_tzone <- function(x, tzone = "UTC", x_name = NULL) {
- 
   if (vld_tzone(x, tzone, x_name)) {
     return(invisible())
   }
-  
+
   if (is.null(x_name)) {
     x_name <- chk::deparse_backtick_chk(substitute(x))
   }
-  
+
   attr_tzone <- attr(x, "tzone")
   if (is.null(attr_tzone)) attr_tzone <- "NULL"
   chk::abort_chk(
