@@ -8,9 +8,10 @@ License: MIT + file LICENSE
 Imports: 
     chk,
     DBI,
+    dttr2,
+    rlang,
     RSQLite,
-    utils,
-    dttr2
+    utils
 Suggests: 
     covr,
     ggplot2,

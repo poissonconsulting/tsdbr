@@ -34,11 +34,7 @@ plot_station <- function(data) {
 #' DateTime and Recorded and/or Corrected.
 #' @export
 ts_plot_data <- function(data) {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' needed for this function to work. Please install it.",
-      call. = FALSE
-    )
-  }
+  rlang::check_installed("ggplot2", reason = "for this function to work.")
 
   check_data(data,
     values = list(
