@@ -129,7 +129,7 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
     " INTO Data SELECT * FROM Upload;"
   ))
 
-  x <- DBI::dbFetch(res)
+  x <- DBI::dbGetRowsAffected(res)
   DBI::dbClearResult(res)
 
   DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
