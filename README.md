@@ -7,7 +7,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![Codecov test
 coverage](https://codecov.io/gh/poissonconsulting/tsdbr/graph/badge.svg)](https://app.codecov.io/gh/poissonconsulting/tsdbr)
 [![License:
-MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/license/mit/)
 <!-- badges: end -->
 
 # tsdbr
@@ -35,14 +35,14 @@ databases of environmental time series data.
     )
     print(head(data))
     #> # A tibble: 6 × 11
-    #>   Station DateTime            Recorded Corrected Status     Site    Depth Parameter Units StationName Comments
-    #>   <chr>   <dttm>                 <dbl>     <dbl> <ord>      <chr>   <dbl> <chr>     <chr> <chr>       <chr>   
-    #> 1 S1      2000-09-01 00:00:00       -2        -2 reasonable Niagar…    NA discharge cms   <NA>        <NA>    
-    #> 2 S1      2000-09-01 01:00:00       -1        -1 reasonable Niagar…    NA discharge cms   <NA>        <NA>    
-    #> 3 S1      2000-09-01 02:00:00        0         0 reasonable Niagar…    NA discharge cms   <NA>        <NA>    
-    #> 4 S1      2000-09-01 03:00:00        1         1 reasonable Niagar…    NA discharge cms   <NA>        <NA>    
-    #> 5 S1      2000-09-01 04:00:00        2         2 reasonable Niagar…    NA discharge cms   <NA>        <NA>    
-    #> 6 S1      2000-09-01 05:00:00        3         3 reasonable Niagar…    NA discharge cms   <NA>        <NA>
+    #>   Station DateTime            Recorded Corrected Status     Site          Depth Parameter Units StationName Comments
+    #>   <chr>   <dttm>                 <dbl>     <dbl> <ord>      <chr>         <dbl> <chr>     <chr> <chr>       <chr>   
+    #> 1 S1      2000-09-01 00:00:00       -2        -2 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+    #> 2 S1      2000-09-01 01:00:00       -1        -1 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+    #> 3 S1      2000-09-01 02:00:00        0         0 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+    #> 4 S1      2000-09-01 03:00:00        1         1 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+    #> 5 S1      2000-09-01 04:00:00        2         2 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+    #> 6 S1      2000-09-01 05:00:00        3         3 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>
     ts_plot_data(data)
 
 <img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
