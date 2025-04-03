@@ -74,14 +74,14 @@
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>)</span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(data))</span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 11</span></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;   Station DateTime            Recorded Corrected Status     Site    Depth Parameter Units StationName Comments</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;dttm&gt;                 &lt;dbl&gt;     &lt;dbl&gt; &lt;ord&gt;      &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;   </span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reasonable Niagar…    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;   Station DateTime            Recorded Corrected Status     Site          Depth Parameter Units StationName Comments</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;dttm&gt;                 &lt;dbl&gt;     &lt;dbl&gt; &lt;ord&gt;      &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;   </span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 1 S1      2000-09-01 00:00:00       -2        -2 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 2 S1      2000-09-01 01:00:00       -1        -1 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 3 S1      2000-09-01 02:00:00        0         0 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 4 S1      2000-09-01 03:00:00        1         1 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 5 S1      2000-09-01 04:00:00        2         2 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;    </span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 6 S1      2000-09-01 05:00:00        3         3 reasonable Niagara Falls    NA discharge cms   &lt;NA&gt;        &lt;NA&gt;</span></span>
 <span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="fu">ts_plot_data</span>(data)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">ts_disconnect_db</span>()</span></code></pre></div>
@@ -144,7 +144,7 @@
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/poissonconsulting/tsdbr/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/poissonconsulting/tsdbr/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/poissonconsulting/tsdbr" class="external-link"><img src="https://codecov.io/gh/poissonconsulting/tsdbr/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a></li>
+<li><a href="https://opensource.org/license/mit/" class="external-link"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a></li>
 </ul>
 </div>
 
