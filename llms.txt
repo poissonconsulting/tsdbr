@@ -1,0 +1,131 @@
+# tsdbr
+
+`tsdbr` is designed to create, populate, maintain and query SQLite
+databases of environmental time series data.
+
+## Utilisation
+
+``` R
+library(tsdbr)
+conn <- ts_create_db(":memory:")
+options(tsdbr.conn = conn)
+ts_add_parameter("discharge", "cms")
+ts_add_site("Niagara Falls")
+ts_add_station("S1", "discharge", "Niagara Falls", "hour")
+data <- data.frame(
+  Station = "S1", DateTime = ISOdate(2000, 9, 1, 0:23),
+  Recorded = 0:23 - 2,
+  stringsAsFactors = FALSE
+)
+ts_add_data(data)
+data <- ts_get_data(
+  start_date = as.Date("2000-09-01"),
+  end_date = as.Date("2000-09-02")
+)
+print(head(data))
+#> # A tibble: 6 × 11
+#>   Station DateTime            Recorded Corrected Status     Site          Depth Parameter Units StationName Comments
+#>   <chr>   <dttm>                 <dbl>     <dbl> <ord>      <chr>         <dbl> <chr>     <chr> <chr>       <chr>   
+#> 1 S1      2000-09-01 00:00:00       -2        -2 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+#> 2 S1      2000-09-01 01:00:00       -1        -1 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+#> 3 S1      2000-09-01 02:00:00        0         0 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+#> 4 S1      2000-09-01 03:00:00        1         1 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+#> 5 S1      2000-09-01 04:00:00        2         2 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>    
+#> 6 S1      2000-09-01 05:00:00        3         3 reasonable Niagara Falls    NA discharge cms   <NA>        <NA>
+ts_plot_data(data)
+```
+
+![](reference/figures/README-unnamed-chunk-1-1.png)
+
+``` R
+ts_disconnect_db()
+```
+
+## Installation
+
+To install the latest version from GitHub
+[repository](https://github.com/poissonconsulting/tsdbr)
+
+``` R
+# install.packages("remotes")
+remotes::install_github("poissonconsulting/tsdbr")
+```
+
+## Contribution
+
+Please report any
+[issues](https://github.com/poissonconsulting/tsdbr/issues).
+
+[Pull requests](https://github.com/poissonconsulting/tsdbr/pulls) are
+always welcome.
+
+## Code of Conduct
+
+Please note that the tsdbr project is released with a [Contributor Code
+of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
+# Package index
+
+## All functions
+
+- [`ts_add_data()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_data.md)
+  : Add Data
+- [`ts_add_parameter()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_parameter.md)
+  : Add Parameter
+- [`ts_add_parameters()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_parameters.md)
+  : Add Parameters
+- [`ts_add_site()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_site.md)
+  : Add Sites
+- [`ts_add_sites()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_sites.md)
+  : Add Site
+- [`ts_add_station()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_station.md)
+  : Add Station
+- [`ts_add_stations()`](https://poissonconsulting.github.io/tsdbr/reference/ts_add_stations.md)
+  : Add Stations
+- [`ts_connect_db()`](https://poissonconsulting.github.io/tsdbr/reference/ts_connect_db.md)
+  : Connect to Database
+- [`ts_create_db()`](https://poissonconsulting.github.io/tsdbr/reference/ts_create_db.md)
+  : Create Time-Series Database
+- [`ts_delete_station()`](https://poissonconsulting.github.io/tsdbr/reference/ts_delete_station.md)
+  : Delete Station
+- [`ts_disconnect_db()`](https://poissonconsulting.github.io/tsdbr/reference/ts_disconnect_db.md)
+  : Disconnect from Database
+- [`ts_doctor_db()`](https://poissonconsulting.github.io/tsdbr/reference/ts_doctor_db.md)
+  : Doctor Database
+- [`ts_get_data()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_data.md)
+  : Get Data
+- [`ts_get_disclaimer()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_disclaimer.md)
+  : Get Disclaimer
+- [`ts_get_log()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_log.md)
+  : Get Log Table
+- [`ts_get_maintainer()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_maintainer.md)
+  : Get Maintainer
+- [`ts_get_parameters()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_parameters.md)
+  : Get Parameter Table
+- [`ts_get_sites()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_sites.md)
+  : Get Site Table
+- [`ts_get_stations()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_stations.md)
+  : Get Stations Table
+- [`ts_get_table()`](https://poissonconsulting.github.io/tsdbr/reference/ts_get_table.md)
+  : Get Table
+- [`ts_integer_to_status()`](https://poissonconsulting.github.io/tsdbr/reference/ts_integer_to_status.md)
+  : Status to Integer
+- [`ts_plot_data()`](https://poissonconsulting.github.io/tsdbr/reference/ts_plot_data.md)
+  : Plot Data
+- [`ts_set_disclaimer()`](https://poissonconsulting.github.io/tsdbr/reference/ts_set_disclaimer.md)
+  : Set Disclaimer
+- [`ts_set_maintainer()`](https://poissonconsulting.github.io/tsdbr/reference/ts_set_maintainer.md)
+  : Set Maintainer
+- [`ts_status_to_integer()`](https://poissonconsulting.github.io/tsdbr/reference/ts_status_to_integer.md)
+  : Status to Integer
+- [`ts_sys_user()`](https://poissonconsulting.github.io/tsdbr/reference/ts_sys_user.md)
+  : System User
+- [`ts_translate_stations()`](https://poissonconsulting.github.io/tsdbr/reference/ts_translate_stations.md)
+  : Translate Stations
+- [`ts_utc_offset_to_tz()`](https://poissonconsulting.github.io/tsdbr/reference/ts_utc_offset_to_tz.md)
+  : UTC Offset to Time Zone
+- [`ts_write_csv()`](https://poissonconsulting.github.io/tsdbr/reference/ts_write_csv.md)
+  : Write csv
+
