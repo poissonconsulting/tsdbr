@@ -11,11 +11,13 @@
 #' @return A flag indicating whether or not the database passed the checks (or
 #'   was fixed)
 #' @export
-ts_doctor_db <- function(check_limits = TRUE,
-                         check_period = FALSE,
-                         check_gaps = FALSE,
-                         fix = FALSE,
-                         conn = getOption("tsdbr.conn", NULL)) {
+ts_doctor_db <- function(
+  check_limits = TRUE,
+  check_period = FALSE,
+  check_gaps = FALSE,
+  fix = FALSE,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   chk_flag(check_limits)
   chk_flag(check_period)
   chk_flag(check_gaps)
@@ -48,22 +50,37 @@ ts_doctor_db <- function(check_limits = TRUE,
       if (fix) {
         limits$Status <- 3L
         limits <- limits[c(
-          "Station", "DateTimeData", "Recorded",
-          "Corrected", "Status", "CommentsData"
+          "Station",
+          "DateTimeData",
+          "Recorded",
+          "Corrected",
+          "Status",
+          "CommentsData"
         )]
         limits$UploadedUTC <- sys_time_utc()
 
         DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(limits, "Upload", conn)
 
-        DBI::dbExecute(conn, paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(
+          conn,
+          paste0("INSERT OR REPLACE INTO Data SELECT * FROM Upload;")
+        )
 
-        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", limits$UploadedUTC[1], "',
-                               'UPDATE', 'Data', 'REPLACE fix limits');"))
+        DBI::dbExecute(
+          conn,
+          paste0(
+            "INSERT INTO Log VALUES('",
+            limits$UploadedUTC[1],
+            "',
+                               'UPDATE', 'Data', 'REPLACE fix limits');"
+          )
+        )
         limits <- limits[integer(0), ]
       }
       message(
-        "the following stations ", ifelse(fix, "had", "have"),
+        "the following stations ",
+        ifelse(fix, "had", "have"),
         " non-erroneous (corrected) data",
         " that are outside the lower and upper limits:\n",
         paste0(utils::capture.output(table), collapse = "\n")
@@ -117,7 +134,8 @@ ts_doctor_db <- function(check_limits = TRUE,
 
     span <- split(span, seq_len(nrow(span)))
     span <- lapply(span, FUN = function(x) {
-      datetimes <- seq(as.POSIXct(x$Start, tz = "UTC", origin = "1970-01-01"),
+      datetimes <- seq(
+        as.POSIXct(x$Start, tz = "UTC", origin = "1970-01-01"),
         as.POSIXct(x$End, tz = "UTC", origin = "1970-01-01"),
         by = x$Period
       )
@@ -131,14 +149,25 @@ ts_doctor_db <- function(check_limits = TRUE,
     DBI::dbClearResult(res)
 
     data$DateTimeData <- as.character(data$DateTimeData)
-    data$DateTimeData[!grepl(" ", data$DateTimeData)] <- paste(data$DateTimeData[!grepl(" ", data$DateTimeData)], "00:00:00")
+    data$DateTimeData[!grepl(" ", data$DateTimeData)] <- paste(
+      data$DateTimeData[!grepl(" ", data$DateTimeData)],
+      "00:00:00"
+    )
     data <- data.frame(ID = paste(data$Station, data$DateTimeData))
 
     span <- data.frame(ID = setdiff(span$ID, data$ID))
     rm(data)
 
-    span$Station <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\1", span$ID)
-    span$DateTimeData <- sub("(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})", "\\3", span$ID)
+    span$Station <- sub(
+      "(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})",
+      "\\1",
+      span$ID
+    )
+    span$DateTimeData <- sub(
+      "(.*)(\\s)(\\d{4,4}-\\d{2,2}-\\d{2,2} \\d{2,2}:\\d{2,2}:\\d{2,2})",
+      "\\3",
+      span$ID
+    )
     span$DateTimeData <- as.numeric(dttr2::dtt_date_time(span$DateTimeData))
     span$ID <- NULL
 
@@ -157,14 +186,25 @@ ts_doctor_db <- function(check_limits = TRUE,
         DBI::dbExecute(conn, "DELETE FROM Upload;")
         add(span, "Upload", conn)
 
-        DBI::dbExecute(conn, paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;"))
+        DBI::dbExecute(
+          conn,
+          paste0("INSERT OR ABORT INTO Data SELECT * FROM Upload;")
+        )
 
-        DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", span$UploadedUTC[1], "',
-                               'INSERT', 'Data', 'ABORT - fix gaps');"))
+        DBI::dbExecute(
+          conn,
+          paste0(
+            "INSERT INTO Log VALUES('",
+            span$UploadedUTC[1],
+            "',
+                               'INSERT', 'Data', 'ABORT - fix gaps');"
+          )
+        )
         span <- span[integer(0), ]
       }
       message(
-        "the following stations ", ifelse(fix, "had", "have"),
+        "the following stations ",
+        ifelse(fix, "had", "have"),
         " gaps in their data:\n",
         paste0(utils::capture.output(table), collapse = "\n")
       )

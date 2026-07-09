@@ -11,10 +11,15 @@
 #' Options are 'abort', 'ignore' or 'replace'.
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
-                        resolution = "abort",
-                        conn = getOption("tsdbr.conn", NULL)) {
-  check_data(data,
+ts_add_data <- function(
+  data,
+  aggregate = NULL,
+  na_rm = FALSE,
+  resolution = "abort",
+  conn = getOption("tsdbr.conn", NULL)
+) {
+  check_data(
+    data,
     values = list(
       Station = "",
       DateTime = Sys.time(),
@@ -65,8 +70,12 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   data$Status <- ts_status_to_integer(data$Status)
 
   data <- data[c(
-    "Station", "DateTimeData", "Recorded",
-    "Corrected", "Status", "CommentsData"
+    "Station",
+    "DateTimeData",
+    "Recorded",
+    "Corrected",
+    "Status",
+    "CommentsData"
   )]
 
   stations <- ts_get_table("Station", conn)
@@ -74,11 +83,23 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   chk_vector(data$Station)
   check_values(data$Station, stations$Station)
 
-  data <- merge(data, stations[c("Station", "LowerLimit", "UpperLimit")], by = "Station")
+  data <- merge(
+    data,
+    stations[c("Station", "LowerLimit", "UpperLimit")],
+    by = "Station"
+  )
 
   data$Status[is.na(data$Corrected)] <- 1L
-  data$Status[!is.na(data$Corrected) & !is.na(data$LowerLimit) & data$Corrected < data$LowerLimit] <- 3L
-  data$Status[!is.na(data$Corrected) & !is.na(data$UpperLimit) & data$Corrected > data$UpperLimit] <- 3L
+  data$Status[
+    !is.na(data$Corrected) &
+      !is.na(data$LowerLimit) &
+      data$Corrected < data$LowerLimit
+  ] <- 3L
+  data$Status[
+    !is.na(data$Corrected) &
+      !is.na(data$UpperLimit) &
+      data$Corrected > data$UpperLimit
+  ] <- 3L
 
   data$LowerLimit <- NULL
   data$UpperLimit <- NULL
@@ -90,10 +111,14 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
   if (!is.null(aggregate)) {
     data <- aggregate_time_station(data, na_rm = na_rm, aggregate = aggregate)
   } else {
-    duplicates <- unique(data[duplicated(data[c("Station", "DateTimeData")]), ]$Station)
+    duplicates <- unique(
+      data[duplicated(data[c("Station", "DateTimeData")]), ]$Station
+    )
     if (length(duplicates)) {
-      stop("there are ",
-        length(duplicates), " stations",
+      stop(
+        "there are ",
+        length(duplicates),
+        " stations",
         " with the same rounded-down date times",
         call. = FALSE
       )
@@ -106,7 +131,9 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
 
   add(data, "Upload", conn)
 
-  res <- DBI::dbSendStatement(conn, "SELECT s.Station As Station, s.Period AS Period,
+  res <- DBI::dbSendStatement(
+    conn,
+    "SELECT s.Station As Station, s.Period AS Period,
       MAX(STRFTIME('%m', u.DateTimeData)) != '01' AS MonthData,
       MAX(STRFTIME('%d', u.DateTimeData)) != '01' AS DayData,
       MAX(STRFTIME('%H', u.DateTimeData)) != '00' AS HourData,
@@ -120,20 +147,34 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
       (MinuteData == 1 AND Period IN ('year', 'month', 'day', 'hour')) OR
       (HourData == 1 AND Period IN ('year', 'month', 'day')) OR
       (DayData == 1 AND Period IN ('year', 'month')) OR
-      (MonthData == 1 AND Period IN ('year'));")
+      (MonthData == 1 AND Period IN ('year'));"
+  )
   period <- DBI::dbFetch(res)
   DBI::dbClearResult(res)
 
-  res <- DBI::dbSendStatement(conn, paste0(
-    "INSERT OR ", toupper(resolution),
-    " INTO Data SELECT * FROM Upload;"
-  ))
+  res <- DBI::dbSendStatement(
+    conn,
+    paste0(
+      "INSERT OR ",
+      toupper(resolution),
+      " INTO Data SELECT * FROM Upload;"
+    )
+  )
 
   x <- DBI::dbGetRowsAffected(res)
   DBI::dbClearResult(res)
 
-  DBI::dbExecute(conn, paste0("INSERT INTO Log VALUES('", data$UploadedUTC[1], "',
-                               'INSERT', 'Data', '", toupper(resolution), "');"))
+  DBI::dbExecute(
+    conn,
+    paste0(
+      "INSERT INTO Log VALUES('",
+      data$UploadedUTC[1],
+      "',
+                               'INSERT', 'Data', '",
+      toupper(resolution),
+      "');"
+    )
+  )
 
   invisible(as_tibble(data))
 }
@@ -152,14 +193,16 @@ ts_add_data <- function(data, aggregate = NULL, na_rm = FALSE,
 #' @inheritParams ts_add_data
 #' @return A data frame of the requested data.
 #' @export
-ts_get_data <- function(stations = NULL,
-                        start_date = NULL,
-                        end_date = NULL,
-                        period = "hour",
-                        na_rm = FALSE,
-                        status = "questionable",
-                        fill = TRUE,
-                        conn = getOption("tsdbr.conn", NULL)) {
+ts_get_data <- function(
+  stations = NULL,
+  start_date = NULL,
+  end_date = NULL,
+  period = "hour",
+  na_rm = FALSE,
+  status = "questionable",
+  fill = TRUE,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   chk_null_or(start_date, vld = vld_date)
   chk_null_or(end_date, vld = vld_date)
 
@@ -180,7 +223,9 @@ ts_get_data <- function(stations = NULL,
     check_dim(stations, values = TRUE)
     chk_unique(stations)
   }
-  if (is.null(stations)) stations <- ts_get_stations(conn = conn)$Station
+  if (is.null(stations)) {
+    stations <- ts_get_stations(conn = conn)$Station
+  }
 
   tz <- get_tz(conn)
 
@@ -189,15 +234,25 @@ ts_get_data <- function(stations = NULL,
   }
 
   if (!is.null(end_date)) {
-    end_date <- as.numeric(dttr2::dtt_date_time(paste(end_date, "23:59:59", sep = " "), tz = tz))
+    end_date <- as.numeric(dttr2::dtt_date_time(
+      paste(end_date, "23:59:59", sep = " "),
+      tz = tz
+    ))
   }
 
   if (is.null(start_date) || is.null(end_date)) {
-    res <- DBI::dbSendStatement(conn, paste0("
+    res <- DBI::dbSendStatement(
+      conn,
+      paste0(
+        "
     SELECT Station, MIN(DateTimeData) AS Start, MAX(DateTimeData) AS End
     FROM Data
-    WHERE Station ", in_commas(stations), "
-    GROUP BY Station"))
+    WHERE Station ",
+        in_commas(stations),
+        "
+    GROUP BY Station"
+      )
+    )
     span <- DBI::dbFetch(res, n = -1)
     DBI::dbClearResult(res)
 
@@ -219,25 +274,42 @@ ts_get_data <- function(stations = NULL,
     }
 
     if (is.null(start_date)) {
-      start_date <- min(dttr2::dtt_date(dttr2::dtt_adjust_tz(dttr2::dtt_date_time(span$Start, tz = "UTC"), tz = tz)))
+      start_date <- min(dttr2::dtt_date(dttr2::dtt_adjust_tz(
+        dttr2::dtt_date_time(span$Start, tz = "UTC"),
+        tz = tz
+      )))
       start_date <- as.numeric(dttr2::dtt_date_time(start_date, tz = tz))
     }
     if (is.null(end_date)) {
-      end_date <- max(dttr2::dtt_date(dttr2::dtt_adjust_tz(dttr2::dtt_date_time(span$End, tz = "UTC"), tz = tz)))
-      end_date <- as.numeric(dttr2::dtt_date_time(paste(end_date, "23:59:59", sep = " "), tz = tz))
+      end_date <- max(dttr2::dtt_date(dttr2::dtt_adjust_tz(
+        dttr2::dtt_date_time(span$End, tz = "UTC"),
+        tz = tz
+      )))
+      end_date <- as.numeric(dttr2::dtt_date_time(
+        paste(end_date, "23:59:59", sep = " "),
+        tz = tz
+      ))
     }
   }
 
-  if (end_date < start_date) stop("end_date must be after start_date", call. = FALSE)
+  if (end_date < start_date) {
+    stop("end_date must be after start_date", call. = FALSE)
+  }
 
   res <- DBI::dbSendStatement(
     conn,
     paste0(
       "SELECT Station, DateTimeData, Recorded, Corrected, Status, CommentsData
     FROM Data
-    WHERE Station ", in_commas(stations), " AND
-    DateTimeData >= '", start_date, "' AND
-    DateTimeData <= '", end_date, "'
+    WHERE Station ",
+      in_commas(stations),
+      " AND
+    DateTimeData >= '",
+      start_date,
+      "' AND
+    DateTimeData <= '",
+      end_date,
+      "'
     "
     )
   )
@@ -260,7 +332,6 @@ ts_get_data <- function(stations = NULL,
 
   data$Status <- ts_integer_to_status(data$Status)
 
-
   if (fill) {
     datetimes <- seq(
       dttr2::dtt_adjust_tz(dttr2::dtt_date_time(start_date), tz = tz),
@@ -269,7 +340,8 @@ ts_get_data <- function(stations = NULL,
     )
 
     all <- expand.grid(
-      Station = stations, DateTimeData = datetimes,
+      Station = stations,
+      DateTimeData = datetimes,
       stringsAsFactors = FALSE
     )
     data <- merge(data, all, by = c("Station", "DateTimeData"), all.y = TRUE)
@@ -278,7 +350,11 @@ ts_get_data <- function(stations = NULL,
 
   data <- data[order(data$Station, data$DateTimeData), ]
   colnames(data) <- c(
-    "Station", "DateTime", "Recorded", "Corrected", "Status",
+    "Station",
+    "DateTime",
+    "Recorded",
+    "Corrected",
+    "Status",
     "Comments"
   )
 
@@ -288,7 +364,14 @@ ts_get_data <- function(stations = NULL,
   parameters <- parameters[c("Parameter", "Units")]
 
   stations <- merge(stations, parameters, by = "Parameter")
-  stations <- stations[c("Station", "Site", "Depth", "Parameter", "Units", "StationName")]
+  stations <- stations[c(
+    "Station",
+    "Site",
+    "Depth",
+    "Parameter",
+    "Units",
+    "StationName"
+  )]
   data <- merge(data, stations, by = "Station")
   comments <- data$Comments
   data$Comments <- NULL

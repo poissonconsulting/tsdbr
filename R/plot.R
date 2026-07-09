@@ -19,7 +19,10 @@ plot_station <- function(data) {
     ggplot2::aes_string(x = "DateTime", y = "Corrected")
   ) +
     ggplot2::geom_line(ggplot2::aes_string(color = "Status")) +
-    ggplot2::scale_color_manual(values = c("black", "blue", "red"), drop = FALSE) +
+    ggplot2::scale_color_manual(
+      values = c("black", "blue", "red"),
+      drop = FALSE
+    ) +
     ggplot2::ggtitle(data$Station[1]) +
     ggplot2::xlab("Date") +
     ggplot2::ylab("Value")
@@ -36,7 +39,8 @@ plot_station <- function(data) {
 ts_plot_data <- function(data) {
   rlang::check_installed("ggplot2", reason = "for this function to work.")
 
-  check_data(data,
+  check_data(
+    data,
     values = list(
       Station = "",
       DateTime = Sys.time()
@@ -61,7 +65,6 @@ ts_plot_data <- function(data) {
     chk_vector(data$Status)
     check_values(data$Status, ordered(status_values(), status_values()))
   }
-
 
   data <- split(data, data["Station"], drop = TRUE)
   lapply(data, plot_station)
