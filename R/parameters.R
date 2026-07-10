@@ -5,7 +5,11 @@
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameter <- function(parameter, units, conn = getOption("tsdbr.conn", NULL)) {
+ts_add_parameter <- function(
+  parameter,
+  units,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   chk_string(parameter)
   chk_string(units)
 
@@ -24,8 +28,12 @@ ts_add_parameter <- function(parameter, units, conn = getOption("tsdbr.conn", NU
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_parameters <- function(parameters, conn = getOption("tsdbr.conn", NULL)) {
-  check_data(parameters,
+ts_add_parameters <- function(
+  parameters,
+  conn = getOption("tsdbr.conn", NULL)
+) {
+  check_data(
+    parameters,
     values = list(
       Parameter = "",
       Units = ""

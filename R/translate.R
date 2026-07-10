@@ -13,9 +13,13 @@
 #'
 #' @return The translated data
 #' @export
-ts_translate_stations <- function(data, from = "StationID", to = "Station",
-                                  na_rm = TRUE,
-                                  conn = getOption("tsdbr.conn", NULL)) {
+ts_translate_stations <- function(
+  data,
+  from = "StationID",
+  to = "Station",
+  na_rm = TRUE,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   check_data(data, values = list(Station = ""))
   chk_vector(from)
   check_values(from, c("Station", "StationName", "StationID"))
@@ -42,7 +46,9 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
 
   missing <- unique(stations[[from]][is.na(stations[[to]])])
   if (length(missing)) {
-    warning("the following stations are unrecognised: ", punctuate(missing, "and"),
+    warning(
+      "the following stations are unrecognised: ",
+      punctuate(missing, "and"),
       call. = FALSE
     )
   }
@@ -53,7 +59,9 @@ ts_translate_stations <- function(data, from = "StationID", to = "Station",
   data <- merge(data, stations, by = "..ID")
   data <- data[order(data$..ID), ]
   data <- data[colnames_data]
-  if (na_rm) data <- data[!is.na(data$Station), ]
+  if (na_rm) {
+    data <- data[!is.na(data$Station), ]
+  }
 
   as_tibble(data)
 }

@@ -10,10 +10,15 @@
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported parameters.
 #' @export
-ts_add_site <- function(site, longitude = NA_real_, latitude = NA_real_,
-                        organization = NA_character_, site_name = NA_character_,
-                        comments = NA_character_,
-                        conn = getOption("tsdbr.conn", NULL)) {
+ts_add_site <- function(
+  site,
+  longitude = NA_real_,
+  latitude = NA_real_,
+  organization = NA_character_,
+  site_name = NA_character_,
+  comments = NA_character_,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   chk_string(site)
   chk_vector(longitude)
   check_values(longitude, c(-180, 180, NA))
@@ -48,11 +53,7 @@ ts_add_site <- function(site, longitude = NA_real_, latitude = NA_real_,
 #' @return A data frame of the imported parameters.
 #' @export
 ts_add_sites <- function(sites, conn = getOption("tsdbr.conn", NULL)) {
-  check_data(sites,
-    values = list(Site = ""),
-    key = "Site",
-    nrow = TRUE
-  )
+  check_data(sites, values = list(Site = ""), key = "Site", nrow = TRUE)
 
   if (missing_column(sites, "Longitude")) {
     sites$Longitude <- NA_real_
@@ -90,8 +91,12 @@ ts_add_sites <- function(sites, conn = getOption("tsdbr.conn", NULL)) {
   sites$CommentsSite <- sites$Comments
 
   sites <- sites[c(
-    "Site", "Longitude", "Latitude",
-    "Organization", "SiteName", "CommentsSite"
+    "Site",
+    "Longitude",
+    "Latitude",
+    "Organization",
+    "SiteName",
+    "CommentsSite"
   )]
 
   add(sites, "Site", conn)

@@ -72,10 +72,22 @@ aggregate_na_rm <- function(x, fun, na_rm) {
 }
 
 round_down_time <- function(data) {
-  data$DateTimeData[data$Period == "minute"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "minute"], units = "minutes")
-  data$DateTimeData[data$Period == "hour"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "hour"], units = "hours")
-  data$DateTimeData[data$Period == "day"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "day"], units = "days")
-  data$DateTimeData[data$Period == "month"] <- dttr2::dtt_floor(data$DateTimeData[data$Period == "month"], units = "months")
+  data$DateTimeData[data$Period == "minute"] <- dttr2::dtt_floor(
+    data$DateTimeData[data$Period == "minute"],
+    units = "minutes"
+  )
+  data$DateTimeData[data$Period == "hour"] <- dttr2::dtt_floor(
+    data$DateTimeData[data$Period == "hour"],
+    units = "hours"
+  )
+  data$DateTimeData[data$Period == "day"] <- dttr2::dtt_floor(
+    data$DateTimeData[data$Period == "day"],
+    units = "days"
+  )
+  data$DateTimeData[data$Period == "month"] <- dttr2::dtt_floor(
+    data$DateTimeData[data$Period == "month"],
+    units = "months"
+  )
 
   data
 }
@@ -83,7 +95,11 @@ round_down_time <- function(data) {
 aggregate_time <- function(data, na_rm, aggregate) {
   if (!anyDuplicated(data$DateTimeData)) {
     return(data[c(
-      "Station", "DateTimeData", "Recorded", "Corrected", "Status",
+      "Station",
+      "DateTimeData",
+      "Recorded",
+      "Corrected",
+      "Status",
       "CommentsData"
     )])
   }
@@ -173,7 +189,9 @@ vld_tzone <- function(x, tzone = "UTC", x_name = NULL) {
   }
 
   attr_tzone <- attr(x, "tzone")
-  if (is.null(attr_tzone)) attr_tzone <- "NULL"
+  if (is.null(attr_tzone)) {
+    attr_tzone <- "NULL"
+  }
   if (tzone != attr_tzone) {
     FALSE
   } else {
@@ -191,8 +209,15 @@ check_tzone <- function(x, tzone = "UTC", x_name = NULL) {
   }
 
   attr_tzone <- attr(x, "tzone")
-  if (is.null(attr_tzone)) attr_tzone <- "NULL"
+  if (is.null(attr_tzone)) {
+    attr_tzone <- "NULL"
+  }
   chk::abort_chk(
-    x_name, " time zone must be '", tzone, "' (not '", attr_tzone, "')"
+    x_name,
+    " time zone must be '",
+    tzone,
+    "' (not '",
+    attr_tzone,
+    "')"
   )
 }

@@ -15,11 +15,19 @@
 #' @inheritParams ts_disconnect_db
 #' @return A data frame of the imported station.
 #' @export
-ts_add_station <- function(station, parameter, site, period,
-                           lower_limit = NA_real_, upper_limit = NA_real_,
-                           depth = NA_real_, station_name = NA_character_,
-                           station_id = NA_character_, comments = NA_character_,
-                           conn = getOption("tsdbr.conn", NULL)) {
+ts_add_station <- function(
+  station,
+  parameter,
+  site,
+  period,
+  lower_limit = NA_real_,
+  upper_limit = NA_real_,
+  depth = NA_real_,
+  station_name = NA_character_,
+  station_id = NA_character_,
+  comments = NA_character_,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   chk_string(station)
   chk_string(parameter)
   chk_string(site)
@@ -72,9 +80,16 @@ ts_delete_station <- function(station, conn = getOption("tsdbr.conn", NULL)) {
     warning("station '", station, "' does not exist")
     return(invisible())
   }
-  DBI::dbExecute(conn, paste0("DELETE
+  DBI::dbExecute(
+    conn,
+    paste0(
+      "DELETE
     FROM Station
-    WHERE Station == '", station, "'"))
+    WHERE Station == '",
+      station,
+      "'"
+    )
+  )
   invisible()
 }
 
@@ -88,7 +103,8 @@ ts_delete_station <- function(station, conn = getOption("tsdbr.conn", NULL)) {
 #' @export
 ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
   check_conn(conn)
-  check_data(stations,
+  check_data(
+    stations,
     values = list(
       Station = "",
       Parameter = "",
@@ -144,9 +160,15 @@ ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
   stations$CommentsStation <- stations$Comments
 
   stations <- stations[c(
-    "Station", "Parameter", "Site", "Period",
-    "Depth", "LowerLimit", "UpperLimit",
-    "StationName", "StationID",
+    "Station",
+    "Parameter",
+    "Site",
+    "Period",
+    "Depth",
+    "LowerLimit",
+    "UpperLimit",
+    "StationName",
+    "StationID",
     "CommentsStation"
   )]
 
@@ -163,10 +185,11 @@ ts_add_stations <- function(stations, conn = getOption("tsdbr.conn", NULL)) {
 #' @return A data frame of the requested data.
 #' @export
 ts_get_stations <- function(
-    parameters = NULL,
-    periods = c("year", "month", "day", "hour", "minute", "second"),
-    sites = NULL,
-    conn = getOption("tsdbr.conn", NULL)) {
+  parameters = NULL,
+  periods = c("year", "month", "day", "hour", "minute", "second"),
+  sites = NULL,
+  conn = getOption("tsdbr.conn", NULL)
+) {
   if (!is.null(parameters)) {
     chk_vector(parameters)
     check_values(parameters, ts_get_parameters(conn = conn)$Parameter)
@@ -185,15 +208,24 @@ ts_get_stations <- function(
     check_dim(sites, values = TRUE)
     chk_unique(sites)
   }
-  if (is.null(parameters)) parameters <- ts_get_parameters(conn = conn)$Parameter
-  if (is.null(sites)) sites <- ts_get_sites(conn = conn)$Site
+  if (is.null(parameters)) {
+    parameters <- ts_get_parameters(conn = conn)$Parameter
+  }
+  if (is.null(sites)) {
+    sites <- ts_get_sites(conn = conn)$Site
+  }
 
-  res <- DBI::dbSendStatement(conn, paste0(
-    "SELECT * FROM Station WHERE Parameter ",
-    in_commas(parameters), "AND Period ",
-    in_commas(periods), "AND Site ",
-    in_commas(sites)
-  ))
+  res <- DBI::dbSendStatement(
+    conn,
+    paste0(
+      "SELECT * FROM Station WHERE Parameter ",
+      in_commas(parameters),
+      "AND Period ",
+      in_commas(periods),
+      "AND Site ",
+      in_commas(sites)
+    )
+  )
   data <- DBI::dbFetch(res)
   DBI::dbClearResult(res)
   rownames(data) <- NULL
