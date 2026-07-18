@@ -9,11 +9,11 @@
 ## Citation
 
 Thorley J (2026). *tsdbr: Environmental Time Series Databasing*. R
-package version 0.0.0.9021.
+package version 0.0.0.9022.
 
     @Manual{,
       title = {tsdbr: Environmental Time Series Databasing},
       author = {Joe Thorley},
       year = {2026},
-      note = {R package version 0.0.0.9021},
+      note = {R package version 0.0.0.9022},
     }
